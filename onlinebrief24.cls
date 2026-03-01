@@ -152,7 +152,9 @@
       \node[guide text, anchor=south west] at ($(TL)+(25mm, -110mm)$) {Textbeginn (110mm)};
 
       % --- Fluchtlinie (25mm) - Zeigt die gemeinsame Ausrichtung ---
-      \draw[magenta, dashed, thin] ($(TL)+(25mm, 0)$) -- ($(TL)+(25mm, -297mm)$) node[pos=0.9, sloped, above, font=\fontsize{6}{7}\sffamily] {Fluchtlinie (25mm)};
+      % Linie rot und gestrichelt, Text links daneben auf Höhe des Textbeginns (ca. 105mm)
+      \draw[red!70, dashed, thin] ($(TL)+(25mm, 0)$) -- ($(TL)+(25mm, -297mm)$);
+      \node[anchor=east, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=2pt] at ($(TL)+(25mm, -108mm)$) {Fluchtlinie (25mm)};
 
     \end{tikzpicture}
   \fi
