@@ -13,7 +13,7 @@
 - **Position oben**: 45 mm vom Papierrand.
 - **Position links**: 20 mm vom Papierrand.
 - **Breite**: 72 mm (laut Vorgabe, Standard wäre 85mm).
-- **Höhe**: 45 mm (beinhaltet Zonen 1-3).
+- **Höhe**: 42 mm (beinhaltet Zonen 1-3).
 
 ### Zonen (innerhalb des Fensters)
 Die Zonen werden relativ zum oberen Papierrand positioniert:
