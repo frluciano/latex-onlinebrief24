@@ -38,6 +38,7 @@
 }
 
 % --- Datenspeicher ---
+\newlength{\@obb@addrwidth}
 \newcommand{\@obb@return}{}
 \newcommand{\@obb@recipient}{}
 \newcommand{\@obb@subject}{}
@@ -80,7 +81,19 @@
 \DeclareOption{guides}{\@guidesmodetrue}
 \DeclareOption{modern}{\@modernstyletrue}
 \DeclareOption{footercenter}{\@footercentertrue}
-\DeclareOption{basic}{\@guidesmodefalse}
+\DeclareOption{basic}{\@modernstylefalse}
+
+% --- Farbschema Optionen (wie moderncv) ---
+\def\@obb@colorscheme{grey}% Default: grey
+\DeclareOption{blue}{\def\@obb@colorscheme{blue}}
+\DeclareOption{orange}{\def\@obb@colorscheme{orange}}
+\DeclareOption{green}{\def\@obb@colorscheme{green}}
+\DeclareOption{red}{\def\@obb@colorscheme{red}}
+\DeclareOption{purple}{\def\@obb@colorscheme{purple}}
+\DeclareOption{grey}{\def\@obb@colorscheme{grey}}
+\DeclareOption{burgundy}{\def\@obb@colorscheme{burgundy}}
+\DeclareOption{black}{\def\@obb@colorscheme{black}}
+
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrlttr2}}
 \ProcessOptions\relax
 
@@ -89,8 +102,25 @@
   \RequirePackage[default, light, semibold]{sourcesanspro}
   \RequirePackage{marvosym}
   \RequirePackage{fontawesome}
-  \definecolor{color2}{rgb}{0.45,0.45,0.45}
+  
+  % --- Farbdefinitionen (moderncv-kompatibel) ---
+  \definecolor{color0}{rgb}{0,0,0}% Text (schwarz)
+  \definecolor{color2}{rgb}{0.45,0.45,0.45}% Sekundär (dunkelgrau)
+  
+  % color1 (Akzentfarbe) je nach gewähltem Schema
+  \ifdefstring{\@obb@colorscheme}{blue}{\definecolor{color1}{rgb}{0.22,0.45,0.70}}{}%
+  \ifdefstring{\@obb@colorscheme}{orange}{\definecolor{color1}{rgb}{0.95,0.55,0.15}}{}%
+  \ifdefstring{\@obb@colorscheme}{green}{\definecolor{color1}{rgb}{0.35,0.70,0.30}}{}%
+  \ifdefstring{\@obb@colorscheme}{red}{\definecolor{color1}{rgb}{0.95,0.20,0.20}}{}%
+  \ifdefstring{\@obb@colorscheme}{purple}{\definecolor{color1}{rgb}{0.50,0.33,0.80}}{}%
+  \ifdefstring{\@obb@colorscheme}{grey}{\definecolor{color1}{rgb}{0.55,0.55,0.55}}{}%
+  \ifdefstring{\@obb@colorscheme}{burgundy}{\definecolor{color1}{rgb}{0.596,0,0}}{}%
+  \ifdefstring{\@obb@colorscheme}{black}{\definecolor{color1}{rgb}{0,0,0}}{}%
 \fi
+
+% --- Footer-Hilfsmakros (außerhalb von AddToShipoutPictureBG definiert) ---
+\newif\if@obb@firstfooteritem
+\newcommand{\@obb@footersep}{~\textbar~}
 
 % --- Layout-Zeichnung ---
 \AddToShipoutPictureBG{%
@@ -107,8 +137,10 @@
           \@obb@return
         }%
       }%
-      % Unterstrich für Zone 1
-      \put(25, 248){\line(1,0){80}}
+      % Unterstrich für Zone 1 - dynamische Breite, dünn, nah am Text
+      \settowidth{\@obb@addrwidth}{\fontsize{8pt}{9pt}\sffamily\@obb@return}%
+      \ifdim\@obb@addrwidth>72mm\@obb@addrwidth=72mm\fi
+      \put(25, 249.2){\rule{\@obb@addrwidth}{0.2pt}}
 
   % Zone 3: Empfänger (67mm von oben)
   % Linksbündig bei 25mm (5mm Einzug im 20mm Fenster)
@@ -130,7 +162,7 @@
         \parbox[t][15mm][t]{\paperwidth-50mm}{%
             \raggedleft
             \fontsize{18pt}{20pt}\sffamily\bfseries
-            \color{color2!50}\@obb@fromfirstname\ \color{color2}\@obb@fromlastname
+            \color{color1!50}\@obb@fromfirstname\ \color{color1}\@obb@fromlastname
             \ifdefempty{\@obb@fromaddress}{}{\\[4pt]
               \fontsize{10pt}{12pt}\sffamily\color{color2!50}
               \@obb@fromaddress
@@ -143,27 +175,26 @@
       \parbox[b][10mm][b]{\textwidth}{%
         \if@footercenter\centering\else\raggedleft\fi
         \footnotesize\sffamily\color{color2}%
-        \newif\iffirstfooteritem\firstfooteritemtrue
-        \newcommand{\footersep}{~\vline~}%
-        
+        \global\@obb@firstfooteritemtrue
+        %
         \ifdefempty{\@obb@fromlandline}{}{%
-          \iffirstfooteritem\firstfooteritemfalse\else\footersep\fi
+          \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
           \Telefon\ \@obb@fromlandline
         }%
         \ifdefempty{\@obb@fromphone}{}{%
-          \iffirstfooteritem\firstfooteritemfalse\else\footersep\fi
+          \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
           \Mobilefone\ \@obb@fromphone
         }%
         \ifdefempty{\@obb@fromemail}{}{%
-          \iffirstfooteritem\firstfooteritemfalse\else\footersep\fi
+          \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
           \Letter\ \@obb@fromemail
         }%
         \ifdefempty{\@obb@fromweb}{}{%
-          \iffirstfooteritem\firstfooteritemfalse\else\footersep\fi
+          \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
           \Mundus\ \@obb@fromweb
         }%
         \ifdefempty{\@obb@fromlinkedin}{}{%
-          \iffirstfooteritem\firstfooteritemfalse\else\footersep\fi
+          \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
           \faLinkedin\ \@obb@fromlinkedin
         }%
       }%
