@@ -51,6 +51,8 @@ Danach können Sie von überall auf Ihrem System `\documentclass{onlinebrief24}`
 \end{letter}
 \end{document}
 ```
+<img width="45%" alt="example-basic" src="https://github.com/user-attachments/assets/943fcd60-6e56-4d7e-91d6-1fa519cabbd4" />
+
 
 ### Moderner Brief mit Farbschema
 
@@ -77,20 +79,59 @@ Danach können Sie von überall auf Ihrem System `\documentclass{onlinebrief24}`
 \end{letter}
 \end{document}
 ```
-
-## Vorschau
-
 <p align="center">
 <img width="45%" alt="example-modern-blue" src="https://github.com/user-attachments/assets/53d11876-95f7-40be-aa7d-69f6e04935c6" />
+   
+## Einfacher Brief (basic) mit Visualisierungs-Modus
 
-<img width="45%" alt="example-basic" src="https://github.com/user-attachments/assets/943fcd60-6e56-4d7e-91d6-1fa519cabbd4" />
+```
+\documentclass[basic, guides]{onlinebrief24}
 
+\setreturnaddress{Max Mustermann, Musterstraße 123, 12345 Musterstadt}
+\setrecipient{Erika Mustermann \\ Musterweg 1 \\ 12345 Stadt}
+\setsubject{Betreff des Briefes}
+
+\begin{document}
+\begin{letter}{}
+    \opening{Sehr geehrte Damen und Herren,}
+    
+    Ihr Briefinhalt hier...
+    
+    \closing{Mit freundlichen Grüßen}
+\end{letter}
+\end{document}
+```
 <img width="45%" alt="example-guides" src="https://github.com/user-attachments/assets/81e246d0-f94b-4875-8819-aabaeb3ceed9" />
+
+
+### Moderner Brief mit Farbschema
+
+```latex
+\documentclass[modern, guides, footercenter]{onlinebrief24}
+
+\setfromfirstname{Max}
+\setfromlastname{Mustermann}
+\setfromaddress{Musterstraße 1 | 12345 Musterstadt}
+\setfromphone{0123 / 456 789}
+\setfromemail{max@example.com}
+
+\setreturnaddress{Max Mustermann, Musterstraße 1, 12345 Musterstadt}
+\setrecipient{Erika Mustermann \\ Musterweg 1 \\ 12345 Stadt}
+\setsubject{Betreff des Briefes}
+
+\begin{document}
+\begin{letter}{}
+    \opening{Sehr geehrte Frau Mustermann,}
+    
+    Ihr Briefinhalt hier...
+    
+    \closing{Mit freundlichen Grüßen}
+\end{letter}
+\end{document}
+```
 
 <img width="45%" alt="example-modern-guides" src="https://github.com/user-attachments/assets/47bcb426-d4d2-44aa-9823-244d12644cba" />
 
-
-</p>
 
 ## Optionen
 
