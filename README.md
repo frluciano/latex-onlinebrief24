@@ -56,8 +56,10 @@ Ihr Briefinhalt hier...
 
 ## Preview
 
-![Basic](examples/example-basic-preview.png)
-![Modern](examples/example-modern-preview.png)
+<p align="center">
+  <img src="examples/example-basic-preview.png" alt="Basic" width="45%">
+  <img src="examples/example-modern-preview.png" alt="Modern" width="45%">
+</p>
 
 ## Optionen
 
@@ -83,14 +85,3 @@ Diese Befehle haben nur eine Auswirkung, wenn die `modern`-Option aktiv ist.
 - `\setfromemail{...}`: (Optional) E-Mail-Adresse für die Fußzeile.
 - `\setfromweb{...}`: (Optional) Webseite für die Fußzeile.
 - `\setfromlinkedin{...}`: (Optional) LinkedIn-Profilname für die Fußzeile.
-
-
-## Zonen (DIN 5008 Typ B)
-
-- **Zone 1**: Absenderangabe (2 mm Höhe)
-- **Zone 2**: Sendungskennzeichnung (20 mm Höhe) - wird bei Einschreiben überblendet
-- **Zone 3**: Empfängeranschrift (20 mm Höhe)
-
-## Falzmarken
-
-Zwei Falzmarken bei 105 mm und 205 mm sind automatisch implementiert.
