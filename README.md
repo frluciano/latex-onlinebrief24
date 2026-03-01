@@ -31,6 +31,8 @@ Danach können Sie von überall auf Ihrem System `\documentclass{onlinebrief24}`
 
 ## Verwendung
 
+Im Ordner [`examples/`](examples/) findest du fertige `.tex`-Dateien, die du direkt kompilieren kannst.
+
 Hier findest du die verschiedenen Stile und Optionen der Dokumentenklasse im direkten Vergleich.
 
 ### 1. Standard-Stile
