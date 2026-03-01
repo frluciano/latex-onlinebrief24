@@ -56,7 +56,7 @@ Ihr Briefinhalt hier...
 
 ## Optionen
 
-- `guides` - Aktiviert den Modus mit Sicherheitszonen-Visualisierung
+- `guides` - Aktiviert einen Visualisierungs-Modus, der das komplette Layout mit allen Zonen, Maßen und Falzmarken als technische Zeichnung über den Brief legt. Ideal zur Überprüfung des Satzspiegels.
 - `fontsize=<size>` - Schriftgröße für Empfängeradresse (Standard: 9pt, max 11pt)
 
 ## Befehle
