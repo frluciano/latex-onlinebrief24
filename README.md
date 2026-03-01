@@ -32,25 +32,49 @@ Danach können Sie von überall auf Ihrem System `\documentclass{onlinebrief24}`
 
 ## Verwendung
 
+### Einfacher Brief (basic)
+
 ```latex
-\documentclass{onlinebrief24}
+\documentclass[basic]{onlinebrief24}
 
-\usepackage{fontspec}
-\setmainfont{Arial}
-
-\setreturnaddress{Max Mustermann \\ Musterstraße 123 \\ 12345 Musterstadt}
+\setreturnaddress{Max Mustermann, Musterstraße 123, 12345 Musterstadt}
+\setrecipient{Erika Mustermann \\ Musterweg 1 \\ 12345 Stadt}
+\setsubject{Betreff des Briefes}
 
 \begin{document}
-
-\begin{letter}{Empfängeradresse}
-\opening{Sehr geehrte Damen und Herren,}
-
-Ihr Briefinhalt hier...
-
-\closing{Mit freundlichen Grüßen}
-
+\begin{letter}{}
+    \opening{Sehr geehrte Damen und Herren,}
+    
+    Ihr Briefinhalt hier...
+    
+    \closing{Mit freundlichen Grüßen}
 \end{letter}
+\end{document}
+```
 
+### Moderner Brief mit Farbschema
+
+```latex
+\documentclass[modern, blue, footercenter]{onlinebrief24}
+
+\setfromfirstname{Max}
+\setfromlastname{Mustermann}
+\setfromaddress{Musterstraße 1 | 12345 Musterstadt}
+\setfromphone{0123 / 456 789}
+\setfromemail{max@example.com}
+
+\setreturnaddress{Max Mustermann, Musterstraße 1, 12345 Musterstadt}
+\setrecipient{Erika Mustermann \\ Musterweg 1 \\ 12345 Stadt}
+\setsubject{Betreff des Briefes}
+
+\begin{document}
+\begin{letter}{}
+    \opening{Sehr geehrte Frau Mustermann,}
+    
+    Ihr Briefinhalt hier...
+    
+    \closing{Mit freundlichen Grüßen}
+\end{letter}
 \end{document}
 ```
 
@@ -63,15 +87,41 @@ Ihr Briefinhalt hier...
 
 ## Optionen
 
-- `guides`: Aktiviert einen Visualisierungs-Modus, der das komplette Layout mit allen Zonen, Maßen und Falzmarken als technische Zeichnung über den Brief legt. Ideal zur Überprüfung des Satzspiegels. Kann mit `modern` kombiniert werden.
-- `basic`: (Standard) Deaktiviert den `guides`-Modus.
-- `modern`: Aktiviert ein alternatives, modernes Layout für Kopf- und Fußzeile kann mit `guides` kombiniert werden.
+### Layout-Optionen
+
+- `basic`: (Standard) Einfaches Layout ohne Kopf- und Fußzeile.
+- `modern`: Aktiviert ein alternatives, modernes Layout mit Kopf- und Fußzeile.
+- `guides`: Aktiviert einen Visualisierungs-Modus, der das komplette Layout mit allen Zonen, Maßen und Falzmarken als technische Zeichnung über den Brief legt. Ideal zur Überprüfung des Satzspiegels. Kann mit `basic` oder `modern` kombiniert werden.
 - `footercenter`: Zentriert die Fußzeile. Diese Option hat nur in Verbindung mit `modern` einen Effekt.
+
+### Farbschema-Optionen (nur mit `modern`)
+
+Die Farbschemata sind kompatibel mit [moderncv](https://github.com/xdanaux/moderncv) und steuern die Akzentfarbe des Namens in der Kopfzeile.
+
+| Option | Farbe | RGB |
+|--------|-------|-----|
+| `grey` | Dunkelgrau (Standard) | `0.55, 0.55, 0.55` |
+| `blue` | Hellblau | `0.22, 0.45, 0.70` |
+| `orange` | Orange | `0.95, 0.55, 0.15` |
+| `green` | Grün | `0.35, 0.70, 0.30` |
+| `red` | Rot | `0.95, 0.20, 0.20` |
+| `purple` | Lila | `0.50, 0.33, 0.80` |
+| `burgundy` | Burgund | `0.596, 0, 0` |
+| `black` | Schwarz | `0, 0, 0` |
+
+**Beispiel:**
+
+```latex
+\documentclass[modern, blue, footercenter]{onlinebrief24}
+```
 
 ## Befehle
 
 - `\setrecipient{...}`: Setzt die vollständige Empfängeradresse.
 - `\setreturnaddress{...}`: Setzt die **einzeilige** Absenderadresse für das Sichtfenster (Zone 1). Diese ist für die postalische Verarbeitung zwingend erforderlich. Die Adresse wird automatisch unterstrichen.
+- `\setsubject{...}`: Setzt den Betreff des Briefes (fett, über der Anrede).
+- `\setdate{...}`: Setzt das Datum (Standard: `\today`).
+- `\setplace{...}`: Setzt den Ort vor dem Datum.
 
 ### Befehle für die `modern`-Option
 
