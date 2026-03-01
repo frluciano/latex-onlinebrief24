@@ -1,29 +1,29 @@
 \documentclass[modern, guides, footercenter]{onlinebrief24}
 
-\setfromfirstname{John}
-\setfromlastname{Doe}
-\setfromaddress{Example Street 1 | 12345 Example City}
+\setfromfirstname{Max}
+\setfromlastname{Mustermann}
+\setfromaddress{Musterstraße 1 | 12345 Musterstadt}
 \setfromlandline{0123 / 456 788}
 \setfromphone{0123 / 456 789}
-\setfromemail{john.doe@example.com}
+\setfromemail{max.mustermann@example.com}
 \setfromweb{www.example.com}
-\setfromlinkedin{john-doe}
+\setfromlinkedin{max-mustermann}
 
-\setreturnaddress{John Doe, Example Street 1, 12345 Example City}
-\setrecipient{Jane Doe \\ Example Avenue 456 \\ 67890 Example City}
+\setreturnaddress{Max Mustermann, Musterstraße 1, 12345 Musterstadt}
+\setrecipient{Erika Mustermann \\ Musterweg 1 \\ 12345 Stadt}
 
-\setsubject{Test: Modern style with layout guides}
-\setplace{Example City}
+\setsubject{Test: Moderner Stil mit Layout-Hilfslinien}
+\setplace{Musterstadt}
 \setdate{\today}
 
 \begin{document}
 \begin{letter}{}
-    \opening{Dear Mrs. Doe,}
+    \opening{Sehr geehrte Frau Mustermann,}
     
-    this is a test to verify that the elements of the \texttt{modern} option (header and footer) do not violate the DIN zones visualized by the \texttt{guides} option.
+    dies ist ein Test, um zu verifizieren, dass die Elemente der \texttt{modern}-Option (Kopf- und Fußzeile) die durch die \texttt{guides}-Option visualisierten DIN-Zonen nicht verletzen.
     
-    The return address must be exactly in Zone 1, and the header must be clearly above it. The footer is in the bottom margin and should not touch any specifications.
+    Die Absenderzeile muss exakt in Zone 1 liegen, und die Kopfzeile muss sich deutlich darüber befinden. Die Fußzeile liegt im unteren Seitenrand und sollte keine Spezifikationen berühren.
     
-    \closing{Sincerely}
+    \closing{Mit freundlichen Grüßen}
 \end{letter}
 \end{document}
