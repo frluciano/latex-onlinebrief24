@@ -29,9 +29,6 @@ Für eine systemweite Verfügbarkeit kann die Klassendatei in Ihrem lokalen TeX-
 
 Danach können Sie von überall auf Ihrem System `\documentclass{onlinebrief24}` verwenden.
 
-
-## Verwendung
-
 ## Verwendung
 
 Hier findest du die verschiedenen Stile und Optionen der Dokumentenklasse im direkten Vergleich.
