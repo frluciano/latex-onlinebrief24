@@ -85,6 +85,11 @@ Danach können Sie von überall auf Ihrem System `\documentclass{onlinebrief24}`
 
 <img width="45%" alt="example-basic" src="https://github.com/user-attachments/assets/943fcd60-6e56-4d7e-91d6-1fa519cabbd4" />
 
+<img width="45%" alt="example-guides" src="https://github.com/user-attachments/assets/81e246d0-f94b-4875-8819-aabaeb3ceed9" />
+
+<img width="45%" alt="example-modern-guides" src="https://github.com/user-attachments/assets/47bcb426-d4d2-44aa-9823-244d12644cba" />
+
+
 </p>
 
 ## Optionen
