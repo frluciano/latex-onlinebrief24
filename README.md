@@ -56,7 +56,7 @@ Ihr Briefinhalt hier...
 
 ## Optionen
 
-- `draft` - Aktiviert den Draft-Modus mit Sicherheitszonen-Visualisierung
+- `guides` - Aktiviert den Modus mit Sicherheitszonen-Visualisierung
 - `fontsize=<size>` - Schriftgröße für Empfängeradresse (Standard: 9pt, max 11pt)
 
 ## Befehle
