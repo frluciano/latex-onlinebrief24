@@ -40,7 +40,7 @@ Hier findest du die verschiedenen Stile und Optionen der Dokumentenklasse im dir
 | Stil | Beschreibung |
 | :--- | :--- |
 | **Einfacher Brief (`basic`)** | Einfaches Layout ohne Kopf- und Fußzeile |
-| **Modern (`modern, blue`)** | Modernes Layout mit Kopf- und Fußzeile. Angelehnt an [janmattfeld/latex-briefvorlage](https://github.com/janmattfeld/latex-briefvorlage) |
+| **Modern (`modern, blue`)** | Modernes Layout mit Kopf- und Fußzeile.|
 
 <table>
   <tr>
