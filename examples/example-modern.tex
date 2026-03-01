@@ -1,0 +1,34 @@
+\documentclass[modern, footercenter]{onlinebrief24} % 'modern' für den neuen Stil, 'footercenter' für zentrierte Fußzeile
+
+% --- Neue Befehle für die moderne Kopf- und Fußzeile ---
+\setfromfirstname{Max}
+\setfromlastname{Mustermann}
+\setfromaddress{Musterstraße 1 | 12345 Musterstadt}
+\setfromlandline{0123 / 456 788} % Festnetz (optional)
+\setfromphone{0123 / 456 789} % Mobil (optional)
+\setfromemail{max.mustermann@example.com} % E-Mail (optional)
+\setfromweb{www.example.com} % Webseite (optional)
+\setfromlinkedin{max-mustermann} % LinkedIn (optional)
+
+
+% --- Standard-Befehle (unverändert wichtig!) ---
+\setreturnaddress{Max Mustermann, Musterstraße 1, 12345 Musterstadt}
+\setrecipient{Erika Mustermann \\ Musterweg 1 \\ 12345 Stadt}
+
+\setsubject{Ein Test des neuen modernen Stils}
+\setplace{Musterstadt}
+\setdate{\today}
+
+\begin{document}
+\begin{letter}{} % Leeres Argument!
+    \opening{Sehr geehrte Frau Mustermann,}
+    
+    dies ist ein Beispielbrief, der die neue \texttt{modern}-Option der \texttt{onlinebrief24.cls} Klasse demonstriert.
+    
+    Wie Sie sehen können, erscheint oben rechts mein Name in einer großen, modernen Schrift und unten rechts finden Sie meine Kontaktdaten.
+    
+    Das Wichtigste ist jedoch, dass die Position des Adressfeldes und der Absenderzeile für den Fensterumschlag exakt an der gleichen Stelle geblieben sind, wie in der Standard-Version.
+    
+    \closing{Mit freundlichen Grüßen}
+\end{letter}
+\end{document}
