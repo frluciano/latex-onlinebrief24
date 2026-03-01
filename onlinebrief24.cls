@@ -80,7 +80,7 @@
 \DeclareOption{guides}{\@guidesmodetrue}
 \DeclareOption{modern}{\@modernstyletrue}
 \DeclareOption{footercenter}{\@footercentertrue}
-\DeclareOption{final}{\@guidesmodefalse}
+\DeclareOption{basic}{\@guidesmodefalse}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrlttr2}}
 \ProcessOptions\relax
 
