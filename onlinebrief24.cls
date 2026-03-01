@@ -123,16 +123,16 @@
       % --- Maßpfeile (Links vom Fenster) ---
       
       % Offset 45mm (Start Fenster)
-      \draw[dim line] ($(TL)+(15mm, 0)$) -- ($(TL)+(15mm, -45mm)$) node[dim text] {45mm};
+      \draw[dim line] ($(TL)+(15mm, 0)$) -- ($(TL)+(15mm, -45mm)$) node[dim text, rotate=90] {45mm};
       
       % Höhe Zone 1 (2mm)
-      \draw[dim line] ($(TL)+(15mm, -45mm)$) -- ($(TL)+(15mm, -47mm)$) node[dim text, left] {2mm};
+      \draw[dim line] ($(TL)+(15mm, -45mm)$) -- ($(TL)+(15mm, -47mm)$) node[dim text, rotate=90] {2mm};
       
       % Höhe Zone 2 (20mm)
-      \draw[dim line] ($(TL)+(15mm, -47mm)$) -- ($(TL)+(15mm, -67mm)$) node[dim text] {20mm};
+      \draw[dim line] ($(TL)+(15mm, -47mm)$) -- ($(TL)+(15mm, -67mm)$) node[dim text, rotate=90] {20mm};
       
       % Höhe Zone 3 (20mm)
-      \draw[dim line] ($(TL)+(15mm, -67mm)$) -- ($(TL)+(15mm, -87mm)$) node[dim text] {20mm};
+      \draw[dim line] ($(TL)+(15mm, -67mm)$) -- ($(TL)+(15mm, -87mm)$) node[dim text, rotate=90] {20mm};
       
       % Horizontaler Abstand (20mm)
       \draw[dim line] ($(TL)+(0, -40mm)$) -- ($(TL)+(20mm, -40mm)$) node[dim text] {20mm};
@@ -140,10 +140,11 @@
       % Fensterbreite (72mm)
       \draw[dim line] ($(TL)+(20mm, -40mm)$) -- ($(TL)+(92mm, -40mm)$) node[dim text] {72mm};
 
-      % --- Falzmarken Hinweise (Verkürzt auf 15mm, bleibt im Rand) ---
-      \draw[red!70, thin, <-] ($(TL)+(6mm, -105mm)$) -- ($(TL)+(15mm, -105mm)$) node[right, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=1pt] {1. Falz (105mm)};
+      % --- Falzmarken Hinweise (Vertikaler Text) ---
+      % Text um 90 Grad gedreht, Anker 'west' bedeutet nun 'unten' relativ zum Textfluss
+      \draw[red!70, thin, <-] ($(TL)+(6mm, -105mm)$) -- ($(TL)+(15mm, -105mm)$) node[midway, above=-1pt, rotate=90, font=\fontsize{6}{7}\sffamily, text=red!70] {1. Falz (105mm)};
       
-      \draw[red!70, thin, <-] ($(TL)+(6mm, -205mm)$) -- ($(TL)+(15mm, -205mm)$) node[right, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=1pt] {2. Falz (205mm)};
+      \draw[red!70, thin, <-] ($(TL)+(6mm, -205mm)$) -- ($(TL)+(15mm, -205mm)$) node[midway, above=-1pt, rotate=90, font=\fontsize{6}{7}\sffamily, text=red!70] {2. Falz (205mm)};
       
       % --- Textbeginn Linie (Nur angedeutet, nicht volle Breite) ---
       \draw[guide line, dashed] ($(TL)+(20mm, -110mm)$) -- ($(TL)+(100mm, -110mm)$);
