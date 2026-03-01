@@ -132,7 +132,7 @@ Die Farbschemata sind kompatibel mit [moderncv](https://github.com/xdanaux/moder
 
 ### Befehle für die `modern`-Option 
 
-Die modern-Option ist an die [LaTeX-Briefvorlage von Jan Mattfeld][https://github.com/janmattfeld/latex-briefvorlage] angelehnt.
+Die modern-Option ist an die [LaTeX-Briefvorlage von Jan Mattfeld](https://github.com/janmattfeld/latex-briefvorlage) angelehnt.
 
 Diese Befehle haben nur eine Auswirkung, wenn die `modern`-Option aktiv ist.
 
