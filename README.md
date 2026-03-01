@@ -40,7 +40,9 @@ Hier findest du die verschiedenen Stile und Optionen der Dokumentenklasse im dir
 | **Einfacher Brief (`basic`)** | Einfaches Layout ohne Kopf- und Fußzeile |
 | **Modern (`modern, blue`)** | Modernes Layout mit Kopf- und Fußzeile. Angelehnt an [janmattfeld/latex-briefvorlage](https://github.com/janmattfeld/latex-briefvorlage) |
 
-**Beispiel: Basic-Stil**
+<table>
+  <tr>
+    <td><strong>Beispiel: Basic-Stil</strong>
 
 ```latex
 \documentclass[basic]{onlinebrief24}
@@ -56,13 +58,15 @@ Ihr Briefinhalt hier...
 \end{document}
 ```
 
-**Resultat:**
+</td>
+    <td><strong>Resultat</strong>
 
 <img src="https://github.com/user-attachments/assets/943fcd60-6e56-4d7e-91d6-1fa519cabbd4" width="350" alt="example-basic">
 
----
-
-**Beispiel: Modern-Stil**
+</td>
+  </tr>
+  <tr>
+    <td><strong>Beispiel: Modern-Stil</strong>
 
 ```latex
 \documentclass[modern, blue, footercenter]{onlinebrief24}
@@ -80,9 +84,14 @@ Ihr Briefinhalt hier...
 \end{document}
 ```
 
-**Resultat:**
+</td>
+    <td><strong>Resultat</strong>
 
 <img src="https://github.com/user-attachments/assets/53d11876-95f7-40be-aa7d-69f6e04935c6" width="350" alt="example-modern-blue">
+
+</td>
+  </tr>
+</table>
 
 ---
 
@@ -90,7 +99,9 @@ Ihr Briefinhalt hier...
 
 Nutze die Option `guides`, um Hilfslinien für Faltmarken und Fensterpositionen (nach DIN 5008) einzublenden.
 
-**Beispiel: Basic mit Guides**
+<table>
+  <tr>
+    <td><strong>Beispiel: Basic mit Guides</strong>
 
 ```latex
 \documentclass[basic, guides]{onlinebrief24}
@@ -98,22 +109,29 @@ Nutze die Option `guides`, um Hilfslinien für Faltmarken und Fensterpositionen 
 ...
 ```
 
-**Resultat:**
+</td>
+    <td><strong>Resultat</strong>
 
 <img src="https://github.com/user-attachments/assets/81e246d0-f94b-4875-8819-aabaeb3ceed9" width="350" alt="example-guides">
 
----
-
-**Beispiel: Modern mit Guides**
+</td>
+  </tr>
+  <tr>
+    <td><strong>Beispiel: Modern mit Guides</strong>
 
 ```latex
 \documentclass[modern, guides, footercenter]{onlinebrief24}
 \setfromfirstname{Max} ...
 ```
 
-**Resultat:**
+</td>
+    <td><strong>Resultat</strong>
 
 <img src="https://github.com/user-attachments/assets/47bcb426-d4d2-44aa-9823-244d12644cba" width="350" alt="example-modern-guides">
+
+</td>
+  </tr>
+</table>
 
 ## Optionen
 
