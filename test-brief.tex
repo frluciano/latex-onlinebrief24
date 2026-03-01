@@ -1,16 +1,19 @@
 \documentclass[guides]{onlinebrief24}
 
+% Absender (Zone 1)
 \setreturnaddress{Max Mustermann, Musterstraße 1, 12345 Musterstadt}
 
+% Empfänger (Zone 3)
 \setrecipient{
   Erika Mustermann \\
   Musterweg 456 \\
   67890 Musterstadt
 }
 
-\setkomavar{subject}{Testbrief mit Guides-Modus (Technische Zeichnung)}
-\setkomavar{place}{Musterstadt}
-\setkomavar{date}{\today}
+% Kopfdaten (werden nun manuell gesetzt, um Doppelungen zu vermeiden)
+\setsubject{Testbrief mit exakter Fluchtlinie (25mm)}
+\setplace{Musterstadt}
+\setdate{\today}
 
 \begin{document}
 
@@ -18,17 +21,13 @@
 
 \opening{Sehr geehrte Frau Mustermann,}
 
-dieser Brief demonstriert den neuen `guides`-Modus. Anstelle von blockigen Farben sehen Sie nun präzise Maßlinien und Beschriftungen, die Ihnen helfen, das Layout exakt zu überprüfen.
+dieser Brief demonstriert die exakte Einhaltung der Fluchtlinie bei 25mm. 
 
-Die Maße entsprechen DIN 5008 Typ B:
-\begin{itemize}
-    \item \textbf{Fensterstart:} 45mm von oben
-    \item \textbf{Zone 1:} 2mm Höhe
-    \item \textbf{Zone 2 (Sperrzone):} 20mm Höhe
-    \item \textbf{Zone 3 (Empfänger):} 20mm Höhe
-\end{itemize}
+Sowohl die Absenderzeile (oben im Fenster), die Empfängeranschrift als auch dieser Text und der Betreff beginnen exakt bei 25mm vom linken Papierrand.
 
-Um diese Hilfslinien auszublenden, ändern Sie die Klassenoption von `[guides]` zu `[final]`.
+Das Adressfenster selbst (der Rahmen im `guides`-Modus) beginnt physisch bei 20mm, aber der Textinhalt ist um 5mm eingerückt.
+
+Doppelte Datums- oder Betreffzeilen sollten nun der Vergangenheit angehören, da wir die automatische Ausgabe von KOMA-Script umgehen.
 
 \closing{Mit freundlichen Grüßen}
 
