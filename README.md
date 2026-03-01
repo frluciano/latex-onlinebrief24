@@ -35,10 +35,54 @@ Hier findest du die verschiedenen Stile und Optionen der Dokumentenklasse im dir
 
 ### 1. Standard-Stile
 
-| Code-Beispiel | Resultat |
+| Stil | Beschreibung |
 | :--- | :--- |
-| **Einfacher Brief (`basic`)** <br><br> ```latex \documentclass[basic]{onlinebrief24} \setreturnaddress{Max Mustermann, ...} \setrecipient{Erika Mustermann \\ ...} \setsubject{Betreff des Briefes} \begin{document} \begin{letter}{} \opening{Sehr geehrte Damen...} Ihr Briefinhalt hier... \closing{Mit freundlichen Grüßen} \end{letter} \end{document} ``` | <img src="https://github.com/user-attachments/assets/943fcd60-6e56-4d7e-91d6-1fa519cabbd4" width="350" alt="example-basic"> |
-| **Moderner Brief (`modern, blue`)** <br> *Angelehnt an [janmattfeld/latex-briefvorlage](https://github.com/janmattfeld/latex-briefvorlage)* <br><br> ```latex \documentclass[modern, blue, footercenter]{onlinebrief24} \setfromfirstname{Max} \setfromlastname{Mustermann} \setfromaddress{Musterstraße 1 | ...} \setfromphone{0123 / 456 789} \setfromemail{max@example.com} \begin{document} \begin{letter}{} \opening{Sehr geehrte Frau...} Ihr Briefinhalt hier... \closing{Mit freundlichen Grüßen} \end{letter} \end{document} ``` | <img src="https://github.com/user-attachments/assets/53d11876-95f7-40be-aa7d-69f6e04935c6" width="350" alt="example-modern-blue"> |
+| **Einfacher Brief (`basic`)** | Einfaches Layout ohne Kopf- und Fußzeile |
+| **Modern (`modern, blue`)** | Modernes Layout mit Kopf- und Fußzeile. Angelehnt an [janmattfeld/latex-briefvorlage](https://github.com/janmattfeld/latex-briefvorlage) |
+
+**Beispiel: Basic-Stil**
+
+```latex
+\documentclass[basic]{onlinebrief24}
+\setreturnaddress{Max Mustermann, ...}
+\setrecipient{Erika Mustermann \\ ...}
+\setsubject{Betreff des Briefes}
+\begin{document}
+\begin{letter}{}
+\opening{Sehr geehrte Damen...}
+Ihr Briefinhalt hier...
+\closing{Mit freundlichen Grüßen}
+\end{letter}
+\end{document}
+```
+
+**Resultat:**
+
+<img src="https://github.com/user-attachments/assets/943fcd60-6e56-4d7e-91d6-1fa519cabbd4" width="350" alt="example-basic">
+
+---
+
+**Beispiel: Modern-Stil**
+
+```latex
+\documentclass[modern, blue, footercenter]{onlinebrief24}
+\setfromfirstname{Max}
+\setfromlastname{Mustermann}
+\setfromaddress{Musterstraße 1 | ...}
+\setfromphone{0123 / 456 789}
+\setfromemail{max@example.com}
+\begin{document}
+\begin{letter}{}
+\opening{Sehr geehrte Frau...}
+Ihr Briefinhalt hier...
+\closing{Mit freundlichen Grüßen}
+\end{letter}
+\end{document}
+```
+
+**Resultat:**
+
+<img src="https://github.com/user-attachments/assets/53d11876-95f7-40be-aa7d-69f6e04935c6" width="350" alt="example-modern-blue">
 
 ---
 
@@ -46,10 +90,30 @@ Hier findest du die verschiedenen Stile und Optionen der Dokumentenklasse im dir
 
 Nutze die Option `guides`, um Hilfslinien für Faltmarken und Fensterpositionen (nach DIN 5008) einzublenden.
 
-| Code-Beispiel | Resultat |
-| :--- | :--- |
-| **Basis mit Guides** <br><br> ```latex \documentclass[basic, guides]{onlinebrief24} \setreturnaddress{Max Mustermann...} ... ``` | <img src="https://github.com/user-attachments/assets/81e246d0-f94b-4875-8819-aabaeb3ceed9" width="350" alt="example-guides"> |
-| **Modern mit Guides** <br><br> ```latex \documentclass[modern, guides, footercenter]{onlinebrief24} \setfromfirstname{Max} ... ``` | <img src="https://github.com/user-attachments/assets/47bcb426-d4d2-44aa-9823-244d12644cba" width="350" alt="example-modern-guides"> |
+**Beispiel: Basic mit Guides**
+
+```latex
+\documentclass[basic, guides]{onlinebrief24}
+\setreturnaddress{Max Mustermann...}
+...
+```
+
+**Resultat:**
+
+<img src="https://github.com/user-attachments/assets/81e246d0-f94b-4875-8819-aabaeb3ceed9" width="350" alt="example-guides">
+
+---
+
+**Beispiel: Modern mit Guides**
+
+```latex
+\documentclass[modern, guides, footercenter]{onlinebrief24}
+\setfromfirstname{Max} ...
+```
+
+**Resultat:**
+
+<img src="https://github.com/user-attachments/assets/47bcb426-d4d2-44aa-9823-244d12644cba" width="350" alt="example-modern-guides">
 
 ## Optionen
 
