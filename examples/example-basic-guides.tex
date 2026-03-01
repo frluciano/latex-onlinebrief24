@@ -1,0 +1,36 @@
+\documentclass[basic, guides]{onlinebrief24}
+
+\setreturnaddress{Max Mustermann, Musterstraße 1, 12345 Musterstadt}
+
+\setrecipient{
+  Erika Mustermann \\
+  Musterweg 456 \\
+  67890 Musterstadt
+}
+
+\setsubject{Test: Basic-Stil mit Layout-Hilfslinien}
+\setplace{Musterstadt}
+\setdate{\today}
+
+\begin{document}
+
+\begin{letter}{}
+
+\opening{Sehr geehrte Frau Mustermann,}
+
+Dies ist ein Test des \texttt{basic}-Stils kombiniert mit der \texttt{guides}-Option. 
+
+Die Hilfslinien zeigen die DIN 5008 Typ B Zonen für das Adressfenster:
+\begin{itemize}
+  \item Zone 1: Absenderzeile (45--47mm)
+  \item Zone 2: Sperrzone/Codes (47--67mm)
+  \item Zone 3: Empfängeradresse (67--87mm)
+\end{itemize}
+
+Im Gegensatz zum \texttt{modern}-Stil gibt es hier keine Kopf- oder Fußzeile mit Kontaktdaten.
+
+\closing{Mit freundlichen Grüßen}
+
+\end{letter}
+
+\end{document}
