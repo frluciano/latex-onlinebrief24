@@ -54,7 +54,7 @@ Ihr Briefinhalt hier...
 \end{document}
 ```
 
-## Preview
+## Vorschau
 
 <p align="center">
   <img src="examples/example-basic-preview.png" alt="Basic" width="45%">
