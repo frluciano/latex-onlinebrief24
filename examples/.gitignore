@@ -1,0 +1,12 @@
+# Ignore LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.fls
+*.synctex.gz
+
+# Ignore generated PDFs
+*.pdf
+
+# Ignore the copied class file
+onlinebrief24.cls
