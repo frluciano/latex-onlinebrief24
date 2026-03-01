@@ -140,9 +140,12 @@
       % Fensterbreite (72mm)
       \draw[dim line] ($(TL)+(20mm, -40mm)$) -- ($(TL)+(92mm, -40mm)$) node[dim text] {72mm};
 
-      % --- Falzmarken Maße ---
-      \draw[dim line] ($(TL)+(3mm, 0)$) -- ($(TL)+(3mm, -105mm)$) node[dim text, pos=0.8] {1. Falz (105mm)};
-      \draw[dim line] ($(TL)+(3mm, -105mm)$) -- ($(TL)+(3mm, -205mm)$) node[dim text] {2. Falz (205mm)};
+      % --- Falzmarken Hinweise (Direkte Pfeile) ---
+      % 1. Falz (105mm) - Pfeil von rechts nach links auf die Marke
+      \draw[red!70, thin, <-] ($(TL)+(6mm, -105mm)$) -- ($(TL)+(25mm, -105mm)$) node[right, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=1pt] {1. Falz (105mm)};
+      
+      % 2. Falz (205mm)
+      \draw[red!70, thin, <-] ($(TL)+(6mm, -205mm)$) -- ($(TL)+(25mm, -205mm)$) node[right, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=1pt] {2. Falz (205mm)};
       
       % --- Textbeginn Linie ---
       \draw[guide line, dashed] ($(TL)+(0, -110mm)$) -- ($(TL)+(210mm, -110mm)$);
