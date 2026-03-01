@@ -63,7 +63,6 @@ Ihr Briefinhalt hier...
 
 - `\setrecipient{...}` - Empfängeradresse
 - `\setreturnaddress{...}` - Absenderadresse (einzeilig)
-- `\enablesafetyzones` - Blendet im Draft-Modus graue/rote Boxen zur Visualisierung der Überblendungsbereiche ein
 
 ## Zonen (DIN 5008 Typ B)
 
