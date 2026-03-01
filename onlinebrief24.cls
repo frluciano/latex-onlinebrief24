@@ -43,12 +43,29 @@
 \newcommand{\@obb@subject}{}
 \newcommand{\@obb@date}{\today}
 \newcommand{\@obb@place}{}
+\newcommand{\@obb@fromfirstname}{}
+\newcommand{\@obb@fromlastname}{}
+\newcommand{\@obb@fromaddress}{}
+\newcommand{\@obb@fromphone}{}
+\newcommand{\@obb@fromemail}{}
+\newcommand{\@obb@fromweb}{}
+\newcommand{\@obb@fromlinkedin}{}
+\newcommand{\@obb@fromlandline}{}
 
 \newcommand{\setreturnaddress}[1]{\renewcommand{\@obb@return}{#1}}
 \newcommand{\setrecipient}[1]{\renewcommand{\@obb@recipient}{#1}}
 \newcommand{\setsubject}[1]{\renewcommand{\@obb@subject}{#1}}
 \newcommand{\setdate}[1]{\renewcommand{\@obb@date}{#1}}
 \newcommand{\setplace}[1]{\renewcommand{\@obb@place}{#1}}
+\newcommand{\setfromname}[1]{\renewcommand{\@obb@fromname}{#1}} % Legacy
+\newcommand{\setfromfirstname}[1]{\renewcommand{\@obb@fromfirstname}{#1}}
+\newcommand{\setfromlastname}[1]{\renewcommand{\@obb@fromlastname}{#1}}
+\newcommand{\setfromaddress}[1]{\renewcommand{\@obb@fromaddress}{#1}}
+\newcommand{\setfromphone}[1]{\renewcommand{\@obb@fromphone}{#1}}
+\newcommand{\setfromemail}[1]{\renewcommand{\@obb@fromemail}{#1}}
+\newcommand{\setfromweb}[1]{\renewcommand{\@obb@fromweb}{#1}}
+\newcommand{\setfromlinkedin}[1]{\renewcommand{\@obb@fromlinkedin}{#1}}
+\newcommand{\setfromlandline}[1]{\renewcommand{\@obb@fromlandline}{#1}}
 
 % Patch letter environment
 \let\@obb@oldletter\letter
@@ -58,10 +75,22 @@
 
 % --- Optionen ---
 \newif\if@guidesmode
+\newif\if@modernstyle
+\newif\if@footercenter
 \DeclareOption{guides}{\@guidesmodetrue}
+\DeclareOption{modern}{\@modernstyletrue}
+\DeclareOption{footercenter}{\@footercentertrue}
 \DeclareOption{final}{\@guidesmodefalse}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrlttr2}}
 \ProcessOptions\relax
+
+% --- Bedingtes Laden für den modernen Stil ---
+\if@modernstyle
+  \RequirePackage[default, light, semibold]{sourcesanspro}
+  \RequirePackage{marvosym}
+  \RequirePackage{fontawesome}
+  \definecolor{color2}{rgb}{0.45,0.45,0.45}
+\fi
 
 % --- Layout-Zeichnung ---
 \AddToShipoutPictureBG{%
@@ -69,15 +98,18 @@
   
   % --- Inhalt (immer sichtbar) ---
   
-  % Zone 1: Absender (45mm von oben)
-  % Linksbündig bei 25mm (5mm Einzug im 20mm Fenster)
-  \put(25, 250){%
-    \parbox[b][2mm][c]{80mm}{%
-      \fontsize{8pt}{9pt}\sffamily\selectfont
-      \if@guidesmode\color{darkgray}\fi
-      \@obb@return
-    }%
-  }%
+      % Zone 1: Absender (45mm von oben)
+      % Linksbündig bei 25mm (5mm Einzug im 20mm Fenster)
+      \put(25, 250){%
+        \parbox[b][2mm][c]{80mm}{%
+          \fontsize{8pt}{9pt}\sffamily\selectfont
+          \if@guidesmode\color{darkgray}\fi
+          \tikz[remember picture] \node[inner sep=0pt, anchor=base west](returnaddress){\@obb@return};%
+        }%
+      }%
+      \begin{tikzpicture}[remember picture, overlay]
+        \draw[thin] (returnaddress.south west) -- (returnaddress.south east);
+      \end{tikzpicture}
 
   % Zone 3: Empfänger (67mm von oben)
   % Linksbündig bei 25mm (5mm Einzug im 20mm Fenster)
@@ -91,6 +123,53 @@
   % Falzmarken (immer sichtbar, aber dezent)
   \put(5, 192){\line(1,0){5}}
   \put(5, 92){\line(1,0){5}}
+
+  % --- Moderner Stil (Kopf- und Fußzeile) ---
+  \if@modernstyle
+    % Kopfzeile: Name
+    \put(25, 270){%
+        \parbox[t][15mm][t]{\paperwidth-50mm}{%
+            \raggedleft
+            \fontsize{18pt}{20pt}\sffamily\bfseries
+            \color{color2!50}\@obb@fromfirstname\ \color{color2}\@obb@fromlastname
+            \ifdefempty{\@obb@fromaddress}{}{\\[4pt]
+              \fontsize{10pt}{12pt}\sffamily\color{color2!50}
+              \@obb@fromaddress
+            }
+        }%
+    }%
+    
+    % Fußzeile: Kontaktdaten
+    \put(25, 15){%
+      \parbox[b][10mm][b]{\textwidth}{%
+        \if@footercenter\centering\else\raggedleft\fi
+        \footnotesize\sffamily\color{color2}%
+        \newif\iffirstfooteritem\firstfooteritemtrue
+        \newcommand{\footersep}{~\vline~}%
+        
+        \ifdefempty{\@obb@fromlandline}{}{%
+          \iffirstfooteritem\firstfooteritemfalse\else\footersep\fi
+          \Telefon\ \@obb@fromlandline
+        }%
+        \ifdefempty{\@obb@fromphone}{}{%
+          \iffirstfooteritem\firstfooteritemfalse\else\footersep\fi
+          \Mobilefone\ \@obb@fromphone
+        }%
+        \ifdefempty{\@obb@fromemail}{}{%
+          \iffirstfooteritem\firstfooteritemfalse\else\footersep\fi
+          \Letter\ \@obb@fromemail
+        }%
+        \ifdefempty{\@obb@fromweb}{}{%
+          \iffirstfooteritem\firstfooteritemfalse\else\footersep\fi
+          \Mundus\ \@obb@fromweb
+        }%
+        \ifdefempty{\@obb@fromlinkedin}{}{%
+          \iffirstfooteritem\firstfooteritemfalse\else\footersep\fi
+          \faLinkedin\ \@obb@fromlinkedin
+        }%
+      }%
+    }%
+  \fi
 
   % --- Guides Modus (Technische Zeichnung) ---
   \if@guidesmode
