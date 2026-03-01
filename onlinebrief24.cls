@@ -140,15 +140,13 @@
       % Fensterbreite (72mm)
       \draw[dim line] ($(TL)+(20mm, -40mm)$) -- ($(TL)+(92mm, -40mm)$) node[dim text] {72mm};
 
-      % --- Falzmarken Hinweise (Direkte Pfeile) ---
-      % 1. Falz (105mm) - Pfeil von rechts nach links auf die Marke
-      \draw[red!70, thin, <-] ($(TL)+(6mm, -105mm)$) -- ($(TL)+(25mm, -105mm)$) node[right, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=1pt] {1. Falz (105mm)};
+      % --- Falzmarken Hinweise (Verkürzt auf 15mm, bleibt im Rand) ---
+      \draw[red!70, thin, <-] ($(TL)+(6mm, -105mm)$) -- ($(TL)+(15mm, -105mm)$) node[right, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=1pt] {1. Falz (105mm)};
       
-      % 2. Falz (205mm)
-      \draw[red!70, thin, <-] ($(TL)+(6mm, -205mm)$) -- ($(TL)+(25mm, -205mm)$) node[right, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=1pt] {2. Falz (205mm)};
+      \draw[red!70, thin, <-] ($(TL)+(6mm, -205mm)$) -- ($(TL)+(15mm, -205mm)$) node[right, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=1pt] {2. Falz (205mm)};
       
-      % --- Textbeginn Linie ---
-      \draw[guide line, dashed] ($(TL)+(0, -110mm)$) -- ($(TL)+(210mm, -110mm)$);
+      % --- Textbeginn Linie (Nur angedeutet, nicht volle Breite) ---
+      \draw[guide line, dashed] ($(TL)+(20mm, -110mm)$) -- ($(TL)+(100mm, -110mm)$);
       \node[guide text, anchor=south west] at ($(TL)+(25mm, -110mm)$) {Textbeginn (110mm)};
 
     \end{tikzpicture}
