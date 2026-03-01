@@ -12,6 +12,7 @@
 \RequirePackage{calc}
 \RequirePackage{tikz} % Für präzise Zeichnungen im Guides-Modus
 \usetikzlibrary{calc, arrows.meta}
+\RequirePackage{etoolbox} % Für \ifdefempty
 
 % --- Schriftart: Arial-Ersatz ---
 \setmainfont{Arial}[Ligatures=TeX]
@@ -38,8 +39,15 @@
 % --- Datenspeicher ---
 \newcommand{\@obb@return}{}
 \newcommand{\@obb@recipient}{}
+\newcommand{\@obb@subject}{}
+\newcommand{\@obb@date}{\today}
+\newcommand{\@obb@place}{}
+
 \newcommand{\setreturnaddress}[1]{\renewcommand{\@obb@return}{#1}}
 \newcommand{\setrecipient}[1]{\renewcommand{\@obb@recipient}{#1}}
+\newcommand{\setsubject}[1]{\renewcommand{\@obb@subject}{#1}}
+\newcommand{\setdate}[1]{\renewcommand{\@obb@date}{#1}}
+\newcommand{\setplace}[1]{\renewcommand{\@obb@place}{#1}}
 
 % Patch letter environment
 \let\@obb@oldletter\letter
@@ -61,8 +69,9 @@
   % --- Inhalt (immer sichtbar) ---
   
   % Zone 1: Absender (45mm von oben)
-  \put(20, 250){%
-    \parbox[b][2mm][c]{85mm}{%
+  % Linksbündig bei 25mm (5mm Einzug im 20mm Fenster)
+  \put(25, 250){%
+    \parbox[b][2mm][c]{80mm}{%
       \fontsize{8pt}{9pt}\sffamily\selectfont
       \if@guidesmode\color{darkgray}\fi
       \@obb@return
@@ -70,8 +79,9 @@
   }%
 
   % Zone 3: Empfänger (67mm von oben)
-  \put(20, 210){%
-    \parbox[b][20mm][t]{85mm}{%
+  % Linksbündig bei 25mm (5mm Einzug im 20mm Fenster)
+  \put(25, 210){%
+    \parbox[b][20mm][t]{80mm}{%
       \fontsize{11pt}{13pt}\sffamily\selectfont
       \@obb@recipient
     }%
@@ -85,7 +95,7 @@
   \put(110, 199){%
     \parbox[b][5mm][r]{80mm}{%
       \fontsize{11pt}{13pt}\sffamily\selectfont
-      \usekomavar{place}\Ifkomavarempty{place}{}{, }\usekomavar{date}%
+      \@obb@place\ifdefempty{\@obb@place}{}{, }\@obb@date%
     }%
   }%
 
@@ -105,8 +115,7 @@
 
       % --- Fenster-Rahmen ---
       % Start bei (20mm, -45mm)
-      % Breite 72mm (Standard DIN Fensterbreite ist eigentlich 85mm, aber Spezifikation sagt 72mm)
-      % Wir zeichnen den Rahmen basierend auf den Zonen.
+      % Breite 72mm
       
       % Zone 1 (Absender): 45mm bis 47mm
       \draw[guide line] ($(TL)+(20mm, -45mm)$) rectangle ++(72mm, -2mm);
@@ -125,7 +134,7 @@
       % Offset 45mm (Start Fenster)
       \draw[dim line] ($(TL)+(15mm, 0)$) -- ($(TL)+(15mm, -45mm)$) node[dim text, rotate=90] {45mm};
       
-      % Höhe Zone 1 (2mm) - Text nach links verschoben wegen Platzmangel
+      % Höhe Zone 1 (2mm) - Text nach links verschoben
       \draw[dim line] ($(TL)+(15mm, -45mm)$) -- ($(TL)+(15mm, -47mm)$) node[midway, left=1mm, rotate=90, font=\fontsize{5}{6}\sffamily, text=red!70] {2mm};
       
       % Höhe Zone 2 (20mm)
@@ -149,6 +158,9 @@
       \draw[guide line, dashed] ($(TL)+(20mm, -110mm)$) -- ($(TL)+(100mm, -110mm)$);
       \node[guide text, anchor=south west] at ($(TL)+(25mm, -110mm)$) {Textbeginn (110mm)};
 
+      % --- Fluchtlinie (25mm) - Zeigt die gemeinsame Ausrichtung ---
+      \draw[magenta, dashed, thin] ($(TL)+(25mm, 0)$) -- ($(TL)+(25mm, -297mm)$) node[pos=0.9, sloped, above, font=\fontsize{6}{7}\sffamily] {Fluchtlinie (25mm)};
+
     \end{tikzpicture}
   \fi
 }
@@ -156,8 +168,8 @@
 % --- Betreff manuell setzen ---
 \let\@obb@oldopening\opening
 \renewcommand{\opening}[1]{%
-  \Ifkomavarempty{subject}{}{%
-    {\bfseries\sffamily\usekomavar{subject}}\par
+  \ifdefempty{\@obb@subject}{}{%
+    {\bfseries\sffamily\@obb@subject}\par
     \vspace{1em}%
   }%
   \@obb@oldopening{#1}%
