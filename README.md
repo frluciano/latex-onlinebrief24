@@ -1,5 +1,8 @@
 # LaTeX-Klasse für onlinebrief24.de
 
+**Haftungsausschluss:** Dieses Projekt ist ein inoffizielles Community-Projekt und steht in keinerlei Verbindung zur Onlinebrief24 GmbH. "Onlinebrief24" ist ein eingetragenes Markenzeichen der jeweiligen Rechteinhaber. Die Nutzung dieser LaTeX-Klasse erfolgt auf eigene Gefahr; es wird keine Garantie für die fehlerfreie Verarbeitung durch den Dienstleister übernommen.
+
+
 Basierend auf KOMA-Script (scrlttr2) für DIN 5008 Typ B.
 
 ## Installation
