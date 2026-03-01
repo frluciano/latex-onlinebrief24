@@ -32,108 +32,27 @@ Danach können Sie von überall auf Ihrem System `\documentclass{onlinebrief24}`
 
 ## Verwendung
 
-### Einfacher Brief (basic)
+## Verwendung
 
-```latex
-\documentclass[basic]{onlinebrief24}
+Hier findest du die verschiedenen Stile und Optionen der Dokumentenklasse im direkten Vergleich.
 
-\setreturnaddress{Max Mustermann, Musterstraße 123, 12345 Musterstadt}
-\setrecipient{Erika Mustermann \\ Musterweg 1 \\ 12345 Stadt}
-\setsubject{Betreff des Briefes}
+### 1. Standard-Stile
 
-\begin{document}
-\begin{letter}{}
-    \opening{Sehr geehrte Damen und Herren,}
-    
-    Ihr Briefinhalt hier...
-    
-    \closing{Mit freundlichen Grüßen}
-\end{letter}
-\end{document}
-```
-<p align="center">
-<img width="45%" alt="example-basic" src="https://github.com/user-attachments/assets/943fcd60-6e56-4d7e-91d6-1fa519cabbd4" />
-</p>
+| Code-Beispiel | Resultat |
+| :--- | :--- |
+| **Einfacher Brief (`basic`)** <br><br> ```latex \documentclass[basic]{onlinebrief24} \setreturnaddress{Max Mustermann, ...} \setrecipient{Erika Mustermann \\ ...} \setsubject{Betreff des Briefes} \begin{document} \begin{letter}{} \opening{Sehr geehrte Damen...} Ihr Briefinhalt hier... \closing{Mit freundlichen Grüßen} \end{letter} \end{document} ``` | <img src="https://github.com/user-attachments/assets/943fcd60-6e56-4d7e-91d6-1fa519cabbd4" width="350" alt="example-basic"> |
+| **Moderner Brief (`modern, blue`)** <br> *Angelehnt an [janmattfeld/latex-briefvorlage](https://github.com/janmattfeld/latex-briefvorlage)* <br><br> ```latex \documentclass[modern, blue, footercenter]{onlinebrief24} \setfromfirstname{Max} \setfromlastname{Mustermann} \setfromaddress{Musterstraße 1 | ...} \setfromphone{0123 / 456 789} \setfromemail{max@example.com} \begin{document} \begin{letter}{} \opening{Sehr geehrte Frau...} Ihr Briefinhalt hier... \closing{Mit freundlichen Grüßen} \end{letter} \end{document} ``` | <img src="https://github.com/user-attachments/assets/53d11876-95f7-40be-aa7d-69f6e04935c6" width="350" alt="example-modern-blue"> |
 
-### Moderner Brief mit Farbschema
+---
 
-```latex
-\documentclass[modern, blue, footercenter]{onlinebrief24}
+### 2. Visualisierungs-Modus (`guides`)
 
-\setfromfirstname{Max}
-\setfromlastname{Mustermann}
-\setfromaddress{Musterstraße 1 | 12345 Musterstadt}
-\setfromphone{0123 / 456 789}
-\setfromemail{max@example.com}
+Nutze die Option `guides`, um Hilfslinien für Faltmarken und Fensterpositionen (nach DIN 5008) einzublenden.
 
-\setreturnaddress{Max Mustermann, Musterstraße 1, 12345 Musterstadt}
-\setrecipient{Erika Mustermann \\ Musterweg 1 \\ 12345 Stadt}
-\setsubject{Betreff des Briefes}
-
-\begin{document}
-\begin{letter}{}
-    \opening{Sehr geehrte Frau Mustermann,}
-    
-    Ihr Briefinhalt hier...
-    
-    \closing{Mit freundlichen Grüßen}
-\end{letter}
-\end{document}
-```
-<p align="center">
-<img width="45%" alt="example-modern-blue" src="https://github.com/user-attachments/assets/53d11876-95f7-40be-aa7d-69f6e04935c6" />
-</p>
-## Einfacher Brief (basic) mit Visualisierungs-Modus
-
-```
-\documentclass[basic, guides]{onlinebrief24}
-
-\setreturnaddress{Max Mustermann, Musterstraße 123, 12345 Musterstadt}
-\setrecipient{Erika Mustermann \\ Musterweg 1 \\ 12345 Stadt}
-\setsubject{Betreff des Briefes}
-
-\begin{document}
-\begin{letter}{}
-    \opening{Sehr geehrte Damen und Herren,}
-    
-    Ihr Briefinhalt hier...
-    
-    \closing{Mit freundlichen Grüßen}
-\end{letter}
-\end{document}
-```
-<p align="center">
-<img width="45%" alt="example-guides" src="https://github.com/user-attachments/assets/81e246d0-f94b-4875-8819-aabaeb3ceed9" />
-</p>
-
-### Moderner Brief mit Farbschema
-
-```latex
-\documentclass[modern, guides, footercenter]{onlinebrief24}
-
-\setfromfirstname{Max}
-\setfromlastname{Mustermann}
-\setfromaddress{Musterstraße 1 | 12345 Musterstadt}
-\setfromphone{0123 / 456 789}
-\setfromemail{max@example.com}
-
-\setreturnaddress{Max Mustermann, Musterstraße 1, 12345 Musterstadt}
-\setrecipient{Erika Mustermann \\ Musterweg 1 \\ 12345 Stadt}
-\setsubject{Betreff des Briefes}
-
-\begin{document}
-\begin{letter}{}
-    \opening{Sehr geehrte Frau Mustermann,}
-    
-    Ihr Briefinhalt hier...
-    
-    \closing{Mit freundlichen Grüßen}
-\end{letter}
-\end{document}
-```
-<p align="center">
-<img width="45%" alt="example-modern-guides" src="https://github.com/user-attachments/assets/47bcb426-d4d2-44aa-9823-244d12644cba" />
-</p>
+| Code-Beispiel | Resultat |
+| :--- | :--- |
+| **Basis mit Guides** <br><br> ```latex \documentclass[basic, guides]{onlinebrief24} \setreturnaddress{Max Mustermann...} ... ``` | <img src="https://github.com/user-attachments/assets/81e246d0-f94b-4875-8819-aabaeb3ceed9" width="350" alt="example-guides"> |
+| **Modern mit Guides** <br><br> ```latex \documentclass[modern, guides, footercenter]{onlinebrief24} \setfromfirstname{Max} ... ``` | <img src="https://github.com/user-attachments/assets/47bcb426-d4d2-44aa-9823-244d12644cba" width="350" alt="example-modern-guides"> |
 
 ## Optionen
 
