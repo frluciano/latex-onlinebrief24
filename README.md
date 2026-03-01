@@ -7,7 +7,7 @@ Basierend auf KOMA-Script (scrlttr2) für DIN 5008 Typ B.
 
 ## Installation
 
-Die Datei `onlinebrief24.cls` muss im gleichen Verzeichnis wie Ihre Briefdatei liegen.
+Die Datei `onlinebrief24.cls` muss im gleichen Verzeichnis wie deine Latex Briefdatei liegen.
 
 ### Globale Installation (optional)
 
