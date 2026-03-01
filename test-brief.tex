@@ -1,0 +1,37 @@
+\documentclass[guides]{onlinebrief24}
+
+\setreturnaddress{Max Mustermann, Musterstraße 1, 12345 Musterstadt}
+
+\setrecipient{
+  Erika Mustermann \\
+  Musterweg 456 \\
+  67890 Musterstadt
+}
+
+\setkomavar{subject}{Testbrief mit Guides-Modus (Technische Zeichnung)}
+\setkomavar{place}{Musterstadt}
+\setkomavar{date}{\today}
+
+\begin{document}
+
+\begin{letter}{} % Leeres Argument, da wir \setrecipient nutzen
+
+\opening{Sehr geehrte Frau Mustermann,}
+
+dieser Brief demonstriert den neuen `guides`-Modus. Anstelle von blockigen Farben sehen Sie nun präzise Maßlinien und Beschriftungen, die Ihnen helfen, das Layout exakt zu überprüfen.
+
+Die Maße entsprechen DIN 5008 Typ B:
+\begin{itemize}
+    \item \textbf{Fensterstart:} 45mm von oben
+    \item \textbf{Zone 1:} 2mm Höhe
+    \item \textbf{Zone 2 (Sperrzone):} 20mm Höhe
+    \item \textbf{Zone 3 (Empfänger):} 20mm Höhe
+\end{itemize}
+
+Um diese Hilfslinien auszublenden, ändern Sie die Klassenoption von `[guides]` zu `[final]`.
+
+\closing{Mit freundlichen Grüßen}
+
+\end{letter}
+
+\end{document}
