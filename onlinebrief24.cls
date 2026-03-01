@@ -125,8 +125,8 @@
       % Offset 45mm (Start Fenster)
       \draw[dim line] ($(TL)+(15mm, 0)$) -- ($(TL)+(15mm, -45mm)$) node[dim text, rotate=90] {45mm};
       
-      % Höhe Zone 1 (2mm)
-      \draw[dim line] ($(TL)+(15mm, -45mm)$) -- ($(TL)+(15mm, -47mm)$) node[dim text, rotate=90] {2mm};
+      % Höhe Zone 1 (2mm) - Text nach links verschoben wegen Platzmangel
+      \draw[dim line] ($(TL)+(15mm, -45mm)$) -- ($(TL)+(15mm, -47mm)$) node[midway, left=1mm, rotate=90, font=\fontsize{5}{6}\sffamily, text=red!70] {2mm};
       
       % Höhe Zone 2 (20mm)
       \draw[dim line] ($(TL)+(15mm, -47mm)$) -- ($(TL)+(15mm, -67mm)$) node[dim text, rotate=90] {20mm};
