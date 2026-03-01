@@ -1,34 +1,31 @@
-\documentclass[modern, footercenter]{onlinebrief24} % 'modern' für den neuen Stil, 'footercenter' für zentrierte Fußzeile
+\documentclass[modern, footercenter]{onlinebrief24}
 
-% --- Neue Befehle für die moderne Kopf- und Fußzeile ---
-\setfromfirstname{Max}
-\setfromlastname{Mustermann}
-\setfromaddress{Musterstraße 1 | 12345 Musterstadt}
-\setfromlandline{0123 / 456 788} % Festnetz (optional)
-\setfromphone{0123 / 456 789} % Mobil (optional)
-\setfromemail{max.mustermann@example.com} % E-Mail (optional)
-\setfromweb{www.example.com} % Webseite (optional)
-\setfromlinkedin{max-mustermann} % LinkedIn (optional)
+\setfromfirstname{John}
+\setfromlastname{Doe}
+\setfromaddress{Example Street 1 | 12345 Example City}
+\setfromlandline{0123 / 456 788}
+\setfromphone{0123 / 456 789}
+\setfromemail{john.doe@example.com}
+\setfromweb{www.example.com}
+\setfromlinkedin{john-doe}
 
+\setreturnaddress{John Doe, Example Street 1, 12345 Example City}
+\setrecipient{Jane Doe \\ Example Avenue 456 \\ 67890 Example City}
 
-% --- Standard-Befehle (unverändert wichtig!) ---
-\setreturnaddress{Max Mustermann, Musterstraße 1, 12345 Musterstadt}
-\setrecipient{Erika Mustermann \\ Musterweg 1 \\ 12345 Stadt}
-
-\setsubject{Ein Test des neuen modernen Stils}
-\setplace{Musterstadt}
+\setsubject{Test of the new modern style}
+\setplace{Example City}
 \setdate{\today}
 
 \begin{document}
-\begin{letter}{} % Leeres Argument!
-    \opening{Sehr geehrte Frau Mustermann,}
+\begin{letter}{}
+    \opening{Dear Mrs. Doe,}
     
-    dies ist ein Beispielbrief, der die neue \texttt{modern}-Option der \texttt{onlinebrief24.cls} Klasse demonstriert.
+    this is a sample letter demonstrating the new \texttt{modern} option of the \texttt{onlinebrief24.cls} class.
     
-    Wie Sie sehen können, erscheint oben rechts mein Name in einer großen, modernen Schrift und unten rechts finden Sie meine Kontaktdaten.
+    As you can see, my name appears in the top right in a large, modern font and my contact details can be found in the bottom right.
     
-    Das Wichtigste ist jedoch, dass die Position des Adressfeldes und der Absenderzeile für den Fensterumschlag exakt an der gleichen Stelle geblieben sind, wie in der Standard-Version.
+    Most importantly, the position of the address field and the return address for the window envelope remain exactly the same as in the standard version.
     
-    \closing{Mit freundlichen Grüßen}
+    \closing{Sincerely}
 \end{letter}
 \end{document}

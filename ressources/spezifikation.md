@@ -43,7 +43,7 @@ Alle Textelemente richten sich an einer gemeinsamen **Fluchtlinie bei 25 mm** vo
     - Zeigt Bemaßungspfeile und Maße in Rot.
     - Zeigt die Fluchtlinie (gestrichelt, rot).
     - Zeigt Falzmarken-Hinweise.
-- `final` (Standard): Deaktiviert alle Hilfslinien für den produktiven Druck.
+- `basic` (Standard): Deaktiviert alle Hilfslinien für den produktiven Druck.
 
 ## 4. Befehle & Makros
 
@@ -60,7 +60,7 @@ Um Doppelungen durch KOMA-Script zu vermeiden, nutzt die Klasse eigene Datenspei
 ## 5. Nutzung
 
 ```latex
-\documentclass[guides]{onlinebrief24} % 'guides' für Vorschau, 'final' für Druck
+\documentclass[guides]{onlinebrief24} % 'guides' für Vorschau, 'basic' für Druck
 
 \setreturnaddress{Max Mustermann, Musterstraße 1, 12345 Musterstadt}
 \setrecipient{Erika Mustermann \\ Musterweg 1 \\ 12345 Stadt}
