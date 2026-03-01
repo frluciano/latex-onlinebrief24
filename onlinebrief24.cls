@@ -175,4 +175,8 @@
   \@obb@oldopening{#1}%
 }
 
+% --- KOMA-Script Variablen leeren (Verhindert doppelte Ausgabe) ---
+\setkomavar{date}{}
+\setkomavar{place}{}
+
 \endinput
