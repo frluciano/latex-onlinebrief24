@@ -5,6 +5,7 @@
 \LoadClass[fontsize=11pt, parskip=half]{scrlttr2}
 
 % --- Pakete ---
+\RequirePackage[ngerman]{babel} % Deutsche Spracheinstellungen (Datum, Trennung)
 \RequirePackage{geometry}
 \RequirePackage{fontspec}
 \RequirePackage{eso-pic}
@@ -91,14 +92,6 @@
   \put(5, 192){\line(1,0){5}}
   \put(5, 92){\line(1,0){5}}
 
-  % Datum & Ort (manuell platziert)
-  \put(110, 199){%
-    \parbox[b][5mm][r]{80mm}{%
-      \fontsize{11pt}{13pt}\sffamily\selectfont
-      \@obb@place\ifdefempty{\@obb@place}{}{, }\@obb@date%
-    }%
-  }%
-
   % --- Guides Modus (Technische Zeichnung) ---
   \if@guidesmode
     \begin{tikzpicture}[remember picture, overlay]
@@ -174,9 +167,5 @@
   }%
   \@obb@oldopening{#1}%
 }
-
-% --- KOMA-Script Variablen leeren (Verhindert doppelte Ausgabe) ---
-\setkomavar{date}{}
-\setkomavar{place}{}
 
 \endinput
