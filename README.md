@@ -56,13 +56,29 @@ Ihr Briefinhalt hier...
 
 ## Optionen
 
-- `guides` - Aktiviert einen Visualisierungs-Modus, der das komplette Layout mit allen Zonen, Maßen und Falzmarken als technische Zeichnung über den Brief legt. Ideal zur Überprüfung des Satzspiegels.
-- `fontsize=<size>` - Schriftgröße für Empfängeradresse (Standard: 9pt, max 11pt)
+- `guides`: Aktiviert einen Visualisierungs-Modus, der das komplette Layout mit allen Zonen, Maßen und Falzmarken als technische Zeichnung über den Brief legt. Ideal zur Überprüfung des Satzspiegels.
+- `final`: (Standard) Deaktiviert den `guides`-Modus.
+- `modern`: Aktiviert ein alternatives, modernes Layout für Kopf- und Fußzeile, das sich am Design von Jan Mattfelds `latex-briefvorlage` orientiert.
+- `footercenter`: Zentriert die Fußzeile. Diese Option hat nur in Verbindung mit `modern` einen Effekt.
 
 ## Befehle
 
-- `\setrecipient{...}` - Empfängeradresse
-- `\setreturnaddress{...}` - Absenderadresse (einzeilig)
+- `\setrecipient{...}`: Setzt die vollständige Empfängeradresse.
+- `\setreturnaddress{...}`: Setzt die **einzeilige** Absenderadresse für das Sichtfenster (Zone 1). Diese ist für die postalische Verarbeitung zwingend erforderlich. Die Adresse wird automatisch unterstrichen.
+
+### Befehle für die `modern`-Option
+
+Diese Befehle haben nur eine Auswirkung, wenn die `modern`-Option aktiv ist.
+
+- `\setfromfirstname{...}`: Vorname des Absenders für die Kopfzeile.
+- `\setfromlastname{...}`: Nachname des Absenders für die Kopfzeile.
+- `\setfromaddress{...}`: Adresse für die Kopfzeile (z.B., "Musterweg 1 | 12345 Musterstadt").
+- `\setfromlandline{...}`: (Optional) Festnetznummer für die Fußzeile.
+- `\setfromphone{...}`: (Optional) Mobilfunknummer für die Fußzeile.
+- `\setfromemail{...}`: (Optional) E-Mail-Adresse für die Fußzeile.
+- `\setfromweb{...}`: (Optional) Webseite für die Fußzeile.
+- `\setfromlinkedin{...}`: (Optional) LinkedIn-Profilname für die Fußzeile.
+
 
 ## Zonen (DIN 5008 Typ B)
 
