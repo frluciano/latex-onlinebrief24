@@ -81,8 +81,7 @@ Danach können Sie von überall auf Ihrem System `\documentclass{onlinebrief24}`
 ## Vorschau
 
 <p align="center">
-  <img src="examples/example-basic-preview.png" alt="Basic" width="45%">
-  <img src="examples/example-modern-preview.png" alt="Modern" width="45%">
+<img width="1488" height="2104" alt="example-modern-blue" src="https://github.com/user-attachments/assets/53d11876-95f7-40be-aa7d-69f6e04935c6" />
 </p>
 
 ## Optionen
