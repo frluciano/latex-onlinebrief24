@@ -104,12 +104,11 @@
         \parbox[b][2mm][c]{80mm}{%
           \fontsize{8pt}{9pt}\sffamily\selectfont
           \if@guidesmode\color{darkgray}\fi
-          \tikz[remember picture] \node[inner sep=0pt, anchor=base west](returnaddress){\@obb@return};%
+          \@obb@return
         }%
       }%
-      \begin{tikzpicture}[remember picture, overlay]
-        \draw[thin] (returnaddress.south west) -- (returnaddress.south east);
-      \end{tikzpicture}
+      % Unterstrich für Zone 1
+      \put(25, 248){\line(1,0){80}}
 
   % Zone 3: Empfänger (67mm von oben)
   % Linksbündig bei 25mm (5mm Einzug im 20mm Fenster)
