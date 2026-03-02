@@ -95,46 +95,6 @@ Ihr Briefinhalt hier...
   </tr>
 </table>
 
----
-
-### 2. Visualisierungs-Modus (`guides`)
-
-Nutze die Option `guides`, um Hilfslinien für Faltmarken und Fensterpositionen (nach DIN 5008) einzublenden.
-
-<table>
-  <tr>
-    <td><strong>Beispiel: Basic mit Guides</strong>
-
-```latex
-\documentclass[basic, guides]{onlinebrief24}
-\setreturnaddress{Max Mustermann...}
-...
-```
-
-</td>
-    <td><strong>Resultat</strong>
-
-<img src="https://github.com/user-attachments/assets/81e246d0-f94b-4875-8819-aabaeb3ceed9" width="350" alt="example-guides">
-
-</td>
-  </tr>
-  <tr>
-    <td><strong>Beispiel: Modern mit Guides</strong>
-
-```latex
-\documentclass[modern, guides, footercenter]{onlinebrief24}
-\setfromfirstname{Max} ...
-```
-
-</td>
-    <td><strong>Resultat</strong>
-
-<img src="https://github.com/user-attachments/assets/47bcb426-d4d2-44aa-9823-244d12644cba" width="350" alt="example-modern-guides">
-
-</td>
-  </tr>
-</table>
-
 ## Optionen
 
 ### Layout-Optionen
