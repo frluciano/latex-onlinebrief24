@@ -7,7 +7,12 @@ Basierend auf KOMA-Script (scrlttr2) für DIN 5008 Typ B.
 
 ## Installation
 
-Die Datei `onlinebrief24.cls` muss im gleichen Verzeichnis wie deine Latex Briefdatei liegen.
+Fuer eigene Briefe sollte die Datei `onlinebrief24.cls` im gleichen Verzeichnis wie deine `.tex`-Datei liegen. Die Beispiele in diesem Repo referenzieren die Klasse relativ ueber `../onlinebrief24.cls`.
+
+## Voraussetzungen
+
+- Kompiliere mit `xelatex` oder `lualatex`. `pdflatex` wird nicht unterstützt, da die Klasse `fontspec` nutzt.
+- `Arial` wird bevorzugt verwendet. Wenn die Schrift nicht installiert ist, fällt die Klasse automatisch auf `TeX Gyre Heros` zurück.
 
 ### Globale Installation (optional)
 
@@ -32,6 +37,13 @@ Danach können Sie von überall auf Ihrem System `\documentclass{onlinebrief24}`
 ## Verwendung
 
 Im Ordner [`examples/`](examples/) findest du fertige `.tex`-Dateien, die du direkt kompilieren kannst.
+
+Empfohlener Start:
+
+```bash
+cd examples
+xelatex example-basic.tex
+```
 
 Hier findest du die verschiedenen Stile und Optionen der Dokumentenklasse im direkten Vergleich.
 
