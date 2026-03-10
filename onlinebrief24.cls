@@ -171,23 +171,23 @@
   
   % --- Inhalt (immer sichtbar) ---
   
-      % Zone 1: Ruecksendeanschrift muss komplett oberhalb der Sendungskennzeichnung bleiben.
-      % 6pt halten die Textbox innerhalb der 2mm-Zone aus der Onlinebrief24-Spezifikation.
-      \put(20, 246.35){%
+      % Zone 1 wird separat so justiert, dass die Ruecksendezeile vollstaendig
+      % innerhalb der 2mm-Zone bleibt, ohne Zone 2/3 zu verschieben.
+      \put(20, 245.00){%
         \parbox[b][2mm][c]{72mm}{%
-          \fontsize{6pt}{6.8pt}\sffamily\selectfont
+          \fontsize{5.8pt}{6.4pt}\sffamily\selectfont
           \if@guidesmode\color{darkgray}\fi
           \@obb@return
         }%
       }%
-      % Unterstrich für Zone 1 - vollstaendig oberhalb der 51mm-Grenze halten
-      \settowidth{\@obb@addrwidth}{{\fontsize{6pt}{6.8pt}\sffamily\selectfont\@obb@return}}%
+      % Unterstrich fuer Zone 1 vollstaendig oberhalb der 52mm-Grenze halten.
+      \settowidth{\@obb@addrwidth}{{\fontsize{5.8pt}{6.4pt}\sffamily\selectfont\@obb@return}}%
       \ifdim\@obb@addrwidth>72mm\@obb@addrwidth=72mm\fi
-      \put(20, 246.08){\rule{\@obb@addrwidth}{0.2pt}}
+      \put(20, 245.00){\rule{\@obb@addrwidth}{0.2pt}}
 
-  % Zone 3: Empfänger (71mm von oben)
+  % Zone 3: Empfaenger, gegen Onlinebrief24-Vorschau 1mm tiefer kalibriert.
   % Linksbündig bei 20mm entsprechend der Referenzvorlage
-  \put(20, 205){%
+  \put(20, 204){%
     \parbox[b][20mm][t]{72mm}{%
       \raggedright
       \fontsize{11pt}{13pt}\sffamily\selectfont
@@ -255,39 +255,41 @@
       \tikzset{
         guide line/.style={draw=blue!50, thin},
         guide text/.style={font=\fontsize{7}{8}\sffamily, text=blue!70, inner sep=1pt},
+        guide fill/.style={fill opacity=0.42, draw opacity=1},
         dim line/.style={draw=red!70, thin, |<->|},
         dim text/.style={midway, fill=white, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=1pt}
       }
 
       % --- Fenster-Rahmen ---
-      % Start bei (20mm, -49mm)
+      % Gegen die Onlinebrief24-Vorschau 1mm tiefer kalibriert.
+      % Start bei (20mm, -50mm)
       % Breite 72mm
       
-      % Zone 1 (Absender): 49mm bis 51mm
-      \draw[guide line] ($(TL)+(20mm, -49mm)$) rectangle ++(72mm, -2mm);
-      \node[guide text, anchor=west] at ($(TL)+(92mm, -50mm)$) {Zone 1 (Absender)};
+      % Zone 1 (Absender): 50mm bis 52mm
+      \draw[guide line, guide fill, fill=blue!18] ($(TL)+(20mm, -50mm)$) rectangle ++(72mm, -2mm);
+      \node[guide text, anchor=west] at ($(TL)+(92mm, -51mm)$) {Zone 1 (Absender)};
       
-      % Zone 2 (Sperrzone): 51mm bis 71mm
-      \draw[guide line, fill=red!5] ($(TL)+(20mm, -51mm)$) rectangle ++(72mm, -20mm);
-      \node[guide text, anchor=west] at ($(TL)+(92mm, -61mm)$) {Zone 2 (Sperrzone/Codes)};
+      % Zone 2 (Sperrzone): 52mm bis 72mm
+      \draw[guide line, guide fill, fill=red!22] ($(TL)+(20mm, -52mm)$) rectangle ++(72mm, -20mm);
+      \node[guide text, anchor=west] at ($(TL)+(92mm, -62mm)$) {Zone 2 (Sperrzone/Codes)};
       
-      % Zone 3 (Empfänger): 71mm bis 91mm
-      \draw[guide line] ($(TL)+(20mm, -71mm)$) rectangle ++(72mm, -20mm);
-      \node[guide text, anchor=west] at ($(TL)+(92mm, -81mm)$) {Zone 3 (Empfänger)};
+      % Zone 3 (Empfaenger): 72mm bis 92mm
+      \draw[guide line, guide fill, fill=green!22] ($(TL)+(20mm, -72mm)$) rectangle ++(72mm, -20mm);
+      \node[guide text, anchor=west] at ($(TL)+(92mm, -82mm)$) {Zone 3 (Empfänger)};
       
       % --- Maßpfeile (Links vom Fenster) ---
       
-      % Offset 49mm (Start Fenster)
-      \draw[dim line] ($(TL)+(15mm, 0)$) -- ($(TL)+(15mm, -49mm)$) node[dim text, rotate=90] {49mm};
+      % Offset 50mm (Start Fenster)
+      \draw[dim line] ($(TL)+(15mm, 0)$) -- ($(TL)+(15mm, -50mm)$) node[dim text, rotate=90] {50mm};
       
       % Höhe Zone 1 (2mm) - Text nach links verschoben
-      \draw[dim line] ($(TL)+(15mm, -49mm)$) -- ($(TL)+(15mm, -51mm)$) node[midway, left=1mm, rotate=90, font=\fontsize{5}{6}\sffamily, text=red!70] {2mm};
+      \draw[dim line] ($(TL)+(15mm, -50mm)$) -- ($(TL)+(15mm, -52mm)$) node[midway, left=1mm, rotate=90, font=\fontsize{5}{6}\sffamily, text=red!70] {2mm};
       
       % Höhe Zone 2 (20mm)
-      \draw[dim line] ($(TL)+(15mm, -51mm)$) -- ($(TL)+(15mm, -71mm)$) node[dim text, rotate=90] {20mm};
+      \draw[dim line] ($(TL)+(15mm, -52mm)$) -- ($(TL)+(15mm, -72mm)$) node[dim text, rotate=90] {20mm};
       
       % Höhe Zone 3 (20mm)
-      \draw[dim line] ($(TL)+(15mm, -71mm)$) -- ($(TL)+(15mm, -91mm)$) node[dim text, rotate=90] {20mm};
+      \draw[dim line] ($(TL)+(15mm, -72mm)$) -- ($(TL)+(15mm, -92mm)$) node[dim text, rotate=90] {20mm};
       
       % Horizontaler Abstand (20mm)
       \draw[dim line] ($(TL)+(0, -40mm)$) -- ($(TL)+(20mm, -40mm)$) node[dim text] {20mm};
@@ -305,8 +307,8 @@
       \node[guide text, anchor=south west] at ($(TL)+(25mm, -110mm)$) {Textbeginn (110mm)};
 
       % --- Textfluchtlinie (25mm) für Betreff und Briefkörper ---
-      % Linie rot und gestrichelt, Text links daneben auf Höhe des Textbeginns (ca. 105mm)
-      \draw[red!70, dashed, thin] ($(TL)+(25mm, 0)$) -- ($(TL)+(25mm, -297mm)$);
+      % Erst ab dem Textbeginn andeuten, damit der Fensterbereich frei bleibt.
+      \draw[red!70, dashed, thin] ($(TL)+(25mm, -110mm)$) -- ($(TL)+(25mm, -297mm)$);
       \node[anchor=east, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=2pt] at ($(TL)+(25mm, -108mm)$) {Textfluchtlinie (25mm)};
 
     \end{tikzpicture}
