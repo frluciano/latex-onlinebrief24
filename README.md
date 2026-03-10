@@ -60,8 +60,8 @@ Hier findest du die verschiedenen Stile und Optionen der Dokumentenklasse im dir
 
 ```latex
 \documentclass[basic]{onlinebrief24}
-\setreturnaddress{Max Mustermann, ...}
-\setrecipient{Erika Mustermann \\ ...}
+\setreturnaddress{Erika Mustermann, Blumenweg. 1, 54321 Blumenstadt}
+\setrecipient{Mustermann GmbH \& Co. KG \\ Herrn Hans Mustermann \\ ...}
 \setsubject{Betreff des Briefes}
 \begin{document}
 \begin{letter}{}
@@ -84,11 +84,11 @@ Ihr Briefinhalt hier...
 
 ```latex
 \documentclass[modern, blue, footercenter]{onlinebrief24}
-\setfromfirstname{Max}
+\setfromfirstname{Erika}
 \setfromlastname{Mustermann}
-\setfromaddress{Musterstraße 1 | ...}
+\setfromaddress{Blumenweg. 1 | 54321 Blumenstadt}
 \setfromphone{0123 / 456 789}
-\setfromemail{max@example.com}
+\setfromemail{erika@example.com}
 \begin{document}
 \begin{letter}{}
 \opening{Sehr geehrte Frau...}
@@ -115,6 +115,13 @@ Ihr Briefinhalt hier...
 - `modern`: Aktiviert ein alternatives, modernes Layout mit Kopf- und Fußzeile.
 - `guides`: Aktiviert einen Visualisierungs-Modus, der das komplette Layout mit allen Zonen, Maßen und Falzmarken als technische Zeichnung über den Brief legt. Ideal zur Überprüfung des Satzspiegels. Kann mit `basic` oder `modern` kombiniert werden.
 - `footercenter`: Zentriert die Fußzeile. Diese Option hat nur in Verbindung mit `modern` einen Effekt.
+
+## Kalibrierung
+
+- Die offizielle Maßgrafik von onlinebrief24.de nennt das Fenster nominell mit Start bei `49 mm` und Zonen `49-51 / 51-71 / 71-91 mm`.
+- Die reale PDF-Vorschau des Onlinebrief24-Tools liegt jedoch messbar etwa `1 mm` tiefer.
+- Diese Klasse ist deshalb bewusst auf `50-52 / 52-72 / 72-92 mm` kalibriert, weil damit der automatisch eingedruckte Sendungsaufdruck in der echten Vorschau korrekt in Zone 2 sitzt.
+- Kurzform: `49 mm` ist der Nennwert aus der Grafik, `50 mm` der praxistaugliche Kompatibilitätswert zur echten Tool-Ausgabe.
 
 ### Farbschema-Optionen (nur mit `modern`)
 
@@ -153,7 +160,7 @@ Diese Befehle haben nur eine Auswirkung, wenn die `modern`-Option aktiv ist.
 
 - `\setfromfirstname{...}`: Vorname des Absenders für die Kopfzeile.
 - `\setfromlastname{...}`: Nachname des Absenders für die Kopfzeile.
-- `\setfromaddress{...}`: Adresse für die Kopfzeile (z.B., "Musterweg 1 | 12345 Musterstadt").
+- `\setfromaddress{...}`: Adresse für die Kopfzeile (z.B., "Blumenweg. 1 | 54321 Blumenstadt").
 - `\setfromlandline{...}`: (Optional) Festnetznummer für die Fußzeile.
 - `\setfromphone{...}`: (Optional) Mobilfunknummer für die Fußzeile.
 - `\setfromemail{...}`: (Optional) E-Mail-Adresse für die Fußzeile.
