@@ -16,7 +16,7 @@ Fuer eigene Briefe sollte die Datei `onlinebrief24.cls` im gleichen Verzeichnis 
 
 ### Globale Installation (optional)
 
-Für eine systemweite Verfügbarkeit kann die Klassendatei in Ihrem lokalen TeX-Verzeichnisbaum abgelegt werden. Dadurch müssen Sie die `.cls`-Datei nicht mehr in jedem Projektordner vorhalten.
+Für eine systemweite Verfügbarkeit kann die Klassendatei in Ihrem lokalen TeX-Verzeichnisbaum abgelegt werden. Dadurch musst du die `.cls`-Datei nicht mehr in jedem Projektordner vorhalten.
 
 1.  **Finden Sie Ihren `TEXMFHOME`-Pfad:**
     *   Führen Sie im Terminal den Befehl `kpsewhich -var-value TEXMFHOME` aus.
