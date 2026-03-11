@@ -1,0 +1,46 @@
+% ctan-o-mat configuration for onlinebrief24
+% Used by the release workflow to upload packages to CTAN automatically.
+
+\pkg{onlinebrief24}
+\version{${VERSION}}
+\author{Francesco Luciano}
+\email{${CTAN_EMAIL}}
+\uploader{Francesco Luciano}
+\ctanPath{/macros/latex/contrib/onlinebrief24}
+\license{lppl1.3c}
+\home{https://github.com/frluciano/latex-onlinebrief24}
+\bugtracker{https://github.com/frluciano/latex-onlinebrief24/issues}
+\repository{https://github.com/frluciano/latex-onlinebrief24}
+\support{}
+\development{}
+\update{true}
+\topic{letter}
+\topic{german}
+\summary{LaTeX class for DIN 5008 type-B business letters calibrated for use with onlinebrief24.de.}
+\file{${CTAN_ZIP}}
+\begin{description}
+onlinebrief24 is a LaTeX letter class based on KOMA-Script scrlttr2. It is
+calibrated against the practical preview behavior of onlinebrief24.de and
+provides:
+
+- a plain letter layout
+- a modern layout with header, footer, and accent colors
+- a guides mode for technical layout inspection
+- validated address-window inputs
+- verified pdfLaTeX, XeLaTeX, and LuaLaTeX workflows
+
+The package is intended for German business letters and currently supports one
+letter per document as the hardened use case.
+
+onlinebrief24.de is a hybrid mail service for business customers: documents
+are submitted digitally, and the service handles printing, enveloping,
+franking, and postal delivery.
+
+The trademark holders have formally authorized the maintainer to use the
+Onlinebrief24 mark in connection with this LaTeX class.
+\end{description}
+\begin{announcement}
+${ANNOUNCEMENT}
+\end{announcement}
+\begin{note}
+\end{note}
