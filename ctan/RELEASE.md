@@ -119,7 +119,7 @@ provides:
 - a modern layout with header, footer, and accent colors
 - a guides mode for technical layout inspection
 - validated address-window inputs
-- verified XeLaTeX and LuaLaTeX workflows
+- verified pdfLaTeX, XeLaTeX, and LuaLaTeX workflows
 
 The package is intended for German business letters and currently supports one
 letter per document as the hardened use case.
@@ -137,4 +137,4 @@ Suggested announcement:
 calibrated for use with onlinebrief24.de, a hybrid mail service for business
 customers. The package is based on KOMA-Script `scrlttr2` and provides plain
 and modern letter styles, a guides mode for layout inspection, validated
-address-window inputs, and verified XeLaTeX and LuaLaTeX workflows.
+address-window inputs, and verified pdfLaTeX, XeLaTeX, and LuaLaTeX workflows.

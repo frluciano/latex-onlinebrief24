@@ -29,18 +29,10 @@ the mark in connection with this LaTeX class.
 
 ## Installation
 
-After the package has propagated from CTAN into your TeX distribution, install
-it with your distribution's package manager if that route is available to you.
-
-For direct use, development snapshots, or local testing, place
-`onlinebrief24.cls` next to your letter document, or install the current class
-file into your local `TEXMFHOME` tree:
+Install via your TeX distribution's package manager:
 
 ```bash
-kpsewhich -var-value TEXMFHOME
-mkdir -p "$(kpsewhich -var-value TEXMFHOME)/tex/latex/onlinebrief24"
-cp onlinebrief24.cls "$(kpsewhich -var-value TEXMFHOME)/tex/latex/onlinebrief24/"
-texhash
+tlmgr install onlinebrief24
 ```
 
 ## Documentation
