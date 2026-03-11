@@ -94,7 +94,7 @@ Die Dateien im Verzeichnis `examples/` sind lauffähige Referenzen für die unte
 - `example-modern-guides.tex`: moderner Stil plus Overlay
 - `example-multipage-regression.tex`: Mehrseiten-Regressionsfall
 
-Kurze visuelle Vorschau der beiden häufigsten Varianten:
+Visuelle Vorschau der beiden Varianten:
 
 | Basic | Modern Blue |
 | --- | --- |
