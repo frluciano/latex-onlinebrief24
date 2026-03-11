@@ -11,7 +11,9 @@ Fuer eigene Briefe sollte die Datei `onlinebrief24.cls` im gleichen Verzeichnis 
 
 ## Voraussetzungen
 
-- Kompiliere mit `xelatex` oder `lualatex`. `pdflatex` wird nicht unterstützt, da die Klasse `fontspec` nutzt.
+- Empfohlener und verifizierter Build-Workflow: `xelatex`.
+- `lualatex` ist prinzipiell vorgesehen, wird in diesem Repository aktuell aber nicht als Standard-Workflow verifiziert.
+- `pdflatex` wird nicht unterstützt, da die Klasse `fontspec` nutzt.
 - `Arial` wird bevorzugt verwendet. Wenn die Schrift nicht installiert ist, fällt die Klasse automatisch auf `TeX Gyre Heros` zurück.
 
 ### Globale Installation (optional)
@@ -46,6 +48,12 @@ xelatex example-basic.tex
 ```
 
 Hier findest du die verschiedenen Stile und Optionen der Dokumentenklasse im direkten Vergleich.
+
+Zur lokalen Verifikation aller Beispiele inklusive Mehrseiten-Regression:
+
+```bash
+sh scripts/verify.sh
+```
 
 ### 1. Standard-Stile
 

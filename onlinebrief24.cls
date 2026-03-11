@@ -1,11 +1,11 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{onlinebrief24}[2026/03/10 Precision Layout Class with Guides]
 
-% --- Basis: KOMA-Script Briefklasse ---
+% --- Base: KOMA-Script letter class ---
 \LoadClass[fontsize=11pt, parskip=half]{scrlttr2}
 
-% --- Pakete ---
-\RequirePackage[ngerman]{babel} % Deutsche Spracheinstellungen (Datum, Trennung)
+% --- Packages ---
+\RequirePackage[ngerman]{babel} % German language settings (date, hyphenation)
 \RequirePackage{geometry}
 \RequirePackage{iftex}
 \ifPDFTeX
@@ -15,11 +15,11 @@
 \RequirePackage{eso-pic}
 \RequirePackage{xcolor}
 \RequirePackage{calc}
-\RequirePackage{tikz} % Für präzise Zeichnungen im Guides-Modus
+\RequirePackage{tikz} % Used for precise drawing in guides mode
 \usetikzlibrary{calc, arrows.meta}
-\RequirePackage{etoolbox} % Für \ifdefempty
+\RequirePackage{etoolbox} % Used for \ifdefempty
 
-% --- Schriftart: Arial bevorzugt, ansonsten TeX-Gyre-Fallback ---
+% --- Font setup: prefer Arial, otherwise fall back to TeX Gyre ---
 \IfFontExistsTF{Arial}{%
   \setmainfont{Arial}[Ligatures=TeX]
   \setsansfont{Arial}[Ligatures=TeX]
@@ -28,7 +28,7 @@
   \setsansfont{TeX Gyre Heros}[Ligatures=TeX]
 }
 
-% --- KOMA-Script Deaktivierung ---
+% --- Disable KOMA-Script built-ins we replace ourselves ---
 \KOMAoptions{
   addrfield=false,
   firsthead=false,
@@ -36,17 +36,18 @@
   foldmarks=false
 }
 
-% --- Seitenlayout ---
+% --- Page layout ---
+\newcommand{\@obb@openingvskip}{85mm}
 \geometry{
   paper=a4paper,
-  top=110mm,
+  top=25mm,
   bottom=25mm,
   left=25mm,
   right=20mm,
   footskip=10mm
 }
 
-% --- Datenspeicher ---
+% --- Stored document data ---
 \newlength{\@obb@addrwidth}
 \newcommand{\@obb@return}{}
 \newcommand{\@obb@recipient}{}
@@ -91,9 +92,29 @@
 \newcommand{\setfromweb}[1]{\renewcommand{\@obb@fromweb}{#1}}
 \newcommand{\setfromlinkedin}[1]{\renewcommand{\@obb@fromlinkedin}{#1}}
 \newcommand{\setfromlandline}[1]{\renewcommand{\@obb@fromlandline}{#1}}
+\newcommand{\@obb@validatereturnaddresswidth}{%
+  \begingroup
+    \settowidth{\@obb@addrwidth}{{\fontsize{5.8pt}{6.4pt}\sffamily\selectfont\@obb@return}}%
+    \ifdim\@obb@addrwidth>72mm
+      \endgroup
+      \ClassError{onlinebrief24}{Return address too long}{Shorten the return address so it fits on a single line within the 72mm sender zone.}%
+    \else
+      \endgroup
+    \fi
+}
+\newcommand{\@obb@validateletterfields}{%
+  \ifdefempty{\@obb@return}{%
+    \ClassError{onlinebrief24}{Missing return address}{Set the return address with \string\setreturnaddress\space before \string\begin{document}. The return address is mandatory for the address window.}%
+  }{%
+    \@obb@validatereturnaddresswidth
+  }%
+  \ifdefempty{\@obb@recipient}{%
+    \ClassError{onlinebrief24}{Missing recipient}{Set the recipient with \string\setrecipient\space or pass it to \string\begin{letter}{...}. The recipient address is mandatory for the address window.}%
+  }{}%
+}
 \@obb@syncplaceanddate
 
-% Patch letter environment
+% Patch the letter environment
 \let\@obb@oldletter\letter
 \renewcommand{\letter}[1]{%
   \ifstrempty{#1}{}{%
@@ -103,10 +124,11 @@
       \ClassWarningNoLine{onlinebrief24}{Ignoring recipient passed to letter environment because \string\setrecipient\space is already set}%
     }%
   }%
+  \@obb@validateletterfields
   \@obb@oldletter{}%
 }
 
-% --- Optionen ---
+% --- Options ---
 \newif\if@guidesmode
 \newif\if@modernstyle
 \newif\if@footercenter
@@ -115,7 +137,7 @@
 \DeclareOption{footercenter}{\@footercentertrue}
 \DeclareOption{basic}{\@modernstylefalse}
 
-% --- Farbschema Optionen (wie moderncv) ---
+% --- Color scheme options (moderncv-compatible) ---
 \def\@obb@colorscheme{grey}% Default: grey
 \DeclareOption{blue}{\def\@obb@colorscheme{blue}}
 \DeclareOption{orange}{\def\@obb@colorscheme{orange}}
@@ -129,16 +151,16 @@
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrlttr2}}
 \ProcessOptions\relax
 
-% --- Bedingtes Laden für den modernen Stil ---
+% --- Conditional loading for the modern style ---
 \if@modernstyle
   \RequirePackage[default, light, semibold]{sourcesanspro}
   \RequirePackage{marvosym}
   
-  % --- Farbdefinitionen (moderncv-kompatibel) ---
-  \definecolor{color0}{rgb}{0,0,0}% Text (schwarz)
-  \definecolor{color2}{rgb}{0.45,0.45,0.45}% Sekundär (dunkelgrau)
+  % --- Color definitions (moderncv-compatible) ---
+  \definecolor{color0}{rgb}{0,0,0}% Text (black)
+  \definecolor{color2}{rgb}{0.45,0.45,0.45}% Secondary text (dark gray)
   
-  % color1 (Akzentfarbe) je nach gewähltem Schema
+  % color1 (accent color) selected by the chosen scheme
   \ifdefstring{\@obb@colorscheme}{blue}{\definecolor{color1}{rgb}{0.22,0.45,0.70}}{}%
   \ifdefstring{\@obb@colorscheme}{orange}{\definecolor{color1}{rgb}{0.95,0.55,0.15}}{}%
   \ifdefstring{\@obb@colorscheme}{green}{\definecolor{color1}{rgb}{0.35,0.70,0.30}}{}%
@@ -149,7 +171,7 @@
   \ifdefstring{\@obb@colorscheme}{black}{\definecolor{color1}{rgb}{0,0,0}}{}%
 \fi
 
-% --- Footer-Hilfsmakros (außerhalb von AddToShipoutPictureBG definiert) ---
+% --- Footer helper macros (defined outside AddToShipoutPictureBG) ---
 \newif\if@obb@firstfooteritem
 \newcommand{\@obb@footersep}{~\textbar~}
 \newcommand{\@obb@renderheadername}{%
@@ -164,15 +186,33 @@
     \ifdefempty{\@obb@fromlastname}{}{\ \color{color1}\@obb@fromlastname}%
   }%
 }
+\newcommand{\@obb@renderdateline}{%
+  \ifdefempty{\@obb@place}{%
+    \@obb@date%
+  }{%
+    \@obb@place, \@obb@date%
+  }%
+}
+\newcommand{\@obb@renderopeningheader}{%
+  \noindent
+  \ifdefempty{\@obb@subject}{%
+    \hfill\parbox[t]{0.36\textwidth}{\raggedleft\@obb@renderdateline}%
+  }{%
+    \parbox[t]{0.60\textwidth}{\bfseries\sffamily\@obb@subject}%
+    \hfill
+    \parbox[t]{0.36\textwidth}{\raggedleft\@obb@renderdateline}%
+  }%
+  \par
+}
 
-% --- Layout-Zeichnung ---
-\AddToShipoutPictureBG{%
+% --- Page overlay drawing ---
+\newcommand{\@obb@firstpageoverlay}{%
   \setlength{\unitlength}{1mm}%
   
-  % --- Inhalt (immer sichtbar) ---
+  % --- Content that is always visible on page 1 ---
   
-      % Zone 1 wird separat so justiert, dass die Ruecksendezeile vollstaendig
-      % innerhalb der 2mm-Zone bleibt, ohne Zone 2/3 zu verschieben.
+      % Zone 1 is tuned separately so the return address stays entirely
+      % inside the 2mm sender line without shifting zones 2 and 3.
       \put(20, 245.00){%
         \parbox[b][2mm][c]{72mm}{%
           \fontsize{5.8pt}{6.4pt}\sffamily\selectfont
@@ -180,13 +220,13 @@
           \@obb@return
         }%
       }%
-      % Unterstrich fuer Zone 1 vollstaendig oberhalb der 52mm-Grenze halten.
+      % Keep the underline for zone 1 fully above the 52mm boundary.
       \settowidth{\@obb@addrwidth}{{\fontsize{5.8pt}{6.4pt}\sffamily\selectfont\@obb@return}}%
       \ifdim\@obb@addrwidth>72mm\@obb@addrwidth=72mm\fi
       \put(20, 245.00){\rule{\@obb@addrwidth}{0.2pt}}
 
-  % Zone 3: Empfaenger, gegen Onlinebrief24-Vorschau 1mm tiefer kalibriert.
-  % Linksbündig bei 20mm entsprechend der Referenzvorlage
+  % Zone 3: recipient block, calibrated 1mm lower to match the Onlinebrief24 preview.
+  % Left-aligned at 20mm in line with the reference layout.
   \put(20, 204){%
     \parbox[b][20mm][t]{72mm}{%
       \raggedright
@@ -195,13 +235,13 @@
     }%
   }%
   
-  % Falzmarken (immer sichtbar, aber dezent)
+  % Fold marks (always visible, but subtle)
   \put(5, 192){\line(1,0){5}}
   \put(5, 92){\line(1,0){5}}
 
-  % --- Moderner Stil (Kopf- und Fußzeile) ---
+  % --- Modern style (header and footer) ---
   \if@modernstyle
-    % Kopfzeile: Name
+    % Header: sender name
     \put(25, 270){%
         \parbox[t][15mm][t]{\paperwidth-50mm}{%
             \raggedleft
@@ -214,7 +254,7 @@
         }%
     }%
     
-    % Fußzeile: Kontaktdaten
+    % Footer: contact details
     \put(25, 15){%
       \parbox[b][10mm][b]{\textwidth}{%
         \if@footercenter\centering\else\raggedleft\fi
@@ -245,13 +285,13 @@
     }%
   \fi
 
-  % --- Guides Modus (Technische Zeichnung) ---
+  % --- Guides mode (technical overlay) ---
   \if@guidesmode
     \begin{tikzpicture}[remember picture, overlay]
-      % Koordinaten-Ursprung oben links definieren für einfacheres Denken
+      % Define a top-left origin to make coordinates easier to reason about
       \coordinate (TL) at (current page.north west);
       
-      % Stile
+      % Styles
       \tikzset{
         guide line/.style={draw=blue!50, thin},
         guide text/.style={font=\fontsize{7}{8}\sffamily, text=blue!70, inner sep=1pt},
@@ -260,69 +300,79 @@
         dim text/.style={midway, fill=white, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=1pt}
       }
 
-      % --- Fenster-Rahmen ---
-      % Gegen die Onlinebrief24-Vorschau 1mm tiefer kalibriert.
-      % Start bei (20mm, -50mm)
-      % Breite 72mm
+      % --- Window frame ---
+      % Calibrated 1mm lower to match the Onlinebrief24 preview.
+      % Start at (20mm, -50mm)
+      % Width 72mm
       
-      % Zone 1 (Absender): 50mm bis 52mm
+      % Zone 1 (sender): 50mm to 52mm
       \draw[guide line, guide fill, fill=blue!18] ($(TL)+(20mm, -50mm)$) rectangle ++(72mm, -2mm);
       \node[guide text, anchor=west] at ($(TL)+(92mm, -51mm)$) {Zone 1 (Absender)};
       
-      % Zone 2 (Sperrzone): 52mm bis 72mm
+      % Zone 2 (reserved/code area): 52mm to 72mm
       \draw[guide line, guide fill, fill=red!22] ($(TL)+(20mm, -52mm)$) rectangle ++(72mm, -20mm);
       \node[guide text, anchor=west] at ($(TL)+(92mm, -62mm)$) {Zone 2 (Sperrzone/Codes)};
       
-      % Zone 3 (Empfaenger): 72mm bis 92mm
+      % Zone 3 (recipient): 72mm to 92mm
       \draw[guide line, guide fill, fill=green!22] ($(TL)+(20mm, -72mm)$) rectangle ++(72mm, -20mm);
       \node[guide text, anchor=west] at ($(TL)+(92mm, -82mm)$) {Zone 3 (Empfänger)};
       
-      % --- Maßpfeile (Links vom Fenster) ---
+      % --- Dimension markers (left of the window) ---
       
-      % Offset 50mm (Start Fenster)
+      % 50mm offset (window start)
       \draw[dim line] ($(TL)+(15mm, 0)$) -- ($(TL)+(15mm, -50mm)$) node[dim text, rotate=90] {50mm};
       
-      % Höhe Zone 1 (2mm) - Text nach links verschoben
+      % Height of zone 1 (2mm) with label shifted left
       \draw[dim line] ($(TL)+(15mm, -50mm)$) -- ($(TL)+(15mm, -52mm)$) node[midway, left=1mm, rotate=90, font=\fontsize{5}{6}\sffamily, text=red!70] {2mm};
       
-      % Höhe Zone 2 (20mm)
+      % Height of zone 2 (20mm)
       \draw[dim line] ($(TL)+(15mm, -52mm)$) -- ($(TL)+(15mm, -72mm)$) node[dim text, rotate=90] {20mm};
       
-      % Höhe Zone 3 (20mm)
+      % Height of zone 3 (20mm)
       \draw[dim line] ($(TL)+(15mm, -72mm)$) -- ($(TL)+(15mm, -92mm)$) node[dim text, rotate=90] {20mm};
       
-      % Horizontaler Abstand (20mm)
+      % Horizontal offset (20mm)
       \draw[dim line] ($(TL)+(0, -40mm)$) -- ($(TL)+(20mm, -40mm)$) node[dim text] {20mm};
       
-      % Fensterbreite (72mm)
+      % Window width (72mm)
       \draw[dim line] ($(TL)+(20mm, -40mm)$) -- ($(TL)+(92mm, -40mm)$) node[dim text] {72mm};
 
-      % --- Falzmarken Hinweise (Text am Ende der Linie) ---
+      % --- Fold mark annotations (text at the end of the line) ---
       \draw[red!70, thin, <-] ($(TL)+(6mm, -105mm)$) -- ($(TL)+(15mm, -105mm)$) node[anchor=west, rotate=90, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=1pt] {1. Falz (105mm)};
       
       \draw[red!70, thin, <-] ($(TL)+(6mm, -205mm)$) -- ($(TL)+(15mm, -205mm)$) node[anchor=west, rotate=90, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=1pt] {2. Falz (205mm)};
       
-      % --- Textbeginn Linie (Nur angedeutet, nicht volle Breite) ---
+      % --- Text start line (indicated only, not full width) ---
       \draw[guide line, dashed] ($(TL)+(20mm, -110mm)$) -- ($(TL)+(100mm, -110mm)$);
       \node[guide text, anchor=south west] at ($(TL)+(25mm, -110mm)$) {Textbeginn (110mm)};
 
-      % --- Textfluchtlinie (25mm) für Betreff und Briefkörper ---
-      % Erst ab dem Textbeginn andeuten, damit der Fensterbereich frei bleibt.
+      % --- Text alignment line (25mm) for subject and body text ---
+      % Start it only below the text area so the window remains unobstructed.
       \draw[red!70, dashed, thin] ($(TL)+(25mm, -110mm)$) -- ($(TL)+(25mm, -297mm)$);
       \node[anchor=east, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=2pt] at ($(TL)+(25mm, -108mm)$) {Textfluchtlinie (25mm)};
 
     \end{tikzpicture}
   \fi
 }
+\AtBeginDocument{%
+  \AddToShipoutPictureBG*{\@obb@firstpageoverlay}%
+}
 
-% --- Betreff manuell setzen ---
-\let\@obb@oldopening\opening
+% --- Render the subject line manually ---
 \renewcommand{\opening}[1]{%
-  \ifdefempty{\@obb@subject}{}{%
-    {\bfseries\sffamily\@obb@subject}\par
-    \vspace{1em}%
-  }%
-  \@obb@oldopening{#1}%
+  \@PapersizeWarning
+  \thispagestyle{empty}%
+  \noindent
+  \@foldmarks\@firstheadfootfield
+  \@addrfield\@locfield
+  \vspace*{\@obb@openingvskip}%
+  \@obb@renderopeningheader
+  \vspace{\baselineskip}%
+  {\setparsizes{\z@}{\z@}{\z@ plus 1fil}\par@updaterelative#1\par}%
+  {\setlength{\@tempdima}{\baselineskip}%
+    \addtolength{\@tempdima}{-\parskip}%
+    \ifdim \@tempdima>\z@\vskip\@tempdima\fi}%
+  \@afterindentfalse\@afterheading
 }
 
 \endinput
