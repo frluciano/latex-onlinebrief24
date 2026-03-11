@@ -36,42 +36,36 @@ printing, enveloping, franking, and postal delivery.
 
 \section{Status}
 
-The class is currently verified with XeLaTeX and LuaLaTeX. The supported and
+The class is verified with pdfLaTeX, XeLaTeX, and LuaLaTeX. The supported and
 hardened use case is one letter per document. The package is aimed at German
-business letters and loads \texttt{babel} with \texttt{ngerman}.
+business letters and loads \texttt{babel} with \texttt{ngerman} by default
+(configurable via the \texttt{lang=} class option).
 
 \section{Installation}
 
-After the package has propagated from CTAN into your TeX distribution, install
-it with your distribution's package manager if that route is available to you.
+Install via your TeX distribution's package manager:
 
-For direct use, development snapshots, or local testing, place
-\texttt{onlinebrief24.cls} next to your \texttt{.tex} document and load it
-with:
+\begin{Verbatim}[fontsize=\small]
+tlmgr install onlinebrief24
+\end{Verbatim}
+
+Then load the class in your document:
 
 \begin{Verbatim}[fontsize=\small]
 \documentclass{onlinebrief24}
 \end{Verbatim}
 
-To install the current class file into your local TeX tree:
-
-\begin{Verbatim}[fontsize=\small]
-kpsewhich -var-value TEXMFHOME
-mkdir -p "$(kpsewhich -var-value TEXMFHOME)/tex/latex/onlinebrief24"
-cp onlinebrief24.cls "$(kpsewhich -var-value TEXMFHOME)/tex/latex/onlinebrief24/"
-texhash
-\end{Verbatim}
-
 \section{Engine Support}
 
 \begin{itemize}
+\item pdfLaTeX: verified
 \item XeLaTeX: verified
 \item LuaLaTeX: verified
-\item pdfLaTeX: not supported
 \end{itemize}
 
-The class uses \texttt{fontspec}. If Arial is not installed, it falls back to
-\texttt{TeX Gyre Heros}.
+With pdfLaTeX the class uses \texttt{fontenc} and \texttt{tgheros} (TeX Gyre
+Heros). With XeLaTeX and LuaLaTeX it uses \texttt{fontspec}; Arial is preferred
+if installed, otherwise it falls back to TeX Gyre Heros.
 
 \section{Minimal Example}
 
@@ -116,6 +110,8 @@ production output. \\
 \texttt{blue}, \texttt{orange}, \texttt{green}, \texttt{red},
 \texttt{purple}, \texttt{grey}, \texttt{burgundy}, \texttt{black} &
 Accent-color schemes for modern mode. \\
+\texttt{lang=\textit{name}} & Document language passed to \texttt{babel}
+(default: \texttt{ngerman}). Any valid babel language name is accepted. \\
 \bottomrule
 \end{longtable}
 
