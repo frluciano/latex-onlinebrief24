@@ -1,6 +1,6 @@
 # Run the same verification suite for every push and pull request so layout
 # regressions are caught before they are merged or released.
-name: LaTeX Build Verification
+name: Build LaTeX Verification
 
 on:
   push:
