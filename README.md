@@ -18,6 +18,8 @@ Die Klasse basiert auf `scrlttr2` aus KOMA-Script und ist auf einen robusten, re
 - `guides`-Modus zur technischen Sichtprüfung von Zonen, Abständen und Falzmarken
 - Option `footercenter` für zentrierte Fußzeile im `modern`-Stil
 - Arial als bevorzugte Schrift mit Fallback auf `TeX Gyre Heros`
+- Unterstützt XeLaTeX, LuaLaTeX und pdfLaTeX
+- Konfigurierbare Dokumentsprache (`lang=ngerman|english|french`)
 
 ## Schnellstart
 
@@ -52,16 +54,14 @@ dies ist ein Beispielbrief.
 \end{document}
 ```
 
-Build:
+Build (alle drei Engines werden unterstützt):
 
 ```bash
 xelatex brief.tex
-```
-
-oder:
-
-```bash
+# oder
 lualatex brief.tex
+# oder
+pdflatex brief.tex
 ```
 
 ## Installation
@@ -114,21 +114,15 @@ Die lokale Standardprüfung baut alle Beispiele und prüft zusätzlich den Mehrs
 - kein Wiederholen des Empfängerblocks auf Seite 2
 - normaler Textbeginn auf Seite 2 statt geerbtem Fenster-Offset
 
-XeLaTeX:
-
 ```bash
-sh scripts/verify.sh
-```
-
-LuaLaTeX:
-
-```bash
-OB24_TEX_ENGINE=lualatex sh scripts/verify.sh
+sh scripts/verify.sh                              # XeLaTeX (Standard)
+OB24_TEX_ENGINE=lualatex sh scripts/verify.sh     # LuaLaTeX
+OB24_TEX_ENGINE=pdflatex sh scripts/verify.sh     # pdfLaTeX
 ```
 
 Das Skript verwaltet für `lualatex` bei Bedarf automatisch einen repo-lokalen TeX-Cache, damit `luaotfload` auch in restriktiveren Umgebungen reproduzierbar funktioniert.
 
-Dafür werden lokal insbesondere `latexmk`, `xelatex`, `lualatex` und `pdftotext` benötigt. Für GitHub Actions ist ein Workflow unter `.github/workflows/verify.yml` enthalten, der beide Engines testet.
+Dafür werden lokal insbesondere `latexmk`, `xelatex`, `lualatex` und `pdftotext` benötigt. Für GitHub Actions ist ein Workflow unter `.github/workflows/verify.yml` enthalten, der alle drei Engines testet.
 
 ## Optionen
 
@@ -140,6 +134,9 @@ Dafür werden lokal insbesondere `latexmk`, `xelatex`, `lualatex` und `pdftotext
 | `modern` | Moderner Stil mit Kopfzeile, Fußzeile und Akzentfarbe |
 | `guides` | Technischer Overlay-Modus zur Layoutprüfung; blendet Hilfslinien und Markierungen ein und ist daher nur zur Prüfung gedacht |
 | `footercenter` | Zentriert die Fußzeile im `modern`-Stil |
+| `lang=ngerman` | Dokumentsprache (Standard); lädt `babel` mit `ngerman` |
+| `lang=english` | Englische Dokumentsprache |
+| `lang=french` | Französische Dokumentsprache |
 
 ### Farbschemata für `modern`
 
@@ -205,16 +202,16 @@ Die Klasse ist bewusst gegen die reale Onlinebrief24-Applikation-Vorschau kalibr
 
 Aktueller Stand:
 
-- Verifizierte Workflows: `xelatex` und `lualatex`
-- `pdflatex` wird nicht unterstützt
+- Verifizierte Workflows: `xelatex`, `lualatex` und `pdflatex`
 - Mehrseitige Briefe sind abgesichert: Fensterbereich, Falzmarken und optionaler Modern-Header/Footer erscheinen nur auf Seite 1
 - Die Klasse prüft beim Start des Briefs automatisch, ob Rücksendeadresse und Empfänger für das Adressfenster korrekt gesetzt sind
 - CI-Workflow und lokale Verifikation sind im Repository enthalten
+- Konfigurierbare Dokumentsprache über `lang=`-Option (Standard: `ngerman`)
 
 Einschränkungen:
 
-- Die Klasse ist auf deutschsprachige Briefe zugeschnitten und lädt `babel` mit `ngerman`
 - Für einen robusten Einsatz ist aktuell ein Brief pro Dokument der gehärtete Use Case
+- Bei pdfLaTeX wird TeX Gyre Heros statt Arial verwendet (kein `fontspec`-Zugriff auf Systemfonts)
 
 ## Lizenz
 
