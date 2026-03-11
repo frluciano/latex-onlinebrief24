@@ -184,7 +184,7 @@ Alternativ kann der Empfänger auch an `\begin{letter}{...}` übergeben werden. 
 
 ## Kalibrierung
 
-Die Klasse ist bewusst gegen die reale Onlinebrief24-Vorschau kalibriert, nicht nur gegen die nominellen Maßangaben der offiziellen Grafik. Praktisch bedeutet das:
+Die Klasse ist bewusst gegen die reale Onlinebrief24-Applikation-Vorschau kalibriert, nicht nur gegen die nominellen Maßangaben der offiziellen Grafik. Praktisch bedeutet das:
 
 - Die offizielle Maßgrafik nennt den Fensterstart nominell bei `49 mm`
 - Die reale Vorschau liegt messbar etwa `1 mm` tiefer
