@@ -6,14 +6,6 @@ LaTeX-Klasse für DIN-5008-Briefe zur Nutzung mit onlinebrief24.de.
 
 Die Klasse basiert auf `scrlttr2` aus KOMA-Script und ist auf einen robusten, reproduzierbaren Workflow für deutsche Geschäftsbriefe ausgelegt.
 
-## Status
-
-- Verifizierte Workflows: `xelatex` und `lualatex`
-- `pdflatex` wird nicht unterstützt
-- Mehrseitige Briefe sind abgesichert: Fensterbereich, Falzmarken und optionaler Modern-Header/Footer erscheinen nur auf Seite 1
-- Pflichtfelder für den Fensterbereich werden beim Start eines Briefs validiert
-- CI-Workflow und lokale Verifikation sind im Repository enthalten
-
 ## Funktionsumfang
 
 - DIN-5008-Typ-B-Grundlayout mit kalibriertem Fensterbereich
@@ -147,7 +139,7 @@ Dafür werden lokal insbesondere `latexmk`, `xelatex`, `lualatex` und `pdftotext
 | --- | --- |
 | `basic` | Einfaches Layout ohne Kopf- und Fußzeile |
 | `modern` | Moderner Stil mit Kopfzeile, Fußzeile und Akzentfarbe |
-| `guides` | Technischer Overlay-Modus zur Layoutprüfung |
+| `guides` | Technischer Overlay-Modus zur Layoutprüfung; blendet Hilfslinien und Markierungen ein und ist daher nur zur Prüfung gedacht |
 | `footercenter` | Zentriert die Fußzeile im `modern`-Stil |
 
 ### Farbschemata für `modern`
@@ -204,17 +196,26 @@ Die Klasse ist bewusst gegen die reale Onlinebrief24-Applikation-Vorschau kalibr
 - Die reale Vorschau liegt messbar etwa `1 mm` tiefer
 - Die Klasse verwendet deshalb effektiv `50-52 / 52-72 / 72-92 mm`, weil das in der Vorschau besser mit dem automatisch eingedruckten Sendungsbereich zusammenpasst
 
-## Bekannte Grenzen
-
-- Die Klasse ist auf deutschsprachige Briefe zugeschnitten und lädt `babel` mit `ngerman`
-- Für einen robusten Einsatz ist aktuell ein Brief pro Dokument der gehärtete Use Case
-- Der `guides`-Modus ist ein Prüfwerkzeug und nicht für finale Produktions-PDFs gedacht
-
 ## Herkunft
 
 - Basis: KOMA-Script `scrlttr2`
 - Der moderne Stil ist an die [LaTeX-Briefvorlage von Jan Mattfeld](https://github.com/janmattfeld/latex-briefvorlage/tree/master) angelehnt
 - Die Farbschemata orientieren sich an `moderncv`
+
+## Status und Einschränkungen
+
+Aktueller Stand:
+
+- Verifizierte Workflows: `xelatex` und `lualatex`
+- `pdflatex` wird nicht unterstützt
+- Mehrseitige Briefe sind abgesichert: Fensterbereich, Falzmarken und optionaler Modern-Header/Footer erscheinen nur auf Seite 1
+- Die Klasse prüft beim Start des Briefs automatisch, ob Rücksendeadresse und Empfänger für das Adressfenster korrekt gesetzt sind
+- CI-Workflow und lokale Verifikation sind im Repository enthalten
+
+Einschränkungen:
+
+- Die Klasse ist auf deutschsprachige Briefe zugeschnitten und lädt `babel` mit `ngerman`
+- Für einen robusten Einsatz ist aktuell ein Brief pro Dokument der gehärtete Use Case
 
 ## Lizenz
 
