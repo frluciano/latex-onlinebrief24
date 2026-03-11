@@ -1,17 +1,44 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{onlinebrief24}[2026/03/10 Precision Layout Class with Guides]
+\ProvidesClass{onlinebrief24}[2026/03/10 v1.0.0 Precision Layout Class with Guides]
+
+% --- Option declarations (all before ProcessOptions) ---
+
+% Language (default: ngerman)
+\def\@obb@lang{ngerman}
+\DeclareOption{lang=ngerman}{\def\@obb@lang{ngerman}}
+\DeclareOption{lang=english}{\def\@obb@lang{english}}
+\DeclareOption{lang=french}{\def\@obb@lang{french}}
+
+% Style switches
+\newif\if@guidesmode
+\newif\if@modernstyle
+\newif\if@footercenter
+\DeclareOption{guides}{\@guidesmodetrue}
+\DeclareOption{modern}{\@modernstyletrue}
+\DeclareOption{footercenter}{\@footercentertrue}
+\DeclareOption{basic}{\@modernstylefalse}
+
+% Color scheme (moderncv-compatible)
+\def\@obb@colorscheme{grey}% Default: grey
+\DeclareOption{blue}{\def\@obb@colorscheme{blue}}
+\DeclareOption{orange}{\def\@obb@colorscheme{orange}}
+\DeclareOption{green}{\def\@obb@colorscheme{green}}
+\DeclareOption{red}{\def\@obb@colorscheme{red}}
+\DeclareOption{purple}{\def\@obb@colorscheme{purple}}
+\DeclareOption{grey}{\def\@obb@colorscheme{grey}}
+\DeclareOption{burgundy}{\def\@obb@colorscheme{burgundy}}
+\DeclareOption{black}{\def\@obb@colorscheme{black}}
+
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrlttr2}}
+\ProcessOptions\relax
 
 % --- Base: KOMA-Script letter class ---
 \LoadClass[fontsize=11pt, parskip=half]{scrlttr2}
 
 % --- Packages ---
-\RequirePackage[ngerman]{babel} % German language settings (date, hyphenation)
+\expandafter\RequirePackage\expandafter[\@obb@lang]{babel}
 \RequirePackage{geometry}
 \RequirePackage{iftex}
-\ifPDFTeX
-  \ClassError{onlinebrief24}{This class requires XeLaTeX or LuaLaTeX}{Compile the document with xelatex or lualatex instead of pdflatex because the class uses fontspec.}
-\fi
-\RequirePackage{fontspec}
 \RequirePackage{eso-pic}
 \RequirePackage{xcolor}
 \RequirePackage{calc}
@@ -19,14 +46,21 @@
 \usetikzlibrary{calc, arrows.meta}
 \RequirePackage{etoolbox} % Used for \ifdefempty
 
-% --- Font setup: prefer Arial, otherwise fall back to TeX Gyre ---
-\IfFontExistsTF{Arial}{%
-  \setmainfont{Arial}[Ligatures=TeX]
-  \setsansfont{Arial}[Ligatures=TeX]
-}{%
-  \setmainfont{TeX Gyre Heros}[Ligatures=TeX]
-  \setsansfont{TeX Gyre Heros}[Ligatures=TeX]
-}
+% --- Engine-aware font setup ---
+\ifPDFTeX
+  \RequirePackage[T1]{fontenc}
+  \RequirePackage{tgheros}% TeX Gyre Heros (Helvetica/Arial clone)
+  \renewcommand{\familydefault}{\sfdefault}
+\else
+  \RequirePackage{fontspec}
+  \IfFontExistsTF{Arial}{%
+    \setmainfont{Arial}[Ligatures=TeX]
+    \setsansfont{Arial}[Ligatures=TeX]
+  }{%
+    \setmainfont{TeX Gyre Heros}[Ligatures=TeX]
+    \setsansfont{TeX Gyre Heros}[Ligatures=TeX]
+  }
+\fi
 
 % --- Disable KOMA-Script built-ins we replace ourselves ---
 \KOMAoptions{
@@ -128,38 +162,19 @@
   \@obb@oldletter{}%
 }
 
-% --- Options ---
-\newif\if@guidesmode
-\newif\if@modernstyle
-\newif\if@footercenter
-\DeclareOption{guides}{\@guidesmodetrue}
-\DeclareOption{modern}{\@modernstyletrue}
-\DeclareOption{footercenter}{\@footercentertrue}
-\DeclareOption{basic}{\@modernstylefalse}
-
-% --- Color scheme options (moderncv-compatible) ---
-\def\@obb@colorscheme{grey}% Default: grey
-\DeclareOption{blue}{\def\@obb@colorscheme{blue}}
-\DeclareOption{orange}{\def\@obb@colorscheme{orange}}
-\DeclareOption{green}{\def\@obb@colorscheme{green}}
-\DeclareOption{red}{\def\@obb@colorscheme{red}}
-\DeclareOption{purple}{\def\@obb@colorscheme{purple}}
-\DeclareOption{grey}{\def\@obb@colorscheme{grey}}
-\DeclareOption{burgundy}{\def\@obb@colorscheme{burgundy}}
-\DeclareOption{black}{\def\@obb@colorscheme{black}}
-
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrlttr2}}
-\ProcessOptions\relax
-
 % --- Conditional loading for the modern style ---
 \if@modernstyle
-  \RequirePackage[default, light, semibold]{sourcesanspro}
+  \ifPDFTeX
+    \RequirePackage[default, light, semibold]{sourcesanspro}
+  \else
+    \RequirePackage[default, light, semibold]{sourcesanspro}
+  \fi
   \RequirePackage{marvosym}
-  
+
   % --- Color definitions (moderncv-compatible) ---
   \definecolor{color0}{rgb}{0,0,0}% Text (black)
   \definecolor{color2}{rgb}{0.45,0.45,0.45}% Secondary text (dark gray)
-  
+
   % color1 (accent color) selected by the chosen scheme
   \ifdefstring{\@obb@colorscheme}{blue}{\definecolor{color1}{rgb}{0.22,0.45,0.70}}{}%
   \ifdefstring{\@obb@colorscheme}{orange}{\definecolor{color1}{rgb}{0.95,0.55,0.15}}{}%
@@ -208,9 +223,9 @@
 % --- Page overlay drawing ---
 \newcommand{\@obb@firstpageoverlay}{%
   \setlength{\unitlength}{1mm}%
-  
+
   % --- Content that is always visible on page 1 ---
-  
+
       % Zone 1 is tuned separately so the return address stays entirely
       % inside the 2mm sender line without shifting zones 2 and 3.
       \put(20, 245.00){%
@@ -234,7 +249,7 @@
       \@obb@recipient
     }%
   }%
-  
+
   % Fold marks (always visible, but subtle)
   \put(5, 192){\line(1,0){5}}
   \put(5, 92){\line(1,0){5}}
@@ -253,7 +268,7 @@
             }
         }%
     }%
-    
+
     % Footer: contact details
     \put(25, 15){%
       \parbox[b][10mm][b]{\textwidth}{%
@@ -290,7 +305,7 @@
     \begin{tikzpicture}[remember picture, overlay]
       % Define a top-left origin to make coordinates easier to reason about
       \coordinate (TL) at (current page.north west);
-      
+
       % Styles
       \tikzset{
         guide line/.style={draw=blue!50, thin},
@@ -304,44 +319,44 @@
       % Calibrated 1mm lower to match the Onlinebrief24 preview.
       % Start at (20mm, -50mm)
       % Width 72mm
-      
+
       % Zone 1 (sender): 50mm to 52mm
       \draw[guide line, guide fill, fill=blue!18] ($(TL)+(20mm, -50mm)$) rectangle ++(72mm, -2mm);
       \node[guide text, anchor=west] at ($(TL)+(92mm, -51mm)$) {Zone 1 (Absender)};
-      
+
       % Zone 2 (reserved/code area): 52mm to 72mm
       \draw[guide line, guide fill, fill=red!22] ($(TL)+(20mm, -52mm)$) rectangle ++(72mm, -20mm);
       \node[guide text, anchor=west] at ($(TL)+(92mm, -62mm)$) {Zone 2 (Sperrzone/Codes)};
-      
+
       % Zone 3 (recipient): 72mm to 92mm
       \draw[guide line, guide fill, fill=green!22] ($(TL)+(20mm, -72mm)$) rectangle ++(72mm, -20mm);
       \node[guide text, anchor=west] at ($(TL)+(92mm, -82mm)$) {Zone 3 (Empfänger)};
-      
+
       % --- Dimension markers (left of the window) ---
-      
+
       % 50mm offset (window start)
       \draw[dim line] ($(TL)+(15mm, 0)$) -- ($(TL)+(15mm, -50mm)$) node[dim text, rotate=90] {50mm};
-      
+
       % Height of zone 1 (2mm) with label shifted left
       \draw[dim line] ($(TL)+(15mm, -50mm)$) -- ($(TL)+(15mm, -52mm)$) node[midway, left=1mm, rotate=90, font=\fontsize{5}{6}\sffamily, text=red!70] {2mm};
-      
+
       % Height of zone 2 (20mm)
       \draw[dim line] ($(TL)+(15mm, -52mm)$) -- ($(TL)+(15mm, -72mm)$) node[dim text, rotate=90] {20mm};
-      
+
       % Height of zone 3 (20mm)
       \draw[dim line] ($(TL)+(15mm, -72mm)$) -- ($(TL)+(15mm, -92mm)$) node[dim text, rotate=90] {20mm};
-      
+
       % Horizontal offset (20mm)
       \draw[dim line] ($(TL)+(0, -40mm)$) -- ($(TL)+(20mm, -40mm)$) node[dim text] {20mm};
-      
+
       % Window width (72mm)
       \draw[dim line] ($(TL)+(20mm, -40mm)$) -- ($(TL)+(92mm, -40mm)$) node[dim text] {72mm};
 
       % --- Fold mark annotations (text at the end of the line) ---
       \draw[red!70, thin, <-] ($(TL)+(6mm, -105mm)$) -- ($(TL)+(15mm, -105mm)$) node[anchor=west, rotate=90, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=1pt] {1. Falz (105mm)};
-      
+
       \draw[red!70, thin, <-] ($(TL)+(6mm, -205mm)$) -- ($(TL)+(15mm, -205mm)$) node[anchor=west, rotate=90, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=1pt] {2. Falz (205mm)};
-      
+
       % --- Text start line (indicated only, not full width) ---
       \draw[guide line, dashed] ($(TL)+(20mm, -110mm)$) -- ($(TL)+(100mm, -110mm)$);
       \node[guide text, anchor=south west] at ($(TL)+(25mm, -110mm)$) {Textbeginn (110mm)};

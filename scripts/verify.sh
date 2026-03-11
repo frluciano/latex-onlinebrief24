@@ -25,9 +25,12 @@ case "$engine" in
     export TEXMFVAR="$texlive_cache_dir"
     export TEXMFCACHE="$texlive_cache_dir"
     ;;
+  pdflatex)
+    latexmk_engine_flag=-pdf
+    ;;
   *)
     # Fail fast on typos or unsupported engines so CI errors stay obvious.
-    printf '%s\n' "Unsupported OB24_TEX_ENGINE: $engine (expected xelatex or lualatex)." >&2
+    printf '%s\n' "Unsupported OB24_TEX_ENGINE: $engine (expected xelatex, lualatex, or pdflatex)." >&2
     exit 1
     ;;
 esac
