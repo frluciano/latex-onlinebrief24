@@ -1,3 +1,5 @@
+# Run the same verification suite for every push and pull request so layout
+# regressions are caught before they are merged or released.
 name: Verify
 
 on:
@@ -7,12 +9,24 @@ on:
 jobs:
   latex:
     runs-on: ubuntu-latest
+    strategy:
+      # Keep both engine results visible even if one fails. This is useful
+      # while maintaining first-class XeLaTeX and LuaLaTeX support in parallel.
+      fail-fast: false
+      matrix:
+        # Verify both officially supported fontspec engines.
+        engine:
+          - xelatex
+          - lualatex
 
     steps:
+      # The workflow is fully repository-local; no external assets are needed.
       - uses: actions/checkout@v4
 
       - name: Install TeX and PDF tools
         run: |
+          # Install a minimal but sufficient TeX/PDF toolchain for the examples,
+          # the font-dependent modern style, and the page-2 regression checks.
           sudo apt-get update
           sudo apt-get install -y \
             latexmk \
@@ -20,8 +34,11 @@ jobs:
             texlive-fonts-extra \
             texlive-lang-german \
             texlive-latex-extra \
+            texlive-luatex \
             texlive-pictures \
             texlive-xetex
 
-      - name: Verify examples
-        run: sh scripts/verify.sh
+      - name: Verify examples (${{ matrix.engine }})
+        # The verification script selects the engine via OB24_TEX_ENGINE and
+        # handles the LuaLaTeX cache workaround automatically when needed.
+        run: OB24_TEX_ENGINE=${{ matrix.engine }} sh scripts/verify.sh

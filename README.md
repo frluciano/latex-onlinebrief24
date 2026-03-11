@@ -8,7 +8,7 @@ Die Klasse basiert auf `scrlttr2` aus KOMA-Script und ist auf einen robusten, re
 
 ## Status
 
-- Verifizierter Standard-Workflow: `xelatex`
+- Verifizierte Workflows: `xelatex` und `lualatex`
 - `pdflatex` wird nicht unterstützt
 - Mehrseitige Briefe sind abgesichert: Fensterbereich, Falzmarken und optionaler Modern-Header/Footer erscheinen nur auf Seite 1
 - Pflichtfelder für den Fensterbereich werden beim Start eines Briefs validiert
@@ -63,6 +63,12 @@ Build:
 xelatex brief.tex
 ```
 
+oder:
+
+```bash
+lualatex brief.tex
+```
+
 ## Installation
 
 ### Lokal im Projekt
@@ -111,19 +117,27 @@ xelatex example-basic.tex
 
 ## Verifikation
 
-Die lokale Standardprüfung baut alle Beispiele mit XeLaTeX und prüft zusätzlich den Mehrseiten-Fall:
+Die lokale Standardprüfung baut alle Beispiele und prüft zusätzlich den Mehrseiten-Fall:
 
 - kein Wiederholen der Rücksendezeile auf Seite 2
 - kein Wiederholen des Empfängerblocks auf Seite 2
 - normaler Textbeginn auf Seite 2 statt geerbtem Fenster-Offset
 
-Ausführen:
+XeLaTeX:
 
 ```bash
 sh scripts/verify.sh
 ```
 
-Dafür werden lokal insbesondere `latexmk`, `xelatex` und `pdftotext` benötigt. Für GitHub Actions ist ein Workflow unter `.github/workflows/verify.yml` enthalten.
+LuaLaTeX:
+
+```bash
+OB24_TEX_ENGINE=lualatex sh scripts/verify.sh
+```
+
+Das Skript verwaltet für `lualatex` bei Bedarf automatisch einen repo-lokalen TeX-Cache, damit `luaotfload` auch in restriktiveren Umgebungen reproduzierbar funktioniert.
+
+Dafür werden lokal insbesondere `latexmk`, `xelatex`, `lualatex` und `pdftotext` benötigt. Für GitHub Actions ist ein Workflow unter `.github/workflows/verify.yml` enthalten, der beide Engines testet.
 
 ## Optionen
 
@@ -192,8 +206,6 @@ Die Klasse ist bewusst gegen die reale Onlinebrief24-Applikation-Vorschau kalibr
 
 ## Bekannte Grenzen
 
-- Der aktuell verifizierte Standard-Workflow ist `xelatex`
-- `lualatex` ist prinzipiell vorgesehen, wird in diesem Repository derzeit aber nicht als Standardpfad getestet
 - Die Klasse ist auf deutschsprachige Briefe zugeschnitten und lädt `babel` mit `ngerman`
 - Für einen robusten Einsatz ist aktuell ein Brief pro Dokument der gehärtete Use Case
 - Der `guides`-Modus ist ein Prüfwerkzeug und nicht für finale Produktions-PDFs gedacht

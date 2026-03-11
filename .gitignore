@@ -33,6 +33,7 @@
 *-blx.aux
 *-blx.bib
 *.run.xml
+.texlive-cache/
 
 ## Build tool auxiliary files:
 *.fdb_latexmk
