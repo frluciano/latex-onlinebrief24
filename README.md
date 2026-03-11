@@ -1,6 +1,6 @@
 # onlinebrief24
 
-Inoffizielle LaTeX-Klasse für DIN-5008-Briefe im Layout von onlinebrief24.de bzw. letterei.de.
+Inoffizielle LaTeX-Klasse für DIN-5008-Briefe im Layout von onlinebrief24.de.
 
 > Dieses Repository ist ein Community-Projekt und steht in keiner offiziellen Verbindung zur letterei.de Postdienste GmbH. "Onlinebrief24" ist ein eingetragenes Markenzeichen der jeweiligen Rechteinhaber. Die Nutzung erfolgt auf eigenes Risiko; es gibt keine Garantie, dass ein erzeugtes PDF vom Dienstleister in jedem Fall akzeptiert oder unverändert verarbeitet wird.
 
