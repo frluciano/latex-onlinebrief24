@@ -19,7 +19,8 @@ At minimum, review these files before every CTAN update:
 
 - `onlinebrief24.cls`
 - `ctan/onlinebrief24-doc.tex`
-- `ctan/CTAN-SUBMISSION.md`
+- `ctan/README.md`
+- `ctan/RELEASE.md`
 
 Typical release edits:
 
@@ -65,15 +66,15 @@ and using its upload link so CTAN can prefill metadata where possible.
 
 Before the upload, confirm:
 
-- the maintainer email in `ctan/CTAN-SUBMISSION.md`
+- the maintainer email and upload text in this file
 - the release version/date
 - the announcement text, if you want CTAN to publish one
 - the package ZIP came from a green CI run on `main`
 
 Use these repository files as the source of truth for upload metadata:
 
-- `ctan/CTAN-SUBMISSION.md` for summary, description, and announcement
 - `ctan/README.md` for the package-facing README
+- `ctan/RELEASE.md` for summary, description, and announcement
 - `ctan/onlinebrief24-doc.tex` for the package documentation source
 
 ## Local Fallback
@@ -101,3 +102,39 @@ A GitHub release is not required for CTAN, but if you want one:
 3. create a GitHub release pointing to that tag
 4. attach the same `onlinebrief24.zip` artifact if you want the GitHub release
    to mirror the CTAN payload
+
+## Suggested CTAN Metadata
+
+Summary:
+
+`LaTeX class for DIN 5008 type-B business letters calibrated for use with onlinebrief24.de.`
+
+Long description:
+
+`onlinebrief24` is a LaTeX letter class based on KOMA-Script `scrlttr2`. It is
+calibrated against the practical preview behavior of onlinebrief24.de and
+provides:
+
+- a plain letter layout
+- a modern layout with header, footer, and accent colors
+- a guides mode for technical layout inspection
+- validated address-window inputs
+- verified XeLaTeX and LuaLaTeX workflows
+
+The package is intended for German business letters and currently supports one
+letter per document as the hardened use case.
+
+onlinebrief24.de is a hybrid mail service for business customers: documents
+are submitted digitally, and the service handles printing, enveloping,
+franking, and postal delivery.
+
+The trademark holders have formally authorized the maintainer to use the
+Onlinebrief24 mark in connection with this LaTeX class.
+
+Suggested announcement:
+
+`onlinebrief24` is a LaTeX class for DIN 5008 type-B business letters
+calibrated for use with onlinebrief24.de, a hybrid mail service for business
+customers. The package is based on KOMA-Script `scrlttr2` and provides plain
+and modern letter styles, a guides mode for layout inspection, validated
+address-window inputs, and verified XeLaTeX and LuaLaTeX workflows.
