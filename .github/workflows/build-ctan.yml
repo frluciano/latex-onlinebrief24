@@ -15,7 +15,7 @@ jobs:
       # The package build is repository-local. CI only needs the checked-out
       # sources plus a TeX toolchain capable of building the English package
       # documentation.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install TeX tools for the CTAN package build
         run: |
@@ -39,7 +39,7 @@ jobs:
         run: unzip -l dist/ctan/onlinebrief24.zip
 
       - name: Upload CTAN artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: onlinebrief24-ctan-package
           path: |

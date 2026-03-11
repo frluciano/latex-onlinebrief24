@@ -21,7 +21,7 @@ jobs:
 
     steps:
       # The workflow is fully repository-local; no external assets are needed.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install TeX and PDF tools
         run: |
