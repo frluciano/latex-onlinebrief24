@@ -1,176 +1,209 @@
-# LaTeX-Klasse für onlinebrief24.de
+# onlinebrief24
 
-**Haftungsausschluss:** Dieses Projekt ist ein inoffizielles Community-Projekt und steht in keinerlei Verbindung zur letterei.de Postdienste GmbH. "Onlinebrief24" ist ein eingetragenes Markenzeichen der jeweiligen Rechteinhaber. Die Nutzung dieser LaTeX-Klasse erfolgt auf eigene Gefahr; es wird keine Garantie für die fehlerfreie Verarbeitung durch den Dienstleister übernommen.
+Inoffizielle LaTeX-Klasse für DIN-5008-Briefe im Layout von onlinebrief24.de bzw. letterei.de.
 
+> Dieses Repository ist ein Community-Projekt und steht in keiner offiziellen Verbindung zur letterei.de Postdienste GmbH. "Onlinebrief24" ist ein eingetragenes Markenzeichen der jeweiligen Rechteinhaber. Die Nutzung erfolgt auf eigenes Risiko; es gibt keine Garantie, dass ein erzeugtes PDF vom Dienstleister in jedem Fall akzeptiert oder unverändert verarbeitet wird.
 
-Basierend auf KOMA-Script (scrlttr2) für DIN 5008 Typ B.
+Die Klasse basiert auf `scrlttr2` aus KOMA-Script und ist auf einen robusten, reproduzierbaren Workflow für deutsche Geschäftsbriefe ausgelegt.
+
+## Status
+
+- Verifizierter Standard-Workflow: `xelatex`
+- `pdflatex` wird nicht unterstützt
+- Mehrseitige Briefe sind abgesichert: Fensterbereich, Falzmarken und optionaler Modern-Header/Footer erscheinen nur auf Seite 1
+- Pflichtfelder für den Fensterbereich werden beim Start eines Briefs validiert
+- CI-Workflow und lokale Verifikation sind im Repository enthalten
+
+## Funktionsumfang
+
+- DIN-5008-Typ-B-Grundlayout mit kalibriertem Fensterbereich
+- `basic`-Stil ohne Kopf- und Fußzeile
+- `modern`-Stil mit Kopfzeile, Fußzeile und Farbschemata
+- `guides`-Modus zur technischen Sichtprüfung von Zonen, Abständen und Falzmarken
+- Option `footercenter` für zentrierte Fußzeile im `modern`-Stil
+- Arial als bevorzugte Schrift mit Fallback auf `TeX Gyre Heros`
+
+## Schnellstart
+
+Für eigene Briefe gibt es zwei sinnvolle Wege:
+
+1. Lege `onlinebrief24.cls` in dasselbe Verzeichnis wie deine `.tex`-Datei und nutze `\documentclass{onlinebrief24}`.
+2. Installiere die Klasse in deinem lokalen `TEXMFHOME`, wenn du sie systemweit verwenden möchtest.
+
+Minimales Beispiel:
+
+```latex
+\documentclass[basic]{onlinebrief24}
+
+\setreturnaddress{Erika Mustermann, Blumenweg 1, 54321 Blumenstadt}
+\setrecipient{
+  Mustermann GmbH \& Co. KG \\
+  Herrn Hans Mustermann \\
+  Musterstr. 1 \\
+  12345 Musterstadt
+}
+\setsubject{Betreff}
+\setplace{Musterstadt}
+\setdate{\today}
+
+\begin{document}
+\begin{letter}{}
+\opening{Sehr geehrter Herr Mustermann,}
+
+dies ist ein Beispielbrief.
+
+\closing{Mit freundlichen Grüßen}
+\end{letter}
+\end{document}
+```
+
+Build:
+
+```bash
+xelatex brief.tex
+```
 
 ## Installation
 
-Fuer eigene Briefe sollte die Datei `onlinebrief24.cls` im gleichen Verzeichnis wie deine `.tex`-Datei liegen. Die Beispiele in diesem Repo referenzieren die Klasse relativ ueber `../onlinebrief24.cls`.
+### Lokal im Projekt
 
-## Voraussetzungen
+Lege `onlinebrief24.cls` neben deine `.tex`-Datei. Das ist der einfachste und transparenteste Weg.
 
-- Empfohlener und verifizierter Build-Workflow: `xelatex`.
-- `lualatex` ist prinzipiell vorgesehen, wird in diesem Repository aktuell aber nicht als Standard-Workflow verifiziert.
-- `pdflatex` wird nicht unterstützt, da die Klasse `fontspec` nutzt.
-- `Arial` wird bevorzugt verwendet. Wenn die Schrift nicht installiert ist, fällt die Klasse automatisch auf `TeX Gyre Heros` zurück.
+### Lokal im TeX-Baum
 
-### Globale Installation (optional)
+Wenn du die Klasse global verfügbar machen möchtest:
 
-Für eine systemweite Verfügbarkeit kann die Klassendatei in Ihrem lokalen TeX-Verzeichnisbaum abgelegt werden. Dadurch musst du die `.cls`-Datei nicht mehr in jedem Projektordner vorhalten.
+```bash
+kpsewhich -var-value TEXMFHOME
+mkdir -p "$(kpsewhich -var-value TEXMFHOME)/tex/latex/onlinebrief24"
+cp onlinebrief24.cls "$(kpsewhich -var-value TEXMFHOME)/tex/latex/onlinebrief24/"
+texhash
+```
 
-1.  **Finden Sie Ihren `TEXMFHOME`-Pfad:**
-    *   Führen Sie im Terminal den Befehl `kpsewhich -var-value TEXMFHOME` aus.
-    *   Das Ergebnis ist der Pfad zu Ihrem lokalen TeX-Verzeichnis (z. B. `~/texmf`).
+Danach kannst du `\documentclass{onlinebrief24}` aus beliebigen Projekten verwenden.
 
-2.  **Erstellen Sie die nötige Ordnerstruktur:**
-    *   Innerhalb Ihres `TEXMFHOME`-Verzeichnisses benötigen Sie folgenden Pfad: `tex/latex/onlinebrief24/`.
-    *   Erstellen Sie die Ordner, falls sie nicht existieren: `mkdir -p $(kpsewhich -var-value TEXMFHOME)/tex/latex/onlinebrief24`
+## Beispiele
 
-3.  **Kopieren Sie die Klassendatei:**
-    *   Verschieben oder kopieren Sie `onlinebrief24.cls` in das soeben erstellte Verzeichnis.
+Die Dateien im Verzeichnis `examples/` sind lauffähige Referenzen für die unterstützten Varianten:
 
-4.  **Aktualisieren Sie die TeX-Datenbank:**
-    *   Führen Sie den Befehl `texhash` (oder `mktexlsr`) im Terminal aus. Bei MiKTeX finden Sie eine entsprechende Option in den Einstellungen (Settings -> "Refresh file name database").
+- `example-basic.tex`: einfacher Brief ohne Kopf- und Fußzeile
+- `example-guides.tex`: technischer Overlay-Modus
+- `example-basic-guides.tex`: einfacher Brief plus Overlay
+- `example-modern.tex`: moderner Stil mit Kontaktdaten
+- `example-modern-blue.tex`: moderner Stil mit alternativem Farbschema
+- `example-modern-guides.tex`: moderner Stil plus Overlay
+- `example-multipage-regression.tex`: Mehrseiten-Regressionsfall
 
-Danach können Sie von überall auf Ihrem System `\documentclass{onlinebrief24}` verwenden.
+Kurze visuelle Vorschau der beiden häufigsten Varianten:
 
-## Verwendung
+| Basic | Modern Blue |
+| --- | --- |
+| ![Preview of the basic letter style](docs/assets/example-basic.png) | ![Preview of the modern blue letter style](docs/assets/example-modern-blue.png) |
 
-Im Ordner [`examples/`](examples/) findest du fertige `.tex`-Dateien, die du direkt kompilieren kannst.
+Hinweis: Die Beispiel-Dateien referenzieren die Klasse absichtlich relativ über `../onlinebrief24`, damit sie direkt aus dem Repository heraus gebaut werden können.
 
-Empfohlener Start:
+Beispiel-Build:
 
 ```bash
 cd examples
 xelatex example-basic.tex
 ```
 
-Hier findest du die verschiedenen Stile und Optionen der Dokumentenklasse im direkten Vergleich.
+## Verifikation
 
-Zur lokalen Verifikation aller Beispiele inklusive Mehrseiten-Regression:
+Die lokale Standardprüfung baut alle Beispiele mit XeLaTeX und prüft zusätzlich den Mehrseiten-Fall:
+
+- kein Wiederholen der Rücksendezeile auf Seite 2
+- kein Wiederholen des Empfängerblocks auf Seite 2
+- normaler Textbeginn auf Seite 2 statt geerbtem Fenster-Offset
+
+Ausführen:
 
 ```bash
 sh scripts/verify.sh
 ```
 
-### 1. Standard-Stile
-
-| Stil | Beschreibung |
-| :--- | :--- |
-| **Einfacher Brief (`basic`)** | Einfaches Layout ohne Kopf- und Fußzeile |
-| **Modern (`modern, blue`)** | Modernes Layout mit Kopf- und Fußzeile.|
-
-<table>
-  <tr>
-    <td><strong>Beispiel: Basic-Stil</strong>
-
-```latex
-\documentclass[basic]{onlinebrief24}
-\setreturnaddress{Erika Mustermann, Blumenweg. 1, 54321 Blumenstadt}
-\setrecipient{Mustermann GmbH \& Co. KG \\ Herrn Hans Mustermann \\ ...}
-\setsubject{Betreff des Briefes}
-\begin{document}
-\begin{letter}{}
-\opening{Sehr geehrte Damen...}
-Ihr Briefinhalt hier...
-\closing{Mit freundlichen Grüßen}
-\end{letter}
-\end{document}
-```
-
-</td>
-    <td><strong>Resultat</strong>
-
-<img src="https://github.com/user-attachments/assets/943fcd60-6e56-4d7e-91d6-1fa519cabbd4" width="350" alt="example-basic">
-
-</td>
-  </tr>
-  <tr>
-    <td><strong>Beispiel: Modern-Stil</strong>
-
-```latex
-\documentclass[modern, blue, footercenter]{onlinebrief24}
-\setfromfirstname{Erika}
-\setfromlastname{Mustermann}
-\setfromaddress{Blumenweg. 1 | 54321 Blumenstadt}
-\setfromphone{0123 / 456 789}
-\setfromemail{erika@example.com}
-\begin{document}
-\begin{letter}{}
-\opening{Sehr geehrte Frau...}
-Ihr Briefinhalt hier...
-\closing{Mit freundlichen Grüßen}
-\end{letter}
-\end{document}
-```
-
-</td>
-    <td><strong>Resultat</strong>
-
-<img src="https://github.com/user-attachments/assets/53d11876-95f7-40be-aa7d-69f6e04935c6" width="350" alt="example-modern-blue">
-
-</td>
-  </tr>
-</table>
+Dafür werden lokal insbesondere `latexmk`, `xelatex` und `pdftotext` benötigt. Für GitHub Actions ist ein Workflow unter `.github/workflows/verify.yml` enthalten.
 
 ## Optionen
 
-### Layout-Optionen
+### Layout
 
-- `basic`: (Standard) Einfaches Layout ohne Kopf- und Fußzeile.
-- `modern`: Aktiviert ein alternatives, modernes Layout mit Kopf- und Fußzeile.
-- `guides`: Aktiviert einen Visualisierungs-Modus, der das komplette Layout mit allen Zonen, Maßen und Falzmarken als technische Zeichnung über den Brief legt. Ideal zur Überprüfung des Satzspiegels. Kann mit `basic` oder `modern` kombiniert werden.
-- `footercenter`: Zentriert die Fußzeile. Diese Option hat nur in Verbindung mit `modern` einen Effekt.
+| Option | Bedeutung |
+| --- | --- |
+| `basic` | Einfaches Layout ohne Kopf- und Fußzeile |
+| `modern` | Moderner Stil mit Kopfzeile, Fußzeile und Akzentfarbe |
+| `guides` | Technischer Overlay-Modus zur Layoutprüfung |
+| `footercenter` | Zentriert die Fußzeile im `modern`-Stil |
 
-## Kalibrierung
+### Farbschemata für `modern`
 
-- Die offizielle Maßgrafik von onlinebrief24.de nennt das Fenster nominell mit Start bei `49 mm` und Zonen `49-51 / 51-71 / 71-91 mm`.
-- Die reale PDF-Vorschau des Onlinebrief24-Tools liegt jedoch messbar etwa `1 mm` tiefer.
-- Diese Klasse ist deshalb bewusst auf `50-52 / 52-72 / 72-92 mm` kalibriert, weil damit der automatisch eingedruckte Sendungsaufdruck in der echten Vorschau korrekt in Zone 2 sitzt.
-- Kurzform: `49 mm` ist der Nennwert aus der Grafik, `50 mm` der praxistaugliche Kompatibilitätswert zur echten Tool-Ausgabe.
+| Option | RGB |
+| --- | --- |
+| `grey` | `0.55, 0.55, 0.55` |
+| `blue` | `0.22, 0.45, 0.70` |
+| `orange` | `0.95, 0.55, 0.15` |
+| `green` | `0.35, 0.70, 0.30` |
+| `red` | `0.95, 0.20, 0.20` |
+| `purple` | `0.50, 0.33, 0.80` |
+| `burgundy` | `0.596, 0, 0` |
+| `black` | `0, 0, 0` |
 
-### Farbschema-Optionen (nur mit `modern`)
-
-Die Farbschemata sind kompatibel mit [moderncv](https://github.com/xdanaux/moderncv) und steuern die Akzentfarbe des Namens in der Kopfzeile.
-
-| Option | Farbe | RGB |
-|--------|-------|-----|
-| `grey` | Dunkelgrau (Standard) | `0.55, 0.55, 0.55` |
-| `blue` | Hellblau | `0.22, 0.45, 0.70` |
-| `orange` | Orange | `0.95, 0.55, 0.15` |
-| `green` | Grün | `0.35, 0.70, 0.30` |
-| `red` | Rot | `0.95, 0.20, 0.20` |
-| `purple` | Lila | `0.50, 0.33, 0.80` |
-| `burgundy` | Burgund | `0.596, 0, 0` |
-| `black` | Schwarz | `0, 0, 0` |
-
-**Beispiel:**
+Beispiel:
 
 ```latex
 \documentclass[modern, blue, footercenter]{onlinebrief24}
 ```
 
-## Befehle
+## Wichtige Befehle
 
-- `\setrecipient{...}`: Setzt die vollständige Empfängeradresse.
-- `\setreturnaddress{...}`: Setzt die **einzeilige** Absenderadresse für das Sichtfenster (Zone 1). Diese ist für die postalische Verarbeitung zwingend erforderlich. Die Adresse wird automatisch unterstrichen.
-- `\setsubject{...}`: Setzt den Betreff des Briefes (fett, über der Anrede).
-- `\setdate{...}`: Setzt das Datum (Standard: `\today`).
-- `\setplace{...}`: Setzt den Ort vor dem Datum.
+### Pflichtangaben
 
-### Befehle für die `modern`-Option 
+- `\setreturnaddress{...}`: einzeilige Rücksendeadresse für Zone 1 im Fensterbereich; Pflichtfeld
+- `\setrecipient{...}`: vollständiger Empfängerblock; Pflichtfeld
 
-Die modern-Option ist an die [LaTeX-Briefvorlage von Jan Mattfeld](https://github.com/janmattfeld/latex-briefvorlage) angelehnt.
+Alternativ kann der Empfänger auch an `\begin{letter}{...}` übergeben werden. Wenn `\setrecipient` bereits gesetzt ist, wird das Argument von `letter` ignoriert.
 
-Diese Befehle haben nur eine Auswirkung, wenn die `modern`-Option aktiv ist.
+### Optionale Grundangaben
 
-- `\setfromfirstname{...}`: Vorname des Absenders für die Kopfzeile.
-- `\setfromlastname{...}`: Nachname des Absenders für die Kopfzeile.
-- `\setfromaddress{...}`: Adresse für die Kopfzeile (z.B., "Blumenweg. 1 | 54321 Blumenstadt").
-- `\setfromlandline{...}`: (Optional) Festnetznummer für die Fußzeile.
-- `\setfromphone{...}`: (Optional) Mobilfunknummer für die Fußzeile.
-- `\setfromemail{...}`: (Optional) E-Mail-Adresse für die Fußzeile.
-- `\setfromweb{...}`: (Optional) Webseite für die Fußzeile.
-- `\setfromlinkedin{...}`: (Optional) LinkedIn-Profilname für die Fußzeile.
+- `\setsubject{...}`: Betreff oberhalb der Anrede
+- `\setdate{...}`: Datum; Standard ist `\today`
+- `\setplace{...}`: Ort vor dem Datum
+
+### Zusatzangaben für `modern`
+
+- `\setfromfirstname{...}`
+- `\setfromlastname{...}`
+- `\setfromaddress{...}`
+- `\setfromlandline{...}`
+- `\setfromphone{...}`
+- `\setfromemail{...}`
+- `\setfromweb{...}`
+- `\setfromlinkedin{...}`
+- `\setfromname{...}`: Legacy-Fallback, wenn keine getrennten Vor-/Nachnamen gesetzt werden
+
+## Kalibrierung
+
+Die Klasse ist bewusst gegen die reale Onlinebrief24-Vorschau kalibriert, nicht nur gegen die nominellen Maßangaben der offiziellen Grafik. Praktisch bedeutet das:
+
+- Die offizielle Maßgrafik nennt den Fensterstart nominell bei `49 mm`
+- Die reale Vorschau liegt messbar etwa `1 mm` tiefer
+- Die Klasse verwendet deshalb effektiv `50-52 / 52-72 / 72-92 mm`, weil das in der Vorschau besser mit dem automatisch eingedruckten Sendungsbereich zusammenpasst
+
+## Bekannte Grenzen
+
+- Der aktuell verifizierte Standard-Workflow ist `xelatex`
+- `lualatex` ist prinzipiell vorgesehen, wird in diesem Repository derzeit aber nicht als Standardpfad getestet
+- Die Klasse ist auf deutschsprachige Briefe zugeschnitten und lädt `babel` mit `ngerman`
+- Für einen robusten Einsatz ist aktuell ein Brief pro Dokument der gehärtete Use Case
+- Der `guides`-Modus ist ein Prüfwerkzeug und nicht für finale Produktions-PDFs gedacht
+
+## Herkunft
+
+- Basis: KOMA-Script `scrlttr2`
+- Der moderne Stil ist an die LaTeX-Briefvorlage von Jan Mattfeld angelehnt
+- Die Farbschemata orientieren sich an `moderncv`
+
+## Lizenz
+
+Das Projekt steht unter der LaTeX Project Public License (LPPL) 1.3c. Details stehen in [LICENSE](LICENSE).
