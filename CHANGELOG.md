@@ -15,7 +15,7 @@ and this project uses date-based versioning aligned with CTAN releases (YYYY-MM-
 ### Changed
 - Date-based versioning replaces semver in `\ProvidesClass`
 - All `\DeclareOption` moved before `\ProcessOptions` for correct option handling
-- CI workflow renamed to `LaTeX Build Verification`
+- CI workflow renamed to `Build LaTeX Verification`
 
 ## [2026-03-10]
 
@@ -33,7 +33,7 @@ Initial CTAN release.
 - Multipage layout hardening: overlays confined to page 1 only
 - Regression test: validates page 2 has no leaked overlay content
 - Verified LuaLaTeX support with reproducible font caching
-- CI workflow `LaTeX Build Verification`: dual-engine matrix (XeLaTeX + LuaLaTeX)
+- CI workflow `Build LaTeX Verification`: dual-engine matrix (XeLaTeX + LuaLaTeX)
 - CI workflow `Build CTAN Package`: automated artifact build with SHA256 checksum
 - CTAN submission workflow documented in `ctan/RELEASE.md`
 - English CTAN documentation (`ctan/onlinebrief24-doc.tex`)
