@@ -19,7 +19,7 @@ Die Klasse basiert auf `scrlttr2` aus KOMA-Script und ist auf einen robusten, re
 - Option `footercenter` für zentrierte Fußzeile im `modern`-Stil
 - Arial als bevorzugte Schrift mit Fallback auf `TeX Gyre Heros`
 - Unterstützt XeLaTeX, LuaLaTeX und pdfLaTeX
-- Konfigurierbare Dokumentsprache (`lang=ngerman|english|french`)
+- Konfigurierbare Dokumentsprache (`lang=<babel-Sprachname>`, Standard: `ngerman`)
 
 ## Schnellstart
 
@@ -117,9 +117,7 @@ xelatex example-basic.tex
 | `modern` | Moderner Stil mit Kopfzeile, Fußzeile und Akzentfarbe |
 | `guides` | Technischer Overlay-Modus zur Layoutprüfung; blendet Hilfslinien und Markierungen ein und ist daher nur zur Prüfung gedacht |
 | `footercenter` | Zentriert die Fußzeile im `modern`-Stil |
-| `lang=ngerman` | Dokumentsprache (Standard); lädt `babel` mit `ngerman` |
-| `lang=english` | Englische Dokumentsprache |
-| `lang=french` | Französische Dokumentsprache |
+| `lang=<sprache>` | Dokumentsprache als babel-Name (Standard: `ngerman`); z.B. `english`, `french`, `spanish`, `italian`, `dutch`, `polish` etc. |
 
 ### Farbschemata für `modern`
 
@@ -189,7 +187,7 @@ Aktueller Stand:
 - Mehrseitige Briefe sind abgesichert: Fensterbereich, Falzmarken und optionaler Modern-Header/Footer erscheinen nur auf Seite 1
 - Die Klasse prüft beim Start des Briefs automatisch, ob Rücksendeadresse und Empfänger für das Adressfenster korrekt gesetzt sind
 - CI-Workflow und lokale Verifikation sind im Repository enthalten
-- Konfigurierbare Dokumentsprache über `lang=`-Option (Standard: `ngerman`)
+- Konfigurierbare Dokumentsprache über `lang=`-Option (jeder babel-Sprachname, Standard: `ngerman`)
 
 Einschränkungen:
 

@@ -3,11 +3,10 @@
 
 % --- Option declarations (all before ProcessOptions) ---
 
-% Language (default: ngerman)
-\def\@obb@lang{ngerman}
-\DeclareOption{lang=ngerman}{\def\@obb@lang{ngerman}}
-\DeclareOption{lang=english}{\def\@obb@lang{english}}
-\DeclareOption{lang=french}{\def\@obb@lang{french}}
+% Key-value option: lang (accepts any babel language name)
+\RequirePackage{kvoptions}
+\SetupKeyvalOptions{family=obb,prefix=obb@}
+\DeclareStringOption[ngerman]{lang}
 
 % Style switches
 \newif\if@guidesmode
@@ -30,13 +29,14 @@
 \DeclareOption{black}{\def\@obb@colorscheme{black}}
 
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrlttr2}}
+\ProcessKeyvalOptions{obb}
 \ProcessOptions\relax
 
 % --- Base: KOMA-Script letter class ---
 \LoadClass[fontsize=11pt, parskip=half]{scrlttr2}
 
 % --- Packages ---
-\expandafter\RequirePackage\expandafter[\@obb@lang]{babel}
+\expandafter\RequirePackage\expandafter[\obb@lang]{babel}
 \RequirePackage{geometry}
 \RequirePackage{iftex}
 \RequirePackage{eso-pic}

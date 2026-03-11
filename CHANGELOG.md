@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CHANGELOG.md with full project history
 - Semantic versioning (`v1.0.0` in `\ProvidesClass`)
 - pdfLaTeX support via engine-aware font loading (`fontenc`/`tgheros` fallback)
-- Configurable document language (`lang=ngerman|english|french` class option)
+- Configurable document language (`lang=<babel name>` class option, default: `ngerman`)
 - Version bump script (`scripts/bump-version.sh`)
 - pdfLaTeX added as third engine in CI verification matrix
 
