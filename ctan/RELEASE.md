@@ -31,9 +31,11 @@ Typical release edits:
 1. Make the intended code and documentation changes on a feature branch.
 2. If the package behavior changes, update the examples, verification logic, or
    CTAN docs as needed.
-3. Update the release version/date in `onlinebrief24.cls`.
-4. If appropriate, update the visible date in `ctan/onlinebrief24-doc.tex`.
-5. Update the announcement in `ctan/onlinebrief24.pkg` if noteworthy.
+3. Bump the version date (updates both `onlinebrief24.cls` and `ctan/onlinebrief24-doc.tex`):
+   ```bash
+   sh scripts/bump-version.sh YYYY-MM-DD
+   ```
+4. Update the announcement in `ctan/onlinebrief24.pkg` if noteworthy.
 6. Merge the finished work into `main`.
 7. Wait for both CI workflows on `main` to pass:
    - `Build LaTeX Verification`
