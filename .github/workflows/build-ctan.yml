@@ -1,0 +1,49 @@
+# Rebuild the exact CTAN upload payload in CI so future package updates can be
+# reproduced without relying on a developer's local TeX installation.
+name: Build CTAN Package
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  ctan-package:
+    runs-on: ubuntu-latest
+
+    steps:
+      # The package build is repository-local. CI only needs the checked-out
+      # sources plus a TeX toolchain capable of building the English package
+      # documentation.
+      - uses: actions/checkout@v4
+
+      - name: Install TeX tools for the CTAN package build
+        run: |
+          # The CTAN payload build only compiles the English documentation PDF
+          # and then assembles the release ZIP, so a pdflatex-capable toolchain
+          # plus latexmk is sufficient here.
+          sudo apt-get update
+          sudo apt-get install -y \
+            latexmk \
+            texlive-lang-german \
+            texlive-latex-extra \
+            zip
+
+      - name: Build CTAN payload
+        run: sh scripts/build-ctan.sh
+
+      - name: Record archive checksum
+        run: sha256sum dist/ctan/onlinebrief24.zip > dist/ctan/onlinebrief24.zip.sha256
+
+      - name: Show packaged files
+        run: unzip -l dist/ctan/onlinebrief24.zip
+
+      - name: Upload CTAN artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: onlinebrief24-ctan-package
+          path: |
+            dist/ctan/onlinebrief24.zip
+            dist/ctan/onlinebrief24.zip.sha256
+          if-no-files-found: error
+          retention-days: 30

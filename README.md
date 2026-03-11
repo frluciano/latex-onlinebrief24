@@ -2,7 +2,11 @@
 
 LaTeX-Klasse für DIN-5008-Briefe zur Nutzung mit [onlinebrief24.de](https://onlinebrief24.de).
 
-> Dieses Repository ist ein Community-Projekt und steht in keiner offiziellen Verbindung zur letterei.de Postdienste GmbH. "Onlinebrief24" ist ein eingetragenes Markenzeichen der jeweiligen Rechteinhaber. Die Nutzung erfolgt auf eigenes Risiko; es gibt keine Garantie, dass ein erzeugtes PDF vom Dienstleister in jedem Fall akzeptiert oder unverändert verarbeitet wird.
+[onlinebrief24.de](https://onlinebrief24.de) ist ein hybrider Briefversanddienst
+für Geschäftskunden: Dokumente werden digital übermittelt, und der Dienst
+übernimmt Druck, Kuvertierung, Frankierung und die postalische Zustellung.
+
+> Dieses Repository ist ein Community-Projekt und steht in keiner offiziellen Verbindung zur letterei.de Postdienste GmbH. "Onlinebrief24" ist ein eingetragenes Markenzeichen der jeweiligen Rechteinhaber. Die Rechteinhaber haben dem Projektmaintainer formal erlaubt, die Marke im Zusammenhang mit dieser LaTeX-Klasse zu verwenden. Die Nutzung erfolgt auf eigenes Risiko; es gibt keine Garantie, dass ein erzeugtes PDF vom Dienstleister in jedem Fall akzeptiert oder unverändert verarbeitet wird.
 
 Die Klasse basiert auf `scrlttr2` aus KOMA-Script und ist auf einen robusten, reproduzierbaren Workflow für deutsche Geschäftsbriefe ausgelegt.
 
