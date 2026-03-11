@@ -201,7 +201,7 @@ Die Klasse ist bewusst gegen die reale Onlinebrief24-Vorschau kalibriert, nicht 
 ## Herkunft
 
 - Basis: KOMA-Script `scrlttr2`
-- Der moderne Stil ist an die LaTeX-Briefvorlage von Jan Mattfeld angelehnt
+- Der moderne Stil ist an die [LaTeX-Briefvorlage von Jan Mattfeld](https://github.com/janmattfeld/latex-briefvorlage/tree/master) angelehnt
 - Die Farbschemata orientieren sich an `moderncv`
 
 ## Lizenz
