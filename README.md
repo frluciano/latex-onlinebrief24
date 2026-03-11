@@ -106,23 +106,6 @@ cd examples
 xelatex example-basic.tex
 ```
 
-## Verifikation
-
-Die lokale Standardprüfung baut alle Beispiele und prüft zusätzlich den Mehrseiten-Fall:
-
-- kein Wiederholen der Rücksendezeile auf Seite 2
-- kein Wiederholen des Empfängerblocks auf Seite 2
-- normaler Textbeginn auf Seite 2 statt geerbtem Fenster-Offset
-
-```bash
-sh scripts/verify.sh                              # XeLaTeX (Standard)
-OB24_TEX_ENGINE=lualatex sh scripts/verify.sh     # LuaLaTeX
-OB24_TEX_ENGINE=pdflatex sh scripts/verify.sh     # pdfLaTeX
-```
-
-Das Skript verwaltet für `lualatex` bei Bedarf automatisch einen repo-lokalen TeX-Cache, damit `luaotfload` auch in restriktiveren Umgebungen reproduzierbar funktioniert.
-
-Dafür werden lokal insbesondere `latexmk`, `xelatex`, `lualatex` und `pdftotext` benötigt. Für GitHub Actions ist ein Workflow unter `.github/workflows/verify.yml` enthalten, der alle drei Engines testet.
 
 ## Optionen
 
