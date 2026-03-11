@@ -36,7 +36,7 @@ Typical release edits:
 5. Update the announcement in `ctan/onlinebrief24.pkg` if noteworthy.
 6. Merge the finished work into `main`.
 7. Wait for both CI workflows on `main` to pass:
-   - `LaTeX Build Verification`
+   - `Build LaTeX Verification`
    - `Build CTAN Package`
 8. Push an annotated tag matching the version date:
    ```bash
@@ -59,7 +59,7 @@ Typical release edits:
 
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
-| `LaTeX Build Verification` | push, PR | Build and verify examples across all engines |
+| `Build LaTeX Verification` | push, PR | Build and verify examples across all engines |
 | `Build CTAN Package` | push, PR | Build CTAN ZIP artifact for validation |
 | `Release CTAN` | date tag push | Build, upload to CTAN, create GitHub Release |
 
