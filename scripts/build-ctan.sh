@@ -2,6 +2,8 @@
 set -eu
 
 repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+# Extract the version date (YYYY/MM/DD) from \ProvidesClass and convert to YYYY-MM-DD.
+version=$(sed -n 's/.*\\ProvidesClass{onlinebrief24}\[\([0-9/]*\).*/\1/p' "$repo_root/onlinebrief24.cls" | tr '/' '-')
 ctan_src_dir="$repo_root/ctan"
 build_root="$repo_root/dist"
 dist_root="$repo_root/dist/ctan"
@@ -29,9 +31,9 @@ cp "$repo_root/examples/example-basic.tex" "$package_root/examples/"
 cp "$repo_root/examples/example-modern.tex" "$package_root/examples/"
 
 # Refresh the unpacked release directory and the upload archive.
-rm -rf "$dist_root/onlinebrief24" "$dist_root/onlinebrief24.zip"
+rm -rf "$dist_root/onlinebrief24" "$dist_root/onlinebrief24-"*.zip
 mv "$package_root" "$dist_root/onlinebrief24"
-(cd "$dist_root" && zip -qr "onlinebrief24.zip" "onlinebrief24")
+(cd "$dist_root" && zip -qr "onlinebrief24-${version}.zip" "onlinebrief24")
 
 printf '%s\n' "CTAN package directory: $dist_root/onlinebrief24"
-printf '%s\n' "CTAN upload archive: $dist_root/onlinebrief24.zip"
+printf '%s\n' "CTAN upload archive: $dist_root/onlinebrief24-${version}.zip"

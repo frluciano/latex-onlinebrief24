@@ -33,17 +33,19 @@ jobs:
         run: sh scripts/build-ctan.sh
 
       - name: Record archive checksum
-        run: sha256sum dist/ctan/onlinebrief24.zip > dist/ctan/onlinebrief24.zip.sha256
+        run: |
+          archive=$(ls dist/ctan/onlinebrief24-*.zip)
+          sha256sum "$archive" > "$archive.sha256"
 
       - name: Show packaged files
-        run: unzip -l dist/ctan/onlinebrief24.zip
+        run: unzip -l dist/ctan/onlinebrief24-*.zip
 
       - name: Upload CTAN artifact
         uses: actions/upload-artifact@v6
         with:
           name: onlinebrief24-ctan-package
           path: |
-            dist/ctan/onlinebrief24.zip
-            dist/ctan/onlinebrief24.zip.sha256
+            dist/ctan/onlinebrief24-*.zip
+            dist/ctan/onlinebrief24-*.zip.sha256
           if-no-files-found: error
           retention-days: 30
