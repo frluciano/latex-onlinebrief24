@@ -10,6 +10,9 @@ für Geschäftskunden: Dokumente werden digital übermittelt, und der Dienst
 
 Die Klasse basiert auf `scrlttr2` aus KOMA-Script und ist auf einen robusten, reproduzierbaren Workflow für deutsche Geschäftsbriefe ausgelegt.
 
+Das Paket ist auch über CTAN verfügbar:
+[ctan.org/pkg/onlinebrief24](https://ctan.org/pkg/onlinebrief24)
+
 ## Funktionsumfang
 
 - DIN-5008-Typ-B-Grundlayout mit für [onlinebrief24.de](https://onlinebrief24.de) kalibriertem Fensterbereich
@@ -23,9 +26,11 @@ Die Klasse basiert auf `scrlttr2` aus KOMA-Script und ist auf einen robusten, re
 
 ## Schnellstart
 
-Für den direkten Einstieg lege `onlinebrief24.cls` in dasselbe Verzeichnis wie deine `.tex`-Datei und nutze `\documentclass{onlinebrief24}`.
+Installiere das Paket bevorzugt über deine TeX-Distribution und nutze danach
+einfach `\documentclass{onlinebrief24}`.
 
-Wenn du die Klasse systemweit verfügbar machen möchtest, siehe unten den Abschnitt `Installation`.
+Wenn du direkt aus dem Repository arbeiten oder eine Entwicklungsversion testen
+möchtest, siehe unten den Abschnitt `Installation`.
 
 Minimales Beispiel:
 
@@ -66,9 +71,19 @@ pdflatex brief.tex
 
 ## Installation
 
-### Lokal im TeX-Baum
+### Über CTAN
 
-Wenn du die Klasse global verfügbar machen möchtest:
+Installiere das Paket `onlinebrief24` bevorzugt über den Paketmanager deiner
+TeX-Distribution.
+
+Die Paketseite ist:
+
+- [ctan.org/pkg/onlinebrief24](https://ctan.org/pkg/onlinebrief24)
+
+### Lokal im TeX-Baum oder aus dem Repository
+
+Wenn du den aktuellen Repository-Stand unabhängig von CTAN global verfügbar
+machen möchtest:
 
 ```bash
 kpsewhich -var-value TEXMFHOME
