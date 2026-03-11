@@ -18,6 +18,7 @@ jobs:
         engine:
           - xelatex
           - lualatex
+          - pdflatex
 
     steps:
       # The workflow is fully repository-local; no external assets are needed.
