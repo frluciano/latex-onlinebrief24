@@ -38,7 +38,7 @@ Typical release edits:
 4. If appropriate, update the visible date in `ctan/onlinebrief24-doc.tex`.
 5. Merge the finished work into `main`.
 6. Wait for both GitHub Actions workflows on `main` to complete successfully:
-   - `Verify`
+   - `LaTeX Build Verification`
    - `Build CTAN Package`
 7. Open the successful `Build CTAN Package` workflow run.
 8. Download the artifact `onlinebrief24-ctan-package`.

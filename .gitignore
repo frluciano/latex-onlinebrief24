@@ -328,3 +328,15 @@ TSWLatexianTemp*
 #*Notes.bib
 
 .DS_Store
+CLAUDE.md
+.gitignore
+agent-rules/Code-Style.md
+agent-rules/Dependencies.md
+agent-rules/Development-Workflow.md
+agent-rules/Error-Handling.md
+agent-rules/Git.md
+agent-rules/Performance.md
+agent-rules/Security.md
+agent-rules/Session-Management.md
+agent-rules/Testing.md
+LESSONS-LEARNED.md

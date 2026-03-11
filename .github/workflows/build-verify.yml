@@ -1,6 +1,6 @@
 # Run the same verification suite for every push and pull request so layout
 # regressions are caught before they are merged or released.
-name: Verify
+name: LaTeX Build Verification
 
 on:
   push:
@@ -39,7 +39,7 @@ jobs:
             texlive-pictures \
             texlive-xetex
 
-      - name: Verify examples (${{ matrix.engine }})
+      - name: Build & verify examples (${{ matrix.engine }})
         # The verification script selects the engine via OB24_TEX_ENGINE and
         # handles the LuaLaTeX cache workaround automatically when needed.
         run: OB24_TEX_ENGINE=${{ matrix.engine }} sh scripts/verify.sh

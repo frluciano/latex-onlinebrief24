@@ -19,14 +19,13 @@ the mark in connection with this LaTeX class.
 - `modern` style with header, footer, and configurable accent color
 - `guides` overlay mode for technical layout inspection
 - `footercenter` option for centered modern footers
-- verified XeLaTeX and LuaLaTeX workflows
+- verified pdfLaTeX, XeLaTeX, and LuaLaTeX workflows
 
 ## Requirements
 
-- XeLaTeX or LuaLaTeX
-- `pdflatex` is not supported because the class uses `fontspec`
-- Arial is preferred if installed; otherwise the class falls back to
-  `TeX Gyre Heros`
+- pdfLaTeX, XeLaTeX, or LuaLaTeX
+- With pdfLaTeX the class uses `fontenc`/`tgheros`; with XeLaTeX/LuaLaTeX
+  it uses `fontspec` (Arial preferred, TeX Gyre Heros as fallback)
 
 ## Installation
 
