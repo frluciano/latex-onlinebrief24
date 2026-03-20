@@ -45,6 +45,8 @@ Typical release edits:
    git tag -a YYYY-MM-DD -m "YYYY-MM-DD — short description"
    git push origin YYYY-MM-DD
    ```
+   Write the tag annotation body in English. The release workflow reuses that
+   text as both the CTAN announcement and the GitHub Release notes.
 9. The `Release CTAN` workflow will automatically:
    - build the CTAN package
    - validate against the CTAN API

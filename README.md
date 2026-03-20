@@ -101,6 +101,7 @@ Die Dateien im Verzeichnis `examples/` sind lauffähige Referenzen für die unte
 - `example-basic.tex`: einfacher Brief ohne Kopf- und Fußzeile
 - `example-guides.tex`: technischer Overlay-Modus
 - `example-basic-guides.tex`: einfacher Brief plus Overlay
+- `example-signature-regression.tex`: Regressionsfall für kurze Grußformel mit expliziter Signatur
 - `example-modern.tex`: moderner Stil mit Kontaktdaten
 - `example-modern-blue.tex`: moderner Stil mit alternativem Farbschema
 - `example-modern-guides.tex`: moderner Stil plus Overlay

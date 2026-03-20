@@ -41,6 +41,7 @@ for example in \
   examples/example-basic.tex \
   examples/example-basic-guides.tex \
   examples/example-guides.tex \
+  examples/example-signature-regression.tex \
   examples/example-modern.tex \
   examples/example-modern-blue.tex \
   examples/example-modern-guides.tex \

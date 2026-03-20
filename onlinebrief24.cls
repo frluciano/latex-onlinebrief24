@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{onlinebrief24}[2026/03/11 Precision Layout Class with Guides]
+\ProvidesClass{onlinebrief24}[2026/03/20 Precision Layout Class with Guides]
 
 % --- Option declarations (all before ProcessOptions) ---
 
@@ -69,6 +69,8 @@
   firstfoot=false,
   foldmarks=false
 }
+\setplength{sigindent}{0pt}
+\let\raggedsignature\raggedright
 
 % --- Page layout ---
 \newcommand{\@obb@openingvskip}{85mm}
