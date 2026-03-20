@@ -6,7 +6,7 @@
 % Key-value option: lang (accepts any babel language name)
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{family=obb,prefix=obb@}
-\DeclareStringOption[ngerman]{lang}
+\DeclareStringOption[german]{lang}
 
 % Style switches
 \newif\if@guidesmode
