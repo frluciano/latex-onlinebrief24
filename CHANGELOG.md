@@ -8,7 +8,7 @@ and this project uses date-based versioning aligned with CTAN releases (YYYY-MM-
 ## [2026-03-20]
 
 ### Added
-- Regression example for `\closing` with explicit `signature` (`examples/example-signature-regression.tex`)
+- Regression example for `\closing` with explicit `signature` (`examples/example-onlinebrief24-signature-regression.tex`)
 
 ### Fixed
 - Left-align `\closing` consistently when a longer `signature` is set via KOMA variables
@@ -17,7 +17,7 @@ and this project uses date-based versioning aligned with CTAN releases (YYYY-MM-
 
 ### Added
 - pdfLaTeX support via engine-aware font loading (`fontenc`/`tgheros` fallback)
-- Configurable document language (`lang=<babel name>` class option, default: `ngerman`)
+- Configurable document language (`lang=<babel name>` class option, default: `german`)
 - pdfLaTeX added as third engine in CI verification matrix
 
 ### Changed

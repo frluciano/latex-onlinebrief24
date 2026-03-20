@@ -38,14 +38,14 @@ esac
 # Rebuild every maintained example document. The `-g` flag forces a fresh build
 # so engine switches do not accidentally reuse stale artifacts from earlier runs.
 for example in \
-  examples/example-basic.tex \
-  examples/example-basic-guides.tex \
-  examples/example-guides.tex \
-  examples/example-signature-regression.tex \
-  examples/example-modern.tex \
-  examples/example-modern-blue.tex \
-  examples/example-modern-guides.tex \
-  examples/example-multipage-regression.tex
+  examples/example-onlinebrief24-basic.tex \
+  examples/example-onlinebrief24-basic-guides.tex \
+  examples/example-onlinebrief24-guides.tex \
+  examples/example-onlinebrief24-signature-regression.tex \
+  examples/example-onlinebrief24-modern.tex \
+  examples/example-onlinebrief24-modern-blue.tex \
+  examples/example-onlinebrief24-modern-guides.tex \
+  examples/example-onlinebrief24-multipage-regression.tex
 do
   latexmk "$latexmk_engine_flag" -g -interaction=nonstopmode -halt-on-error -cd "$example"
 done
@@ -53,8 +53,8 @@ done
 # Extract plain text and positioned text from page 2 of the multipage regression
 # PDF. The plain-text pass checks for leaked address-window content, while the
 # bbox pass gives us the first text Y position on the second page.
-page_two_text=$(pdftotext -f 2 -l 2 examples/example-multipage-regression.pdf -)
-page_two_bbox=$(pdftotext -f 2 -l 2 -bbox examples/example-multipage-regression.pdf -)
+page_two_text=$(pdftotext -f 2 -l 2 examples/example-onlinebrief24-multipage-regression.pdf -)
+page_two_bbox=$(pdftotext -f 2 -l 2 -bbox examples/example-onlinebrief24-multipage-regression.pdf -)
 page_two_first_ymin=$(printf '%s\n' "$page_two_bbox" | sed -n 's/.*yMin="\([0-9.]*\)".*/\1/p' | head -n 1)
 
 # The return address must only appear in the first-page sender line.

@@ -45,14 +45,22 @@ limitations.
 - `onlinebrief24.cls`: class file
 - `onlinebrief24-doc.tex`: documentation source
 - `onlinebrief24-doc.pdf`: compiled documentation
-- `examples/example-basic.tex`: plain example letter
-- `examples/example-modern.tex`: modern example letter
+- `examples/example-onlinebrief24-basic.tex`: plain example letter
+- `examples/example-onlinebrief24-basic.pdf`: compiled plain example
+- `examples/example-onlinebrief24-modern.tex`: modern example letter
+- `examples/example-onlinebrief24-modern.pdf`: compiled modern example
 - `LICENSE`: LPPL 1.3c license text
 
 ## Project URLs
 
 - Repository: <https://github.com/frluciano/latex-onlinebrief24>
 - Homepage / target service: <https://onlinebrief24.de>
+
+## Maintainer
+
+Francesco Luciano
+Repository: <https://github.com/frluciano/latex-onlinebrief24>
+Bug reports: <https://github.com/frluciano/latex-onlinebrief24/issues>
 
 ## License
 

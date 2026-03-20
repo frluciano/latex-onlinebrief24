@@ -22,7 +22,7 @@ Das Paket ist auch über CTAN verfügbar:
 - Option `footercenter` für zentrierte Fußzeile im `modern`-Stil
 - Arial als bevorzugte Schrift mit Fallback auf `TeX Gyre Heros`
 - Unterstützt XeLaTeX, LuaLaTeX und pdfLaTeX
-- Konfigurierbare Dokumentsprache (`lang=<babel-Sprachname>`, Standard: `ngerman`)
+- Konfigurierbare Dokumentsprache (`lang=<babel-Sprachname>`, Standard: `german`)
 
 ## Schnellstart
 
@@ -98,20 +98,20 @@ Danach kannst du `\documentclass{onlinebrief24}` aus beliebigen Projekten verwen
 
 Die Dateien im Verzeichnis `examples/` sind lauffähige Referenzen für die unterstützten Varianten:
 
-- `example-basic.tex`: einfacher Brief ohne Kopf- und Fußzeile
-- `example-guides.tex`: technischer Overlay-Modus
-- `example-basic-guides.tex`: einfacher Brief plus Overlay
-- `example-signature-regression.tex`: Regressionsfall für kurze Grußformel mit expliziter Signatur
-- `example-modern.tex`: moderner Stil mit Kontaktdaten
-- `example-modern-blue.tex`: moderner Stil mit alternativem Farbschema
-- `example-modern-guides.tex`: moderner Stil plus Overlay
-- `example-multipage-regression.tex`: Mehrseiten-Regressionsfall
+- `example-onlinebrief24-basic.tex`: einfacher Brief ohne Kopf- und Fußzeile
+- `example-onlinebrief24-guides.tex`: technischer Overlay-Modus
+- `example-onlinebrief24-basic-guides.tex`: einfacher Brief plus Overlay
+- `example-onlinebrief24-signature-regression.tex`: Regressionsfall für kurze Grußformel mit expliziter Signatur
+- `example-onlinebrief24-modern.tex`: moderner Stil mit Kontaktdaten
+- `example-onlinebrief24-modern-blue.tex`: moderner Stil mit alternativem Farbschema
+- `example-onlinebrief24-modern-guides.tex`: moderner Stil plus Overlay
+- `example-onlinebrief24-multipage-regression.tex`: Mehrseiten-Regressionsfall
 
 Visuelle Vorschau der beiden Varianten:
 
 | Basic | Modern Blue |
 | --- | --- |
-| ![Preview of the basic letter style](docs/assets/example-basic.png) | ![Preview of the modern blue letter style](docs/assets/example-modern-blue.png) |
+| ![Preview of the basic letter style](docs/assets/example-onlinebrief24-basic.png) | ![Preview of the modern blue letter style](docs/assets/example-onlinebrief24-modern-blue.png) |
 
 Hinweis: Die Beispiel-Dateien referenzieren die Klasse absichtlich relativ über `../onlinebrief24`, damit sie direkt aus dem Repository heraus gebaut werden können.
 
@@ -119,7 +119,7 @@ Beispiel-Build:
 
 ```bash
 cd examples
-xelatex example-basic.tex
+xelatex example-onlinebrief24-basic.tex
 ```
 
 
@@ -133,7 +133,7 @@ xelatex example-basic.tex
 | `modern` | Moderner Stil mit Kopfzeile, Fußzeile und Akzentfarbe |
 | `guides` | Technischer Overlay-Modus zur Layoutprüfung; blendet Hilfslinien und Markierungen ein und ist daher nur zur Prüfung gedacht |
 | `footercenter` | Zentriert die Fußzeile im `modern`-Stil |
-| `lang=<sprache>` | Dokumentsprache als babel-Name (Standard: `ngerman`); z.B. `english`, `french`, `spanish`, `italian`, `dutch`, `polish` etc. |
+| `lang=<sprache>` | Dokumentsprache als babel-Name (Standard: `german`); z.B. `english`, `french`, `spanish`, `italian`, `dutch`, `polish` etc. |
 
 ### Farbschemata für `modern`
 
@@ -203,7 +203,7 @@ Aktueller Stand:
 - Mehrseitige Briefe sind abgesichert: Fensterbereich, Falzmarken und optionaler Modern-Header/Footer erscheinen nur auf Seite 1
 - Die Klasse prüft beim Start des Briefs automatisch, ob Rücksendeadresse und Empfänger für das Adressfenster korrekt gesetzt sind
 - CI-Workflow und lokale Verifikation sind im Repository enthalten
-- Konfigurierbare Dokumentsprache über `lang=`-Option (jeder babel-Sprachname, Standard: `ngerman`)
+- Konfigurierbare Dokumentsprache über `lang=`-Option (jeder babel-Sprachname, Standard: `german`)
 
 Einschränkungen:
 
