@@ -62,13 +62,18 @@ jobs:
         run: |
           version="${{ steps.version.outputs.version }}"
           archive=$(ls dist/ctan/onlinebrief24-*.zip)
-          announcement=$(cat /tmp/announcement.txt)
           sed \
             -e "s|\${VERSION}|${version}|g" \
             -e "s|\${CTAN_EMAIL}|${{ secrets.CTAN_EMAIL }}|g" \
             -e "s|\${CTAN_ZIP}|${archive}|g" \
-            -e "s|\${ANNOUNCEMENT}|${announcement}|g" \
             ctan/onlinebrief24.pkg > /tmp/onlinebrief24.pkg
+          perl -0pi -e '
+            open my $fh, "<", "/tmp/announcement.txt" or die $!;
+            local $/;
+            my $announcement = <$fh>;
+            chomp $announcement;
+            s/\$\{ANNOUNCEMENT\}/$announcement/s;
+          ' /tmp/onlinebrief24.pkg
 
       - name: Validate CTAN package
         run: ctan-o-mat --validate /tmp/onlinebrief24.pkg
