@@ -5,7 +5,7 @@ All notable changes to `onlinebrief24` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project uses date-based versioning aligned with CTAN releases (YYYY-MM-DD).
 
-## [Unreleased]
+## [2026-03-21]
 
 ### Added
 - `\encl{...}` documented in README.md and CTAN documentation as the standard

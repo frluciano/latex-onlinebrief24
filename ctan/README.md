@@ -26,6 +26,8 @@ the mark in connection with this LaTeX class.
 - pdfLaTeX, XeLaTeX, or LuaLaTeX
 - With pdfLaTeX the class uses `fontenc`/`tgheros`; with XeLaTeX/LuaLaTeX
   it uses `fontspec` (Arial preferred, TeX Gyre Heros as fallback)
+- The `modern` style additionally requires `fontawesome5` (for footer icons)
+  and `sourcesanspro`; both are included in `texlive-fonts-extra`
 
 ## Installation
 
