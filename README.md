@@ -6,7 +6,7 @@ LaTeX-Klasse für DIN-5008-Briefe zur Nutzung mit [onlinebrief24.de](https://onl
 für Geschäftskunden: Dokumente werden digital übermittelt, und der Dienst
 übernimmt Druck, Kuvertierung, Frankierung und die postalische Zustellung.
 
-> Dieses Repository ist ein Community-Projekt und steht in keiner offiziellen Verbindung zur letterei.de Postdienste GmbH. "Onlinebrief24" ist ein eingetragenes Markenzeichen der jeweiligen Rechteinhaber. Die Rechteinhaber haben dem Projektmaintainer formal erlaubt, die Marke im Zusammenhang mit dieser LaTeX-Klasse zu verwenden. Die Nutzung erfolgt auf eigenes Risiko; es gibt keine Garantie, dass ein erzeugtes PDF vom Dienstleister in jedem Fall akzeptiert oder unverändert verarbeitet wird.
+> Dieses Repository ist ein Community-Projekt und steht in keiner offiziellen Verbindung zur letterei.de Postdienste GmbH. "onlinebrief24.de" ist ein eingetragenes Markenzeichen der jeweiligen Rechteinhaber. Die Rechteinhaber haben dem Projektmaintainer formal erlaubt, die Marke im Zusammenhang mit dieser LaTeX-Klasse zu verwenden. Die Nutzung erfolgt auf eigenes Risiko; es gibt keine Garantie, dass ein erzeugtes PDF vom Dienstleister in jedem Fall akzeptiert oder unverändert verarbeitet wird.
 
 Die Klasse basiert auf `scrlttr2` aus KOMA-Script und ist auf einen robusten, reproduzierbaren Workflow für deutsche Geschäftsbriefe ausgelegt.
 
@@ -184,7 +184,7 @@ Alternativ kann der Empfänger auch an `\begin{letter}{...}` übergeben werden. 
 
 ## Kalibrierung
 
-Die Klasse ist bewusst gegen die reale Onlinebrief24-Applikation-Vorschau kalibriert, nicht nur gegen die nominellen Maßangaben der offiziellen Grafik. Praktisch bedeutet das:
+Die Klasse ist bewusst gegen die reale onlinebrief24.de-Applikation-Vorschau kalibriert, nicht nur gegen die nominellen Maßangaben der offiziellen Grafik. Praktisch bedeutet das:
 
 - Die offizielle Maßgrafik nennt den Fensterstart nominell bei `49 mm`
 - Die reale Vorschau liegt messbar etwa `1 mm` tiefer

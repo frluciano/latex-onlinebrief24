@@ -26,6 +26,8 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
 - CTAN-README um Maintainer-Namen und Kontakt-URLs erweitert
 - Footer im modernen Stil naeher an den unteren Seitenrand gesetzt; die
   README-Vorschau fuer `modern-blue` wurde entsprechend aktualisiert
+- Markenname des Zieldienstes in README, CTAN-Dokumentation und
+  Release-Metadaten konsistent als `onlinebrief24.de` geschrieben
 
 ### Intern
 - `verify.sh` prueft Signatur-Regression und moderne Beispiel-PDFs jetzt

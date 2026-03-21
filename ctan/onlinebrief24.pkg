@@ -15,7 +15,7 @@
 \update{true}
 \topic{letter}
 \topic{german}
-\summary{LaTeX class for DIN 5008 type-B business letters calibrated for use with onlinebrief24.de.}
+\summary{LaTeX class for DIN 5008 type-B business letters calibrated for use with the onlinebrief24.de service.}
 \file{${CTAN_ZIP}}
 \begin{description}
 onlinebrief24 is a LaTeX letter class based on KOMA-Script scrlttr2. It is
@@ -36,7 +36,7 @@ are submitted digitally, and the service handles printing, enveloping,
 franking, and postal delivery.
 
 The trademark holders have formally authorized the maintainer to use the
-Onlinebrief24 mark in connection with this LaTeX class.
+onlinebrief24.de mark in connection with this LaTeX class.
 \end{description}
 \begin{announcement}
 ${ANNOUNCEMENT}
