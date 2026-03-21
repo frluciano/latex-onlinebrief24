@@ -28,6 +28,8 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
 ### Intern
 - `verify.sh` prueft Signatur-Regression und moderne Beispiel-PDFs jetzt
   inhaltlich per `pdftotext`, nicht nur auf erfolgreichen Build
+- Branch-Protection fuer `main` eingerichtet; Aenderungen laufen jetzt ueber
+  Pull Requests mit Pflicht-Checks statt ueber Direkt-Commits
 
 ## [2026-03-20]
 
