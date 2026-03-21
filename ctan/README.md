@@ -1,14 +1,14 @@
 # onlinebrief24
 
 `onlinebrief24` is a LaTeX class for DIN 5008 type-B business
-letters calibrated for use with `onlinebrief24.de`.
+letters calibrated for use with the `onlinebrief24.de` service.
 
 `onlinebrief24.de` is a hybrid mail service for business customers: documents
 are submitted digitally, and the service handles printing, enveloping,
 franking, and postal delivery.
 
 This package is a community project and has no official affiliation with
-letterei.de Postdienste GmbH. "Onlinebrief24" is a trademark of its respective
+letterei.de Postdienste GmbH. "onlinebrief24.de" is a trademark of its respective
 owners. The trademark holders have formally authorized the maintainer to use
 the mark in connection with this LaTeX class.
 
