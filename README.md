@@ -102,10 +102,10 @@ Die Dateien im Verzeichnis `examples/` sind lauffähige Referenzen für die unte
 - `example-onlinebrief24-modern.tex`: moderner Stil mit Kontaktdaten
 - `example-onlinebrief24-modern-blue.tex`: moderner Stil mit alternativem Farbschema
 
-Die folgenden Dateien sind reine Regressionstests für die CI-Verifikation (`verify.sh`) und sind **nicht** im CTAN-Paket enthalten:
+Die reinen Regressionstests für `scripts/verify.sh` liegen bewusst getrennt unter `tests/fixtures/` und sind **nicht** im CTAN-Paket enthalten:
 
-- `example-onlinebrief24-signature-regression.tex`: Regressionsfall für kurze Grußformel mit expliziter Signatur
-- `example-onlinebrief24-multipage-regression.tex`: Mehrseiten-Regressionsfall
+- `signature-regression.tex`: Regressionsfall für kurze Grußformel mit expliziter Signatur
+- `multipage-regression.tex`: Mehrseiten-Regressionsfall
 
 Visuelle Vorschau der beiden Varianten:
 
