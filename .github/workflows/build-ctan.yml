@@ -32,17 +32,43 @@ jobs:
 
       - name: Detect CTAN-package-relevant changes
         id: changes
-        uses: dorny/paths-filter@v3
-        with:
-          filters: |
-            ctan:
-              - '.github/workflows/build-ctan.yml'
-              - '.github/workflows/release-ctan.yml'
-              - 'onlinebrief24.cls'
-              - 'ctan/**'
-              - 'examples/**'
-              - 'scripts/build-ctan.sh'
-              - 'LICENSE'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PUSH_AFTER: ${{ github.sha }}
+        run: |
+          set -eu
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "ctan=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            changed_files=$(gh api \
+              "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files" \
+              --paginate \
+              --jq '.[].filename')
+          else
+            if [ -z "$PUSH_BEFORE" ] || [ "$PUSH_BEFORE" = "0000000000000000000000000000000000000000" ]; then
+              echo "ctan=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            changed_files=$(gh api \
+              "repos/${GITHUB_REPOSITORY}/compare/${PUSH_BEFORE}...${PUSH_AFTER}" \
+              --jq '.files[].filename')
+          fi
+
+          echo "$changed_files"
+
+          if printf '%s\n' "$changed_files" | grep -Eq \
+            '^(\.github/workflows/build-ctan\.yml|\.github/workflows/release-ctan\.yml|onlinebrief24\.cls|ctan/|examples/|scripts/build-ctan\.sh|LICENSE$)'; then
+            echo "ctan=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ctan=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Skip heavy CTAN setup when package inputs are unchanged
         if: steps.changes.outputs.ctan != 'true'
