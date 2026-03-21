@@ -11,6 +11,15 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  # Keep only the newest package build per branch or PR.
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ctan-package:
     runs-on: ubuntu-latest
@@ -21,14 +30,33 @@ jobs:
       # documentation.
       - uses: actions/checkout@v6
 
+      - name: Detect CTAN-package-relevant changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            ctan:
+              - '.github/workflows/build-ctan.yml'
+              - '.github/workflows/release-ctan.yml'
+              - 'onlinebrief24.cls'
+              - 'ctan/**'
+              - 'examples/**'
+              - 'scripts/build-ctan.sh'
+              - 'LICENSE'
+
+      - name: Skip heavy CTAN setup when package inputs are unchanged
+        if: steps.changes.outputs.ctan != 'true'
+        run: echo "No CTAN-package-relevant changes detected; skipping TeX install."
+
       - name: Install TeX tools for the CTAN package build
+        if: steps.changes.outputs.ctan == 'true'
         run: |
           # The CTAN payload build compiles the English documentation plus the
           # packaged `basic` and `modern` example PDFs. The modern example uses
           # `sourcesanspro` and `fontawesome5`, both provided by
           # `texlive-fonts-extra`.
           sudo apt-get update
-          sudo apt-get install -y \
+          sudo apt-get install -y --no-install-recommends \
             latexmk \
             texlive-fonts-extra \
             texlive-lang-german \
@@ -36,17 +64,21 @@ jobs:
             zip
 
       - name: Build CTAN payload
+        if: steps.changes.outputs.ctan == 'true'
         run: sh scripts/build-ctan.sh
 
       - name: Record archive checksum
+        if: steps.changes.outputs.ctan == 'true'
         run: |
           archive=$(ls dist/ctan/onlinebrief24-*.zip)
           sha256sum "$archive" > "$archive.sha256"
 
       - name: Show packaged files
+        if: steps.changes.outputs.ctan == 'true'
         run: unzip -l dist/ctan/onlinebrief24-*.zip
 
       - name: Upload CTAN artifact
+        if: steps.changes.outputs.ctan == 'true'
         uses: actions/upload-artifact@v6
         with:
           name: onlinebrief24-ctan-package

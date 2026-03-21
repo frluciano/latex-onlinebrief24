@@ -10,6 +10,16 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  # When a branch is updated repeatedly, only the newest verification run is
+  # still relevant.
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   latex:
     runs-on: ubuntu-latest
@@ -28,12 +38,29 @@ jobs:
       # The workflow is fully repository-local; no external assets are needed.
       - uses: actions/checkout@v6
 
+      - name: Detect verification-relevant changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            verify:
+              - '.github/workflows/build-verify.yml'
+              - 'onlinebrief24.cls'
+              - 'examples/**'
+              - 'tests/fixtures/**'
+              - 'scripts/verify.sh'
+
+      - name: Skip heavy verification setup when inputs are unchanged
+        if: steps.changes.outputs.verify != 'true'
+        run: echo "No verification-relevant changes detected; skipping TeX install."
+
       - name: Install TeX and PDF tools
+        if: steps.changes.outputs.verify == 'true'
         run: |
           # Install a minimal but sufficient TeX/PDF toolchain for the examples,
           # the font-dependent modern style, and the page-2 regression checks.
           sudo apt-get update
-          sudo apt-get install -y \
+          sudo apt-get install -y --no-install-recommends \
             latexmk \
             poppler-utils \
             texlive-fonts-extra \
@@ -44,6 +71,7 @@ jobs:
             texlive-xetex
 
       - name: Build & verify examples (${{ matrix.engine }})
+        if: steps.changes.outputs.verify == 'true'
         # The verification script selects the engine via OB24_TEX_ENGINE and
         # handles the LuaLaTeX cache workaround automatically when needed.
         run: OB24_TEX_ENGINE=${{ matrix.engine }} sh scripts/verify.sh
