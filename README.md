@@ -211,6 +211,31 @@ Einschränkungen:
 - Für einen robusten Einsatz ist aktuell ein Brief pro Dokument der gehärtete Use Case
 - Bei pdfLaTeX wird TeX Gyre Heros statt Arial verwendet (kein `fontspec`-Zugriff auf Systemfonts)
 
+## Maintainer-Workflow
+
+`main` ist geschützt. Änderungen laufen deshalb standardmäßig über
+Feature-Branch + Pull Request statt über Direkt-Commits.
+
+Empfohlener Ablauf:
+
+1. `main` aktualisieren: `git switch main && git pull --ff-only`
+2. Arbeitsbranch anlegen: `git switch -c fix/kurzbeschreibung`
+3. Änderungen umsetzen und bei Bedarf lokal prüfen:
+   - `sh scripts/verify.sh`
+   - `sh scripts/build-ctan.sh`
+4. Branch pushen und Pull Request öffnen
+5. Vor dem Merge müssen die Pflicht-Checks grün sein:
+   - `ctan-package`
+   - `latex (pdflatex)`
+   - `latex (xelatex)`
+   - `latex (lualatex)`
+6. Offene PR-Kommentare auflösen und erst dann nach `main` mergen
+7. Release-Tag `YYYY-MM-DD` erst auf einen grünen `main`-Stand setzen
+
+Hinweis: Es ist bewusst keine zweite Freigabe verpflichtend, damit der
+Solo-Maintainer-Workflow praktikabel bleibt. Die PR-Pflicht und die grünen
+Checks gelten trotzdem auch für Änderungen des Maintainers.
+
 ## Lizenz
 
 Das Projekt steht unter der LaTeX Project Public License (LPPL) 1.3c. Details stehen in [LICENSE](LICENSE).
