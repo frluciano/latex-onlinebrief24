@@ -187,6 +187,9 @@
 % --- Footer helper macros (defined outside AddToShipoutPictureBG) ---
 \newif\if@obb@firstfooteritem
 \newcommand{\@obb@footersep}{~\textbar~}
+% Normalize fontawesome5 icon metrics to strut height so icons do not
+% shift the footer baseline via oversized ascenders or descenders.
+\newcommand{\@obb@icon}[1]{\raisebox{0pt}[\ht\strutbox][\dp\strutbox]{#1}}
 \newcommand{\@obb@renderheadername}{%
   \ifdefempty{\@obb@fromfirstname}{%
     \ifdefempty{\@obb@fromlastname}{%
@@ -276,23 +279,23 @@
         %
         \ifdefempty{\@obb@fromlandline}{}{%
           \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
-          \faPhone\ \@obb@fromlandline
+          \@obb@icon{\faPhone}\ \@obb@fromlandline
         }%
         \ifdefempty{\@obb@fromphone}{}{%
           \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
-          \faMobile\ \@obb@fromphone
+          \@obb@icon{\faMobile}\ \@obb@fromphone
         }%
         \ifdefempty{\@obb@fromemail}{}{%
           \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
-          \faEnvelope\ \@obb@fromemail
+          \@obb@icon{\faEnvelope}\ \@obb@fromemail
         }%
         \ifdefempty{\@obb@fromweb}{}{%
           \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
-          \faGlobe\ \@obb@fromweb
+          \@obb@icon{\faGlobe}\ \@obb@fromweb
         }%
         \ifdefempty{\@obb@fromlinkedin}{}{%
           \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
-          \faLinkedin\ \@obb@fromlinkedin
+          \@obb@icon{\faLinkedin}\ \@obb@fromlinkedin
         }%
       }%
     }%

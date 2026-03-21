@@ -39,12 +39,9 @@ esac
 # so engine switches do not accidentally reuse stale artifacts from earlier runs.
 for example in \
   examples/example-onlinebrief24-basic.tex \
-  examples/example-onlinebrief24-basic-guides.tex \
-  examples/example-onlinebrief24-guides.tex \
-  examples/example-onlinebrief24-signature-regression.tex \
   examples/example-onlinebrief24-modern.tex \
   examples/example-onlinebrief24-modern-blue.tex \
-  examples/example-onlinebrief24-modern-guides.tex \
+  examples/example-onlinebrief24-signature-regression.tex \
   examples/example-onlinebrief24-multipage-regression.tex
 do
   latexmk "$latexmk_engine_flag" -g -interaction=nonstopmode -halt-on-error -cd "$example"
