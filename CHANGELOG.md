@@ -24,6 +24,8 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
 - Toter `\ifPDFTeX`-Zweig beim Laden der Modern-Stil-Pakete entfernt; beide
   Zweige luden `sourcesanspro` identisch
 - CTAN-README um Maintainer-Namen und Kontakt-URLs erweitert
+- Footer im modernen Stil naeher an den unteren Seitenrand gesetzt; die
+  README-Vorschau fuer `modern-blue` wurde entsprechend aktualisiert
 
 ### Intern
 - `verify.sh` prueft Signatur-Regression und moderne Beispiel-PDFs jetzt

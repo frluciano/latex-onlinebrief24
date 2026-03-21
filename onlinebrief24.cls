@@ -270,8 +270,8 @@
         }%
     }%
 
-    % Footer: contact details
-    \put(25, 15){%
+    % Footer: contact details, kept close to the bottom edge.
+    \put(25, 5){%
       \parbox[b][10mm][b]{\textwidth}{%
         \if@footercenter\centering\else\raggedleft\fi
         \footnotesize\sffamily\color{color2}%
