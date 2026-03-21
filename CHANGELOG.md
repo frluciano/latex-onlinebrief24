@@ -1,86 +1,101 @@
-# Changelog
+# Aenderungsprotokoll
 
-All notable changes to `onlinebrief24` will be documented in this file.
+Alle wesentlichen Aenderungen an `onlinebrief24` werden in dieser Datei dokumentiert.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project uses date-based versioning aligned with CTAN releases (YYYY-MM-DD).
+Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-DD).
 
 ## [2026-03-21]
 
-### Added
-- `\encl{...}` documented in README.md and CTAN documentation as the standard
-  KOMA-Script command for enclosures below the closing
-- Example PDFs (`basic`, `modern`) are now compiled and included in the CTAN
-  package so users can preview the output without building locally
+### Hinzugefuegt
+- `\encl{...}` in README.md und CTAN-Dokumentation als standardmaessiger
+  KOMA-Script-Befehl fuer Anlagen unterhalb der Grussformel dokumentiert
+- Beispiel-PDFs (`basic`, `modern`) werden nun gebaut und ins CTAN-Paket
+  aufgenommen, damit Nutzer die Ausgabe ohne lokalen Build ansehen koennen
 
-### Changed
-- Default babel language changed from `ngerman` to `german` for better
-  compatibility with current babel versions
-- All example files renamed to the `example-onlinebrief24-*` prefix to follow
-  CTAN naming conventions
-- Replaced `marvosym` with `fontawesome5` for modern-style footer icons;
-  `\faPhone`, `\faMobile`, `\faEnvelope`, `\faGlobe`, `\faLinkedin` replace
-  the corresponding `marvosym` symbols
-- Removed dead `\ifPDFTeX` branch in modern-style package loading; both branches
-  loaded `sourcesanspro` identically
-- CTAN README extended with maintainer name and contact URLs
+### Geaendert
+- Standard-Babelsprache von `ngerman` auf `german` umgestellt, fuer bessere
+  Kompatibilitaet mit aktuellen Babel-Versionen
+- Alle Beispiel-Dateien auf das Praefix `example-onlinebrief24-*` umbenannt,
+  passend zu den CTAN-Namenskonventionen
+- `marvosym` fuer Footer-Icons im modernen Stil durch `fontawesome5` ersetzt;
+  `\faPhone`, `\faMobile`, `\faEnvelope`, `\faGlobe`, `\faLinkedin` ersetzen
+  die entsprechenden `marvosym`-Symbole
+- Toter `\ifPDFTeX`-Zweig beim Laden der Modern-Stil-Pakete entfernt; beide
+  Zweige luden `sourcesanspro` identisch
+- CTAN-README um Maintainer-Namen und Kontakt-URLs erweitert
 
-### Internal
-- `verify.sh` now performs content checks on the signature regression and modern
-  example PDFs via `pdftotext`, not just compilation success
+### Intern
+- `verify.sh` prueft Signatur-Regression und moderne Beispiel-PDFs jetzt
+  inhaltlich per `pdftotext`, nicht nur auf erfolgreichen Build
 
 ## [2026-03-20]
 
-### Fixed
-- Left-align `\closing` consistently when a longer `signature` is set via KOMA variables
+### Behoben
+- `\closing` wird nun konsistent linksbuendig gesetzt, auch wenn ueber
+  KOMA-Variablen eine laengere `signature` hinterlegt ist
 
 ## [2026-03-11]
 
-### Added
-- pdfLaTeX support via engine-aware font loading (`fontenc`/`tgheros` fallback)
-- Configurable document language (`lang=<babel name>` class option, default: `german`)
-- pdfLaTeX added as third engine in CI verification matrix
+### Hinzugefuegt
+- pdfLaTeX-Unterstuetzung ueber engine-abhaengiges Font-Loading
+  (`fontenc`/`tgheros` als Fallback)
+- Konfigurierbare Dokumentsprache (`lang=<babel name>` als Klassenoption,
+  Standard: `german`)
+- pdfLaTeX als dritte Engine in der CI-Verifikationsmatrix
 
-### Changed
-- Date-based versioning replaces semver in `\ProvidesClass`
-- All `\DeclareOption` moved before `\ProcessOptions` for correct option handling
-- CI workflow renamed to `Build LaTeX Verification`
+### Geaendert
+- Datumsversionierung ersetzt Semver in `\ProvidesClass`, im CHANGELOG und in
+  release-relevanten Versionsreferenzen
+- Alle `\DeclareOption` vor `\ProcessOptions` verschoben, fuer korrekte
+  Optionsverarbeitung
+- CI-Workflow in `Build LaTeX Verification` umbenannt
+- CTAN-Dokumentation fuer pdfLaTeX-Unterstuetzung, `lang=` und Installation via
+  `tlmgr` aktualisiert
+
+### Intern
+- CTAN-ZIP-Artefakte enthalten nun das Release-Datum im Archivnamen
+- `bump-version.sh` akzeptiert jetzt `YYYY-MM-DD` und aktualisiert Klasse und
+  Doku-Dateien gemeinsam
 
 ## [2026-03-10]
 
-Initial CTAN release.
+Erstes CTAN-Release.
 
-### Added
-- DIN 5008 type-B letter class based on KOMA-Script `scrlttr2`
-- Guides mode with technical overlay: address window zones, fold marks,
-  dimension markers, text alignment line
-- `modern` option with header and footer (phone, email, web, LinkedIn)
-- 8 color schemes inspired by moderncv: grey, blue, orange, green, red,
+### Hinzugefuegt
+- DIN-5008-Typ-B-Briefklasse auf Basis von KOMA-Script `scrlttr2`
+- Guides-Modus mit technischem Overlay: Adressfenster-Zonen, Falzmarken,
+  Bemaassung und Textbeginn-Linie
+- `modern`-Option mit Kopf- und Fusszeile (Telefon, E-Mail, Web, LinkedIn)
+- 8 Farbschemata angelehnt an moderncv: grey, blue, orange, green, red,
   purple, burgundy, black
-- `footercenter` option for centered footer alignment
-- `basic` option as explicit default style
-- Multipage layout hardening: overlays confined to page 1 only
-- Regression test: validates page 2 has no leaked overlay content
-- Verified LuaLaTeX support with reproducible font caching
-- CI workflow `Build LaTeX Verification`: dual-engine matrix (XeLaTeX + LuaLaTeX)
-- CI workflow `Build CTAN Package`: automated artifact build with SHA256 checksum
-- CTAN submission workflow documented in `ctan/RELEASE.md`
-- English CTAN documentation (`ctan/onlinebrief24-doc.tex`)
-- Mandatory field validation: return address and recipient required
-- Font fallback: Arial preferred, TeX Gyre Heros as fallback
-- Project structure with LICENSE (LPPL 1.3c), README, and `.gitignore`
+- `footercenter`-Option fuer zentrierte Fusszeilen-Ausrichtung
+- `basic`-Option als expliziter Default-Stil
+- Mehrseiten-Haertung: Overlays werden nur auf Seite 1 gerendert
+- Regressionstest, der prueft, dass auf Seite 2 keine Overlay-Inhalte leaken
+- Verifizierte LuaLaTeX-Unterstuetzung mit reproduzierbarem Font-Caching
+- CI-Workflow `Build LaTeX Verification` mit Zwei-Engine-Matrix
+  (XeLaTeX + LuaLaTeX)
+- CI-Workflow `Build CTAN Package` fuer automatischen Artefakt-Build mit
+  SHA256-Pruefsumme
+- CTAN-Submission-Workflow in `ctan/RELEASE.md` dokumentiert
+- Englische CTAN-Dokumentation (`ctan/onlinebrief24-doc.tex`)
+- Pflichtfeld-Validierung: Rueckadresse und Empfaenger muessen gesetzt sein
+- Font-Fallback: Arial bevorzugt, TeX Gyre Heros als Ersatz
+- Projektstruktur mit LICENSE (LPPL 1.3c), README und `.gitignore`
 
-### Fixed
-- Guides: fold mark labels positioned vertically at line end
-- Duplicate date in output removed
-- Date format and position corrected
-- Zone 1 underline: replaced TikZ path with simple `\rule`
-- Footer scoping issues resolved across color schemes
+### Behoben
+- Guides: Beschriftungen der Falzmarken vertikal am Linienende positioniert
+- Doppelte Datumsanzeige in der Ausgabe entfernt
+- Datumsformat und Datumsposition korrigiert
+- Unterstreichung in Zone 1: TikZ-Pfad durch einfaches `\rule` ersetzt
+- Scoping-Probleme der Fusszeile ueber alle Farbschemata hinweg behoben
 
-### Changed
-- Address window and guides calibrated 1mm lower to match onlinebrief24.de preview
+### Geaendert
+- Adressfenster und Guides um 1 mm nach unten kalibriert, passend zum
+  Preview von onlinebrief24.de
 
-### Removed
-- Unused `.doc` template from resources
-- Old specification document
-- Compiled PDFs from examples directory
+### Entfernt
+- Ungenutzte `.doc`-Vorlage aus den Ressourcen
+- Altes Spezifikationsdokument
+- Kompilierte PDFs aus dem `examples`-Verzeichnis
