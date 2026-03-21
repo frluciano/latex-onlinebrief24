@@ -32,11 +32,10 @@ jobs:
       - name: Install TeX tools and ctan-o-mat
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
+          sudo apt-get install -y \
             latexmk \
             libwww-perl \
             texlive-fonts-extra \
-            texlive-fonts-recommended \
             texlive-lang-german \
             texlive-latex-extra \
             zip
