@@ -99,11 +99,8 @@ Danach kannst du `\documentclass{onlinebrief24}` aus beliebigen Projekten verwen
 Die Dateien im Verzeichnis `examples/` sind lauffähige Referenzen für die unterstützten Varianten:
 
 - `example-onlinebrief24-basic.tex`: einfacher Brief ohne Kopf- und Fußzeile
-- `example-onlinebrief24-guides.tex`: technischer Overlay-Modus
-- `example-onlinebrief24-basic-guides.tex`: einfacher Brief plus Overlay
 - `example-onlinebrief24-modern.tex`: moderner Stil mit Kontaktdaten
 - `example-onlinebrief24-modern-blue.tex`: moderner Stil mit alternativem Farbschema
-- `example-onlinebrief24-modern-guides.tex`: moderner Stil plus Overlay
 
 Die folgenden Dateien sind reine Regressionstests für die CI-Verifikation (`verify.sh`) und sind **nicht** im CTAN-Paket enthalten:
 
