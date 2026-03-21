@@ -4,6 +4,10 @@ name: Build CTAN Package
 
 on:
   push:
+    # Only run on direct updates to `main`. Feature branches are validated via
+    # `pull_request`, which avoids duplicate runs for the same commit.
+    branches:
+      - main
   pull_request:
   workflow_dispatch:
 
