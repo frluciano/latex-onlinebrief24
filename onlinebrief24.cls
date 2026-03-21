@@ -241,7 +241,7 @@
       \ifdim\@obb@addrwidth>72mm\@obb@addrwidth=72mm\fi
       \put(20, 245.00){\rule{\@obb@addrwidth}{0.2pt}}
 
-  % Zone 3: recipient block, calibrated 1mm lower to match the Onlinebrief24 preview.
+  % Zone 3: recipient block, calibrated 1mm lower to match the onlinebrief24.de preview.
   % Left-aligned at 20mm in line with the reference layout.
   \put(20, 204){%
     \parbox[b][20mm][t]{72mm}{%
@@ -270,8 +270,8 @@
         }%
     }%
 
-    % Footer: contact details
-    \put(25, 15){%
+    % Footer: contact details, kept close to the bottom edge.
+    \put(25, 5){%
       \parbox[b][10mm][b]{\textwidth}{%
         \if@footercenter\centering\else\raggedleft\fi
         \footnotesize\sffamily\color{color2}%
@@ -317,7 +317,7 @@
       }
 
       % --- Window frame ---
-      % Calibrated 1mm lower to match the Onlinebrief24 preview.
+      % Calibrated 1mm lower to match the onlinebrief24.de preview.
       % Start at (20mm, -50mm)
       % Width 72mm
 
