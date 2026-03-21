@@ -91,7 +91,7 @@ ctan-o-mat --submit ctan/onlinebrief24.pkg
 
 Summary:
 
-`LaTeX class for DIN 5008 type-B business letters calibrated for use with onlinebrief24.de.`
+`LaTeX class for DIN 5008 type-B business letters calibrated for use with the onlinebrief24.de service.`
 
 Long description:
 
@@ -113,4 +113,4 @@ are submitted digitally, and the service handles printing, enveloping,
 franking, and postal delivery.
 
 The trademark holders have formally authorized the maintainer to use the
-Onlinebrief24 mark in connection with this LaTeX class.
+onlinebrief24.de mark in connection with this LaTeX class.
