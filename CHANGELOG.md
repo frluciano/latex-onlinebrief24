@@ -10,13 +10,20 @@ and this project uses date-based versioning aligned with CTAN releases (YYYY-MM-
 ### Added
 - `\encl{...}` documented in README.md and CTAN documentation as the standard
   KOMA-Script command for enclosures below the closing
+- Example PDFs (`basic`, `modern`) are now compiled and included in the CTAN
+  package so users can preview the output without building locally
 
 ### Changed
-- Removed dead `\ifPDFTeX` branch in modern-style package loading; both branches
-  loaded `sourcesanspro` identically
+- Default babel language changed from `ngerman` to `german` for better
+  compatibility with current babel versions
+- All example files renamed to the `example-onlinebrief24-*` prefix to follow
+  CTAN naming conventions
 - Replaced `marvosym` with `fontawesome5` for modern-style footer icons;
   `\faPhone`, `\faMobile`, `\faEnvelope`, `\faGlobe`, `\faLinkedin` replace
   the corresponding `marvosym` symbols
+- Removed dead `\ifPDFTeX` branch in modern-style package loading; both branches
+  loaded `sourcesanspro` identically
+- CTAN README extended with maintainer name and contact URLs
 
 ### Internal
 - `verify.sh` now performs content checks on the signature regression and modern
