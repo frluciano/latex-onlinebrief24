@@ -58,9 +58,9 @@ limitations.
 
 ## Maintainer
 
-Francesco Luciano
-Repository: <https://github.com/frluciano/latex-onlinebrief24>
-Bug reports: <https://github.com/frluciano/latex-onlinebrief24/issues>
+- Francesco Luciano
+- Repository: <https://github.com/frluciano/latex-onlinebrief24>
+- Bug reports: <https://github.com/frluciano/latex-onlinebrief24/issues>
 
 ## License
 

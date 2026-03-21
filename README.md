@@ -101,10 +101,13 @@ Die Dateien im Verzeichnis `examples/` sind lauffähige Referenzen für die unte
 - `example-onlinebrief24-basic.tex`: einfacher Brief ohne Kopf- und Fußzeile
 - `example-onlinebrief24-guides.tex`: technischer Overlay-Modus
 - `example-onlinebrief24-basic-guides.tex`: einfacher Brief plus Overlay
-- `example-onlinebrief24-signature-regression.tex`: Regressionsfall für kurze Grußformel mit expliziter Signatur
 - `example-onlinebrief24-modern.tex`: moderner Stil mit Kontaktdaten
 - `example-onlinebrief24-modern-blue.tex`: moderner Stil mit alternativem Farbschema
 - `example-onlinebrief24-modern-guides.tex`: moderner Stil plus Overlay
+
+Die folgenden Dateien sind reine Regressionstests für die CI-Verifikation (`verify.sh`) und sind **nicht** im CTAN-Paket enthalten:
+
+- `example-onlinebrief24-signature-regression.tex`: Regressionsfall für kurze Grußformel mit expliziter Signatur
 - `example-onlinebrief24-multipage-regression.tex`: Mehrseiten-Regressionsfall
 
 Visuelle Vorschau der beiden Varianten:
