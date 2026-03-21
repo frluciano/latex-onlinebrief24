@@ -19,12 +19,14 @@ jobs:
 
       - name: Install TeX tools for the CTAN package build
         run: |
-          # The CTAN payload build only compiles the English documentation PDF
-          # and then assembles the release ZIP, so a pdflatex-capable toolchain
-          # plus latexmk is sufficient here.
+          # The CTAN payload build compiles the English documentation plus the
+          # packaged `basic` and `modern` example PDFs. The modern example uses
+          # `sourcesanspro` and `fontawesome5`, both provided by
+          # `texlive-fonts-extra`.
           sudo apt-get update
           sudo apt-get install -y \
             latexmk \
+            texlive-fonts-extra \
             texlive-lang-german \
             texlive-latex-extra \
             zip
