@@ -10,6 +10,16 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  # When a branch is updated repeatedly, only the newest verification run is
+  # still relevant.
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   latex:
     runs-on: ubuntu-latest
@@ -28,7 +38,52 @@ jobs:
       # The workflow is fully repository-local; no external assets are needed.
       - uses: actions/checkout@v6
 
+      - name: Detect verification-relevant changes
+        id: changes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PUSH_AFTER: ${{ github.sha }}
+        run: |
+          set -eu
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "verify=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            changed_files=$(gh api \
+              "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files" \
+              --paginate \
+              --jq '.[].filename')
+          else
+            if [ -z "$PUSH_BEFORE" ] || [ "$PUSH_BEFORE" = "0000000000000000000000000000000000000000" ]; then
+              echo "verify=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            changed_files=$(gh api \
+              "repos/${GITHUB_REPOSITORY}/compare/${PUSH_BEFORE}...${PUSH_AFTER}" \
+              --jq '.files[].filename')
+          fi
+
+          echo "$changed_files"
+
+          if printf '%s\n' "$changed_files" | grep -Eq \
+            '^(\.github/workflows/build-verify\.yml|onlinebrief24\.cls|examples/|tests/fixtures/|scripts/verify\.sh)'; then
+            echo "verify=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "verify=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Skip heavy verification setup when inputs are unchanged
+        if: steps.changes.outputs.verify != 'true'
+        run: echo "No verification-relevant changes detected; skipping TeX install."
+
       - name: Install TeX and PDF tools
+        if: steps.changes.outputs.verify == 'true'
         run: |
           # Install a minimal but sufficient TeX/PDF toolchain for the examples,
           # the font-dependent modern style, and the page-2 regression checks.
@@ -44,6 +99,7 @@ jobs:
             texlive-xetex
 
       - name: Build & verify examples (${{ matrix.engine }})
+        if: steps.changes.outputs.verify == 'true'
         # The verification script selects the engine via OB24_TEX_ENGINE and
         # handles the LuaLaTeX cache workaround automatically when needed.
         run: OB24_TEX_ENGINE=${{ matrix.engine }} sh scripts/verify.sh
