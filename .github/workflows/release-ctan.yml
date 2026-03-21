@@ -36,6 +36,7 @@ jobs:
             latexmk \
             libwww-perl \
             texlive-fonts-extra \
+            texlive-fonts-recommended \
             texlive-lang-german \
             texlive-latex-extra \
             zip

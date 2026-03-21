@@ -64,6 +64,7 @@ jobs:
             latexmk \
             poppler-utils \
             texlive-fonts-extra \
+            texlive-fonts-recommended \
             texlive-lang-german \
             texlive-latex-extra \
             texlive-luatex \
