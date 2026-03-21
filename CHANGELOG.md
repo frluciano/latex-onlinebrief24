@@ -14,6 +14,9 @@ and this project uses date-based versioning aligned with CTAN releases (YYYY-MM-
 ### Changed
 - Removed dead `\ifPDFTeX` branch in modern-style package loading; both branches
   loaded `sourcesanspro` identically
+- Replaced `marvosym` with `fontawesome5` for modern-style footer icons;
+  `\faPhone`, `\faMobile`, `\faEnvelope`, `\faGlobe`, `\faLinkedin` replace
+  the corresponding `marvosym` symbols
 
 ### Internal
 - `verify.sh` now performs content checks on the signature regression and modern

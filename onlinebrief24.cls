@@ -167,7 +167,7 @@
 % --- Conditional loading for the modern style ---
 \if@modernstyle
   \RequirePackage[default, light, semibold]{sourcesanspro}
-  \RequirePackage{marvosym}
+  \RequirePackage{fontawesome5}
 
   % --- Color definitions (moderncv-compatible) ---
   \definecolor{color0}{rgb}{0,0,0}% Text (black)
@@ -276,23 +276,23 @@
         %
         \ifdefempty{\@obb@fromlandline}{}{%
           \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
-          \Telefon\ \@obb@fromlandline
+          \faPhone\ \@obb@fromlandline
         }%
         \ifdefempty{\@obb@fromphone}{}{%
           \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
-          \Mobilefone\ \@obb@fromphone
+          \faMobile\ \@obb@fromphone
         }%
         \ifdefempty{\@obb@fromemail}{}{%
           \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
-          \Letter\ \@obb@fromemail
+          \faEnvelope\ \@obb@fromemail
         }%
         \ifdefempty{\@obb@fromweb}{}{%
           \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
-          \Mundus\ \@obb@fromweb
+          \faGlobe\ \@obb@fromweb
         }%
         \ifdefempty{\@obb@fromlinkedin}{}{%
           \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
-          LinkedIn\ \@obb@fromlinkedin
+          \faLinkedin\ \@obb@fromlinkedin
         }%
       }%
     }%
