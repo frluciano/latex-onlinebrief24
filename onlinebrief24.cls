@@ -166,11 +166,7 @@
 
 % --- Conditional loading for the modern style ---
 \if@modernstyle
-  \ifPDFTeX
-    \RequirePackage[default, light, semibold]{sourcesanspro}
-  \else
-    \RequirePackage[default, light, semibold]{sourcesanspro}
-  \fi
+  \RequirePackage[default, light, semibold]{sourcesanspro}
   \RequirePackage{marvosym}
 
   % --- Color definitions (moderncv-compatible) ---

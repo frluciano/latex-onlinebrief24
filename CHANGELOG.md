@@ -5,10 +5,21 @@ All notable changes to `onlinebrief24` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project uses date-based versioning aligned with CTAN releases (YYYY-MM-DD).
 
-## [2026-03-20]
+## [Unreleased]
 
 ### Added
-- Regression example for `\closing` with explicit `signature` (`examples/example-onlinebrief24-signature-regression.tex`)
+- `\encl{...}` documented in README.md and CTAN documentation as the standard
+  KOMA-Script command for enclosures below the closing
+
+### Changed
+- Removed dead `\ifPDFTeX` branch in modern-style package loading; both branches
+  loaded `sourcesanspro` identically
+
+### Internal
+- `verify.sh` now performs content checks on the signature regression and modern
+  example PDFs via `pdftotext`, not just compilation success
+
+## [2026-03-20]
 
 ### Fixed
 - Left-align `\closing` consistently when a longer `signature` is set via KOMA variables

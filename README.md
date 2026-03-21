@@ -171,6 +171,7 @@ Alternativ kann der Empfänger auch an `\begin{letter}{...}` übergeben werden. 
 - `\setsubject{...}`: Betreff oberhalb der Anrede
 - `\setdate{...}`: Datum; Standard ist `\today`
 - `\setplace{...}`: Ort vor dem Datum
+- `\encl{...}`: Anlagenverzeichnis unterhalb der Grußformel (KOMA-Script-Standard)
 
 ### Zusatzangaben für `modern`
 

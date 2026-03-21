@@ -50,6 +50,32 @@ do
   latexmk "$latexmk_engine_flag" -g -interaction=nonstopmode -halt-on-error -cd "$example"
 done
 
+# Verify that the modern-style footer fields are rendered in the output PDF.
+# The modern example includes all contact fields; at minimum the email address
+# must appear so we know the footer rendering path is active.
+modern_text=$(pdftotext examples/example-onlinebrief24-modern.pdf -)
+if ! printf '%s' "$modern_text" | grep -F "erika.mustermann@example.com" >/dev/null; then
+  printf '%s\n' "Modern footer regression failed: email address not found in PDF." >&2
+  exit 1
+fi
+if ! printf '%s' "$modern_text" | grep -F "Mustermann" >/dev/null; then
+  printf '%s\n' "Modern header regression failed: sender name not found in PDF." >&2
+  exit 1
+fi
+
+# Verify the signature regression: both the closing phrase and the explicit
+# signature must appear in the PDF. The original bug caused the closing to be
+# mis-aligned when the signature text was longer than the closing phrase.
+sig_text=$(pdftotext examples/example-onlinebrief24-signature-regression.pdf -)
+if ! printf '%s' "$sig_text" | grep -F "Viele" >/dev/null; then
+  printf '%s\n' "Signature regression failed: closing phrase not found in PDF." >&2
+  exit 1
+fi
+if ! printf '%s' "$sig_text" | grep -F "Erika Mustermann" >/dev/null; then
+  printf '%s\n' "Signature regression failed: signature not found in PDF." >&2
+  exit 1
+fi
+
 # Extract plain text and positioned text from page 2 of the multipage regression
 # PDF. The plain-text pass checks for leaked address-window content, while the
 # bbox pass gives us the first text Y position on the second page.

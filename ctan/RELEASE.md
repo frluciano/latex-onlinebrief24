@@ -17,6 +17,7 @@ At minimum, review these files before every release:
 - `onlinebrief24.cls` — version/date in `\ProvidesClass`
 - `ctan/onlinebrief24-doc.tex` — documentation date and content
 - `ctan/README.md` — package README for CTAN
+- `README.md` — German project README (keep feature list in sync with ctan/README.md)
 - `ctan/onlinebrief24.pkg` — announcement text (if changed)
 
 Typical release edits:
