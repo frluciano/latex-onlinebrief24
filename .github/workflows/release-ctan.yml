@@ -199,14 +199,12 @@ jobs:
           bundle_dir = Path("${{ steps.download_prepare_bundle.outputs.bundle_dir }}")
           metadata = json.loads((bundle_dir / "release-metadata.json").read_text(encoding="utf-8"))
           resolved = json.loads((bundle_dir / "resolved-release-metadata.json").read_text(encoding="utf-8"))
-          announcement_lines = (
+          # Show the complete announcement in the validation summary so the
+          # approval decision is based on the exact text frozen into the bundle.
+          announcement_text = (
               (bundle_dir / metadata["announcement_filename"])
               .read_text(encoding="utf-8")
               .strip()
-              .splitlines()
-          )
-          announcement_preview = "<br>".join(
-              line.replace("|", "\\|") for line in announcement_lines[:4]
           ) or "(empty)"
 
           with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as fh:
@@ -221,8 +219,10 @@ jobs:
               fh.write(f"| Artifact | `{metadata['artifact_filename']}` |\n")
               fh.write(f"| SHA256 | `{metadata['artifact_sha256']}` |\n")
               fh.write(f"| Approval gate | `ctan-release` environment pending after validation |\n\n")
-              fh.write("Announcement preview:\n\n")
-              fh.write(f"{announcement_preview}\n\n")
+              fh.write("Announcement:\n\n")
+              fh.write("```text\n")
+              fh.write(announcement_text.replace("```", "'''"))
+              fh.write("\n```\n\n")
               fh.write("Next step: approve the `ctan-release` deployment before `publish-to-ctan` can access CTAN credentials.\n")
           PY
 
