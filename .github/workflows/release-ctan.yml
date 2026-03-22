@@ -49,13 +49,14 @@ jobs:
           # `gh run download` is not consistent about the exact extraction path.
           # Resolve the real bundle directory from the downloaded metadata file
           # instead of assuming a fixed folder shape.
-          rm -rf prepared-download
-          mkdir -p prepared-download
+          download_root="${RUNNER_TEMP}/prepared-download"
+          rm -rf "$download_root"
+          mkdir -p "$download_root"
           gh run download "${{ inputs.prepare_run_id }}" \
             --repo "${GITHUB_REPOSITORY}" \
             --name "${PREPARE_ARTIFACT_NAME}" \
-            --dir prepared-download
-          metadata_path=$(find prepared-download -type f -name release-metadata.json -print | head -n 1)
+            --dir "$download_root"
+          metadata_path=$(find "$download_root" -type f -name release-metadata.json -print | head -n 1)
           if [ -z "$metadata_path" ]; then
             printf '%s\n' "::error::Could not locate release-metadata.json in the prepared release artifact."
             exit 1
@@ -232,13 +233,14 @@ jobs:
           # than re-downloading the original artifact and reintroducing drift.
           # Resolve the actual extraction directory dynamically for the same
           # reason as in the validate job.
-          rm -rf validated-download
-          mkdir -p validated-download
+          download_root="${RUNNER_TEMP}/validated-download"
+          rm -rf "$download_root"
+          mkdir -p "$download_root"
           gh run download "${GITHUB_RUN_ID}" \
             --repo "${GITHUB_REPOSITORY}" \
             --name "${VALIDATED_ARTIFACT_NAME}" \
-            --dir validated-download
-          metadata_path=$(find validated-download -type f -name release-metadata.json -print | head -n 1)
+            --dir "$download_root"
+          metadata_path=$(find "$download_root" -type f -name release-metadata.json -print | head -n 1)
           if [ -z "$metadata_path" ]; then
             printf '%s\n' "::error::Could not locate release-metadata.json in the validated release artifact."
             exit 1
