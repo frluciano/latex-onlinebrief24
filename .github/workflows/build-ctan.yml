@@ -27,7 +27,9 @@ env:
   PREPARE_ARTIFACT_NAME: onlinebrief24-ctan-release-bundle
 
 jobs:
-  prepare-ctan-release:
+  # Keep the historical job context `ctan-package` so the existing protected
+  # branch requirement on `main` does not need to change during the refactor.
+  ctan-package:
     runs-on: ubuntu-latest
 
     steps:
