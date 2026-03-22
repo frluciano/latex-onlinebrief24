@@ -61,8 +61,18 @@ package jobs.
 
 ### Missing announcement prevention
 
-The prepare workflow generates `announcement-draft.txt` from the Git commit
-subjects since the last release tag.
+The prepare workflow generates `announcement-draft.txt` from one of two
+explicit sources:
+
+1. `ctan/release-announcement.txt`, if that file exists and is non-empty
+2. otherwise a deterministic draft from filtered Git commit subjects since the
+   last release tag
+
+The generated commit-based draft intentionally skips obviously internal commit
+types such as `merge`, `chore:`, `ci:`, `docs:`, `test:`, `build:`, `style:`,
+and `release:`. If nothing releasable remains after filtering, prepare fails
+closed and the maintainer must provide `ctan/release-announcement.txt`
+explicitly.
 
 The release workflow fails hard if:
 
@@ -71,6 +81,25 @@ The release workflow fails hard if:
 - the file contains only whitespace
 
 There is no fallback text and no implicit default announcement.
+
+### Prepare trigger strategy
+
+`Prepare CTAN Release` intentionally keeps its `pull_request` trigger even
+though only `push` runs on `main` are eligible for publishing.
+
+This is a deliberate trade-off:
+
+- PR runs catch CTAN-package regressions before merge
+- the historical required check `ctan-package` stays stable for branch
+  protection
+- the workflow does **not** use a `paths:` filter, because that could make the
+  required check disappear entirely for unrelated PRs
+- instead, a lightweight change-detection step keeps the workflow visible while
+  skipping the heavy TeX installation and bundle build when CTAN inputs did not
+  change
+
+This keeps the default safe and predictable without paying the full packaging
+cost on every PR.
 
 ## Prepared Release Bundle
 
@@ -103,6 +132,38 @@ release.
   "announcement_filename": "announcement-draft.txt"
 }
 ```
+
+## Audit Trail and Summaries
+
+The release trail is intentionally duplicated in both machine-readable files
+and human-visible GitHub summaries.
+
+### Machine-readable audit data
+
+The canonical audit data is already part of the release artifacts:
+
+- `release-metadata.json` from prepare
+- `resolved-release-metadata.json` from release
+- the ZIP checksum file
+
+No separate third audit artifact is maintained at the moment, because these
+files already pin the prepared bundle, commit, prepare run, and release run
+without introducing another source of truth.
+
+### GitHub Step Summaries
+
+Each release-relevant workflow writes a concise summary into the GitHub Actions
+run UI:
+
+- `Prepare CTAN Release` shows version, commit, artifact, checksum, and an
+  announcement preview
+- `Release CTAN` shows the validated bundle provenance and the pending approval
+  gate
+- `Sync GitHub Release` shows the synchronized tag/release and the expected
+  GitHub Release URL
+
+When debugging a release incident, start with the summary of the relevant run
+before digging into raw logs.
 
 ## Real Release Checklist
 
@@ -143,6 +204,49 @@ matching tag and GitHub Release from the same validated bundle.
 11. Wait for `Sync GitHub Release` to create or update the Git tag and GitHub
     Release from the validated release bundle.
 
+## Live Validation and Retry Protocol
+
+The fully integrated GitHub Release sync can only be validated after an
+intentional successful CTAN publish. It cannot be proven end-to-end without a
+real CTAN release, because the sync intentionally runs only after CTAN
+completed successfully.
+
+### First live validation after an intentional CTAN release
+
+After the next real CTAN release, verify all of the following:
+
+- `Release CTAN` finished successfully
+- `Sync GitHub Release` started automatically from that successful release run
+- the Git tag name matches the package version
+- the Git tag points to `source_commit_sha`
+- the GitHub Release contains:
+  - the CTAN ZIP
+  - the ZIP checksum
+  - `announcement-draft.txt`
+  - `release-metadata.json`
+  - `resolved-release-metadata.json`
+- the GitHub Release notes match the validated announcement draft
+
+### Retry protocol
+
+If CTAN succeeded but the GitHub Release sync failed:
+
+1. do **not** rerun `Release CTAN`
+2. rerun only `Sync GitHub Release`
+3. pass the original `release_run_id` when using the manual retry path
+
+This preserves the guarantee that a retry never triggers a second CTAN submit.
+
+### Common failure pictures
+
+- Tag already exists but points to the wrong commit:
+  the sync must fail hard; fix the tag state explicitly before retrying
+- GitHub Release exists but is incomplete:
+  rerun `Sync GitHub Release`; it will update notes and replace assets in place
+- Announcement draft is poor or too internal:
+  add `ctan/release-announcement.txt` before the prepare run and regenerate the
+  bundle
+
 ## Requirements
 
 - GitHub Environment `ctan-release` must exist.
@@ -173,6 +277,8 @@ Important changes:
 - CTAN publishing now requires approval through the protected environment
 - the CTAN announcement now comes from `announcement-draft.txt` in the prepared
   bundle and must not be empty
+- `ctan/release-announcement.txt` can now be used as an explicit curated source
+  for the announcement draft; otherwise a filtered commit-based draft is used
 - GitHub Releases are now synchronized from successful CTAN releases instead of
   being maintained independently
 

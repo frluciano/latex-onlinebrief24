@@ -8,6 +8,12 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
 ## [Unreleased]
 
 ### Hinzugefuegt
+- optionale Klassenoption `infoblock` fuer einen festen DIN-nahen
+  Informationsblock oben rechts im Briefkopf
+- neue Makros `\setyourref`, `\setyourmessage`, `\setourref`,
+  `\setourmessage`, `\setcontactname`, `\setcontactphone`,
+  `\setcontactfax` und `\setcontactemail` fuer den Informationsblock
+- neues Beispiel `example-onlinebrief24-infoblock.tex` samt PDF im CTAN-Paket
 - Release-Bundle fuer CTAN mit ZIP, SHA256, `announcement-draft.txt` und
   `release-metadata.json`
 - Dokumentation des manuellen Real-Release-Ablaufs in `ctan/RELEASE.md`
@@ -23,6 +29,13 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
 - Tag-Pushes loesen keinen CTAN-Publish mehr aus
 - GitHub-Releases werden jetzt aus dem erfolgreichen `Release CTAN`-Lauf
   nachgelagert synchronisiert, statt losgeloest davon gepflegt zu werden
+- CTAN-Beispielbuilds nehmen jetzt alle gepflegten
+  `example-onlinebrief24-*.tex`-Dateien automatisch ins Paket auf
+- der CTAN-Announcement-Draft kann nun explizit aus
+  `ctan/release-announcement.txt` kommen; sonst wird ein gefilterter Draft aus
+  releaserelevanten Commit-Subjects erzeugt
+- Release-relevante GitHub-Workflows schreiben jetzt sichtbare Step Summaries
+  mit Bundle-, Commit- und Run-Zuordnung
 
 ### Intern
 - Release-Workflow validiert Prepare-Run-Provenance, Bundle, Checksumme und
@@ -31,6 +44,8 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
   Environment `ctan-release` begrenzt
 - der GitHub-Release-Sync ist separat retrybar und loest niemals einen zweiten
   CTAN-Submit aus
+- `scripts/verify.sh` prueft den neuen Informationsblock engine-robust ueber
+  normalisierten PDF-Text fuer XeLaTeX, LuaLaTeX und pdfLaTeX
 
 ## [2026-03-21]
 

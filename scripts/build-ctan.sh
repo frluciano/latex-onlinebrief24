@@ -27,26 +27,33 @@ cp "$repo_root/LICENSE" "$package_root/"
 cp "$ctan_src_dir/README.md" "$package_root/README"
 cp "$ctan_src_dir/onlinebrief24-doc.tex" "$package_root/"
 cp "$doc_build_dir/onlinebrief24-doc.pdf" "$package_root/"
-# Copy examples and strip the relative class path so they work in TeX
-# distributions where onlinebrief24.cls is installed system-wide.
-for ex in example-onlinebrief24-basic.tex example-onlinebrief24-modern.tex; do
+# Keep the CTAN bundle focused on the two representative examples:
+# one basic letter with the DIN-style information block and one modern
+# letter with the same feature enabled.
+for ex_name in example-onlinebrief24-infoblock.tex example-onlinebrief24-modern.tex; do
+  ex_path="$repo_root/examples/$ex_name"
+  ex=$(basename "$ex_path")
   sed 's|{../onlinebrief24}|{onlinebrief24}|' \
-    "$repo_root/examples/$ex" > "$package_root/examples/$ex"
+    "$ex_path" > "$package_root/examples/$ex"
 done
 
 # Compile example PDFs for inclusion in the CTAN package.
 example_build_dir="$tmp_root/example-build"
 mkdir -p "$example_build_dir"
 cp "$repo_root/onlinebrief24.cls" "$example_build_dir/"
-for ex in example-onlinebrief24-basic.tex example-onlinebrief24-modern.tex; do
-  cp "$package_root/examples/$ex" "$example_build_dir/"
+for ex_path in "$package_root"/examples/example-onlinebrief24-*.tex; do
+  ex_name=$(basename "$ex_path")
+  cp "$ex_path" "$example_build_dir/"
   latexmk -pdf -interaction=nonstopmode -halt-on-error \
-    -outdir="$example_build_dir" "$example_build_dir/$ex"
-  cp "$example_build_dir/${ex%.tex}.pdf" "$package_root/examples/"
+    -outdir="$example_build_dir" "$example_build_dir/$ex_name"
+  cp "$example_build_dir/${ex_name%.tex}.pdf" "$package_root/examples/"
 done
 
-# Refresh the unpacked release directory and the upload archive.
-rm -rf "$dist_root/onlinebrief24" "$dist_root/onlinebrief24-"*.zip
+# Refresh the unpacked release directory and every stale local variant from
+# earlier manual experiments so `dist/ctan` contains only the current package.
+find "$dist_root" -mindepth 1 -maxdepth 1 \
+  \( -name 'onlinebrief24' -o -name 'onlinebrief24 *' -o -name 'onlinebrief24.zip' -o -name 'onlinebrief24-*.zip' \) \
+  -exec rm -rf {} +
 mv "$package_root" "$dist_root/onlinebrief24"
 (cd "$dist_root" && zip -qr "onlinebrief24-${version}.zip" "onlinebrief24")
 
