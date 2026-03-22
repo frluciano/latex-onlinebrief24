@@ -70,10 +70,10 @@ explicit source:
 only whitespace. There is no commit-based fallback and no implicit default
 announcement.
 
-On `pull_request` runs, the workflow does not fail just because the file is
-absent; instead it skips release-bundle preparation and records that the branch
-is not yet release-ready. On `push` to `main` and on manual prepare runs, the
-missing file is a hard error.
+On normal `pull_request` runs and `push` runs on `main`, the workflow does not
+fail just because the file is absent; instead it skips release-bundle
+preparation and records that the branch is not yet release-ready. On manual
+prepare runs, the missing file is a hard error.
 
 The release workflow fails hard if:
 
