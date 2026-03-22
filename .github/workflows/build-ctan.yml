@@ -109,14 +109,20 @@ jobs:
           announcement_path="ctan/release-announcement.txt"
 
           if [ ! -f "$announcement_path" ]; then
+            if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+              printf '%s\n' "::error file=$announcement_path::Missing explicit CTAN announcement file."
+              exit 1
+            fi
+
             if [ "$EVENT_NAME" = "pull_request" ]; then
               printf '%s\n' "ready=false" >> "$GITHUB_OUTPUT"
               printf '%s\n' "reason=Missing ctan/release-announcement.txt on pull request" >> "$GITHUB_OUTPUT"
               exit 0
             fi
 
-            printf '%s\n' "::error file=$announcement_path::Missing explicit CTAN announcement file."
-            exit 1
+            printf '%s\n' "ready=false" >> "$GITHUB_OUTPUT"
+            printf '%s\n' "reason=Missing ctan/release-announcement.txt on push to main" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
 
           announcement_trimmed=$(
