@@ -28,7 +28,8 @@
 \texttt{onlinebrief24} is a LaTeX class for DIN 5008 type-B
 business letters calibrated for use with \href{https://onlinebrief24.de}
 {onlinebrief24.de}. It provides a plain letter layout, a modern variant with
-header and footer, and a technical guides mode for layout inspection.
+header and footer, an optional DIN-style information block, and a technical
+guides mode for layout inspection.
 \href{https://onlinebrief24.de}{onlinebrief24.de} is a hybrid mail service for
 business customers: documents are submitted digitally, and the service handles
 printing, enveloping, franking, and postal delivery.
@@ -107,6 +108,8 @@ Option & Meaning \\
 \endhead
 \texttt{basic} & Plain layout without header and footer. \\
 \texttt{modern} & Modern layout with header, footer, and accent color. \\
+\texttt{infoblock} & Show a DIN-style information block in the upper-right
+header area. Only fields that are set are rendered. \\
 \texttt{guides} & Technical overlay mode for checking the calibrated layout
 zones, fold marks, and text start area. This mode is for inspection, not final
 production output. \\
@@ -135,6 +138,21 @@ Mandatory unless it is passed via \texttt{\string\begin\{letter\}\{...\}}. \\
 \texttt{\string\setplace\{...\}} & Place printed before the date. \\
 \texttt{\string\encl\{...\}} & Enclosures listed below the closing; standard
 KOMA-Script command. \\
+\texttt{\string\setyourref\{...\}} & Information-block field ``Ihr Zeichen''.
+\\
+\texttt{\string\setyourmessage\{...\}} & Information-block field ``Ihre
+Nachricht vom''. \\
+\texttt{\string\setourref\{...\}} & Information-block field ``Unser Zeichen''.
+\\
+\texttt{\string\setourmessage\{...\}} & Information-block field ``Unsere
+Nachricht vom''. \\
+\texttt{\string\setcontactname\{...\}} & Information-block field ``Name''. \\
+\texttt{\string\setcontactphone\{...\}} & Information-block field ``Telefon''.
+\\
+\texttt{\string\setcontactfax\{...\}} & Information-block field ``Telefax''.
+\\
+\texttt{\string\setcontactemail\{...\}} & Information-block field ``E-Mail''.
+\\
 \texttt{\string\setfromfirstname\{...\}} & Modern-mode first name for the
 header. \\
 \texttt{\string\setfromlastname\{...\}} & Modern-mode last name for the header.
@@ -158,6 +176,10 @@ Compilation stops with a clear error if the return address is missing, the
 recipient is missing, or the return address is too long for the single-line
 sender zone.
 
+If the \texttt{infoblock} option is enabled, the information block is rendered
+independently from the body text flow. This keeps the text start stable while
+showing only the fields that are actually set.
+
 For multipage letters, the address-window overlay, fold marks, and optional
 modern header and footer are restricted to page 1. Continuation pages start
 near the normal top margin instead of inheriting the first-page window offset.
@@ -176,6 +198,7 @@ The package ships with example documents covering:
 
 \begin{itemize}
 \item the plain layout
+\item the DIN-style information block
 \item the modern layout
 \end{itemize}
 

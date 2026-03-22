@@ -17,6 +17,7 @@ the mark in connection with this LaTeX class.
 - DIN 5008 type-B letter layout calibrated against the onlinebrief24.de preview
 - `basic` style without header and footer
 - `modern` style with header, footer, and configurable accent color
+- optional DIN-style information block in the upper-right header area
 - `guides` overlay mode for technical layout inspection
 - `footercenter` option for centered modern footers
 - verified pdfLaTeX, XeLaTeX, and LuaLaTeX workflows
@@ -49,8 +50,12 @@ limitations.
 - `onlinebrief24-doc.pdf`: compiled documentation
 - `examples/example-onlinebrief24-basic.tex`: plain example letter
 - `examples/example-onlinebrief24-basic.pdf`: compiled plain example
+- `examples/example-onlinebrief24-infoblock.tex`: information-block example
+- `examples/example-onlinebrief24-infoblock.pdf`: compiled information-block example
 - `examples/example-onlinebrief24-modern.tex`: modern example letter
 - `examples/example-onlinebrief24-modern.pdf`: compiled modern example
+- `examples/example-onlinebrief24-modern-blue.tex`: alternate modern color-scheme example
+- `examples/example-onlinebrief24-modern-blue.pdf`: compiled alternate modern example
 - `LICENSE`: LPPL 1.3c license text
 
 ## Project URLs
