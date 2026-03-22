@@ -35,6 +35,11 @@ and only after explicit human approval.
 The release workflow never rebuilds the CTAN package. It always publishes the
 prepared ZIP from the selected prepare run.
 
+After a successful CTAN publish, `Sync GitHub Release` creates or updates the
+matching Git tag and GitHub Release from the same validated bundle. This sync
+is retryable on its own and must never be used as a reason to re-submit to
+CTAN.
+
 ### Approval gate
 
 Approval happens at the `publish-to-ctan` job via the protected GitHub
@@ -99,6 +104,20 @@ release.
 }
 ```
 
+## Real Release Checklist
+
+For a real CTAN release, all of the following must be true:
+
+- the package version in the source tree is correct
+- `Prepare CTAN Release` completed successfully on `main`
+- `Release CTAN` is started manually with the matching `prepare_run_id`
+- the `ctan-release` environment approval is granted explicitly
+
+If any of these conditions is not met, do not approve the publish job.
+
+After a successful CTAN publish, GitHub should automatically receive the
+matching tag and GitHub Release from the same validated bundle.
+
 ## Standard Release Flow
 
 1. Make the intended code and documentation changes on a feature branch.
@@ -121,6 +140,8 @@ release.
 9. Review and approve the `ctan-release` environment gate.
 10. After approval, the workflow validates again and then submits the prepared
     artifact to CTAN.
+11. Wait for `Sync GitHub Release` to create or update the Git tag and GitHub
+    Release from the validated release bundle.
 
 ## Requirements
 
@@ -136,6 +157,7 @@ release.
 | `Build LaTeX Verification` | push, PR | Build and verify examples across all engines |
 | `Prepare CTAN Release` | push, PR, manual | Build and validate a non-publishing CTAN release bundle |
 | `Release CTAN` | manual only | Validate a prepared bundle, wait for approval, publish to CTAN |
+| `Sync GitHub Release` | after successful `Release CTAN`, manual retry | Create or update the matching Git tag and GitHub Release from the validated bundle |
 
 ## Migration Note
 
@@ -151,6 +173,24 @@ Important changes:
 - CTAN publishing now requires approval through the protected environment
 - the CTAN announcement now comes from `announcement-draft.txt` in the prepared
   bundle and must not be empty
+- GitHub Releases are now synchronized from successful CTAN releases instead of
+  being maintained independently
+
+## GitHub Release Sync
+
+`Sync GitHub Release` consumes the validated bundle artifact from a successful
+`Release CTAN` run and uses it to:
+
+- create the release tag if it does not exist yet
+- verify that an existing tag already points to the exact validated commit
+- create or update the matching GitHub Release
+- upload the same ZIP, checksum, announcement, and metadata files used for CTAN
+
+The sync never rebuilds the package and never re-submits anything to CTAN.
+
+If the GitHub Release sync fails after CTAN already succeeded, rerun only
+`Sync GitHub Release` with the original `release_run_id`. Do not rerun
+`Release CTAN` just to repair GitHub state.
 
 ## Local Fallback
 

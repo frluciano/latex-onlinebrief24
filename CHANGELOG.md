@@ -5,6 +5,33 @@ Alle wesentlichen Aenderungen an `onlinebrief24` werden in dieser Datei dokument
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-DD).
 
+## [Unreleased]
+
+### Hinzugefuegt
+- Release-Bundle fuer CTAN mit ZIP, SHA256, `announcement-draft.txt` und
+  `release-metadata.json`
+- Dokumentation des manuellen Real-Release-Ablaufs in `ctan/RELEASE.md`
+- separater Workflow `Sync GitHub Release`, der nach erfolgreichem
+  CTAN-Release aus demselben validierten Bundle Tag und GitHub Release erzeugt
+
+### Geaendert
+- CTAN-Automation in die strikt getrennten Workflows `Prepare CTAN Release` und
+  `Release CTAN` aufgeteilt
+- CTAN-Publishing ist jetzt nur noch aus einem zuvor vorbereiteten Bundle
+  moeglich und erfordert eine explizite Freigabe im GitHub-Environment
+  `ctan-release`
+- Tag-Pushes loesen keinen CTAN-Publish mehr aus
+- GitHub-Releases werden jetzt aus dem erfolgreichen `Release CTAN`-Lauf
+  nachgelagert synchronisiert, statt losgeloest davon gepflegt zu werden
+
+### Intern
+- Release-Workflow validiert Prepare-Run-Provenance, Bundle, Checksumme und
+  Announcement-Draft vor dem Publish erneut
+- CTAN-Credentials sind auf den `publish-to-ctan`-Job im geschuetzten
+  Environment `ctan-release` begrenzt
+- der GitHub-Release-Sync ist separat retrybar und loest niemals einen zweiten
+  CTAN-Submit aus
+
 ## [2026-03-21]
 
 ### Hinzugefuegt
