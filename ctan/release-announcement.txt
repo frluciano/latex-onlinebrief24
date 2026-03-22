@@ -1,0 +1,9 @@
+This release adds an optional DIN-style information block for business
+correspondence. The new `infoblock` option places fixed reference and contact
+fields in the upper-right header area and works in both the basic and modern
+letter styles.
+
+The information-block labels are now localized for German, English, French,
+Spanish, Italian, Dutch, and Polish. The package documentation and bundled
+CTAN examples have also been refreshed with focused English examples for the
+basic and modern layouts.

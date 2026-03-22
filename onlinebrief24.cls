@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{onlinebrief24}[2026/03/21 Precision Layout Class with Guides]
+\ProvidesClass{onlinebrief24}[2026/03/22 Precision Layout Class with Guides]
 
 % --- Option declarations (all before ProcessOptions) ---
 
@@ -13,26 +13,25 @@
 \newif\if@modernstyle
 \newif\if@footercenter
 \newif\if@infoblock
-\DeclareOption{guides}{\@guidesmodetrue}
-\DeclareOption{modern}{\@modernstyletrue}
-\DeclareOption{footercenter}{\@footercentertrue}
-\DeclareOption{infoblock}{\@infoblocktrue}
-\DeclareOption{basic}{\@modernstylefalse}
+\DeclareVoidOption{guides}{\@guidesmodetrue}
+\DeclareVoidOption{modern}{\@modernstyletrue}
+\DeclareVoidOption{footercenter}{\@footercentertrue}
+\DeclareVoidOption{infoblock}{\@infoblocktrue}
+\DeclareVoidOption{basic}{\@modernstylefalse}
 
 % Color scheme (moderncv-compatible)
 \def\@obb@colorscheme{grey}% Default: grey
-\DeclareOption{blue}{\def\@obb@colorscheme{blue}}
-\DeclareOption{orange}{\def\@obb@colorscheme{orange}}
-\DeclareOption{green}{\def\@obb@colorscheme{green}}
-\DeclareOption{red}{\def\@obb@colorscheme{red}}
-\DeclareOption{purple}{\def\@obb@colorscheme{purple}}
-\DeclareOption{grey}{\def\@obb@colorscheme{grey}}
-\DeclareOption{burgundy}{\def\@obb@colorscheme{burgundy}}
-\DeclareOption{black}{\def\@obb@colorscheme{black}}
+\DeclareVoidOption{blue}{\def\@obb@colorscheme{blue}}
+\DeclareVoidOption{orange}{\def\@obb@colorscheme{orange}}
+\DeclareVoidOption{green}{\def\@obb@colorscheme{green}}
+\DeclareVoidOption{red}{\def\@obb@colorscheme{red}}
+\DeclareVoidOption{purple}{\def\@obb@colorscheme{purple}}
+\DeclareVoidOption{grey}{\def\@obb@colorscheme{grey}}
+\DeclareVoidOption{burgundy}{\def\@obb@colorscheme{burgundy}}
+\DeclareVoidOption{black}{\def\@obb@colorscheme{black}}
 
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrlttr2}}
-\ProcessKeyvalOptions{obb}
-\ProcessOptions\relax
+\DeclareDefaultOption{\PassOptionsToClass{\CurrentOption}{scrlttr2}}
+\ProcessKeyvalOptions*
 
 % --- Base: KOMA-Script letter class ---
 \LoadClass[fontsize=11pt, parskip=half]{scrlttr2}
@@ -109,6 +108,9 @@
 \newcommand{\@obb@contactphone}{}
 \newcommand{\@obb@contactfax}{}
 \newcommand{\@obb@contactemail}{}
+\newcommand{\@obb@defineinfoblocklabel}[3]{%
+  \expandafter\def\csname @obb@infoblocklabel@#1@#2\endcsname{#3}%
+}
 \newlength{\@obb@infoblocklabelwidth}
 \newlength{\@obb@infoblockvaluewidth}
 \newlength{\@obb@infoblockcolsep}
@@ -126,6 +128,83 @@
   \setlength{\@obb@infoblocktopoffset}{50mm}%
 }
 \@obb@usedininfoblocklayout
+% Keep localized information-block labels compact enough to fit the shared
+% DIN-style geometry without forcing awkward line breaks in longer languages.
+\@obb@defineinfoblocklabel{german}{yourref}{Ihr Zeichen}
+\@obb@defineinfoblocklabel{german}{yourmessage}{Ihre Nachricht vom}
+\@obb@defineinfoblocklabel{german}{ourref}{Unser Zeichen}
+\@obb@defineinfoblocklabel{german}{ourmessage}{Unsere Nachricht vom}
+\@obb@defineinfoblocklabel{german}{contactname}{Name}
+\@obb@defineinfoblocklabel{german}{contactphone}{Telefon}
+\@obb@defineinfoblocklabel{german}{contactfax}{Telefax}
+\@obb@defineinfoblocklabel{german}{contactemail}{E-Mail}
+\@obb@defineinfoblocklabel{ngerman}{yourref}{Ihr Zeichen}
+\@obb@defineinfoblocklabel{ngerman}{yourmessage}{Ihre Nachricht vom}
+\@obb@defineinfoblocklabel{ngerman}{ourref}{Unser Zeichen}
+\@obb@defineinfoblocklabel{ngerman}{ourmessage}{Unsere Nachricht vom}
+\@obb@defineinfoblocklabel{ngerman}{contactname}{Name}
+\@obb@defineinfoblocklabel{ngerman}{contactphone}{Telefon}
+\@obb@defineinfoblocklabel{ngerman}{contactfax}{Telefax}
+\@obb@defineinfoblocklabel{ngerman}{contactemail}{E-Mail}
+\@obb@defineinfoblocklabel{english}{yourref}{Your reference}
+\@obb@defineinfoblocklabel{english}{yourmessage}{Your message of}
+\@obb@defineinfoblocklabel{english}{ourref}{Our reference}
+\@obb@defineinfoblocklabel{english}{ourmessage}{Our message of}
+\@obb@defineinfoblocklabel{english}{contactname}{Name}
+\@obb@defineinfoblocklabel{english}{contactphone}{Phone}
+\@obb@defineinfoblocklabel{english}{contactfax}{Fax}
+\@obb@defineinfoblocklabel{english}{contactemail}{Email}
+\@obb@defineinfoblocklabel{french}{yourref}{Vos r\'ef\'erences}
+\@obb@defineinfoblocklabel{french}{yourmessage}{Votre message du}
+\@obb@defineinfoblocklabel{french}{ourref}{Nos r\'ef\'erences}
+\@obb@defineinfoblocklabel{french}{ourmessage}{Notre message du}
+\@obb@defineinfoblocklabel{french}{contactname}{Nom}
+\@obb@defineinfoblocklabel{french}{contactphone}{T\'el\'ephone}
+\@obb@defineinfoblocklabel{french}{contactfax}{Fax}
+\@obb@defineinfoblocklabel{french}{contactemail}{E-mail}
+\@obb@defineinfoblocklabel{spanish}{yourref}{Su referencia}
+\@obb@defineinfoblocklabel{spanish}{yourmessage}{Su mensaje del}
+\@obb@defineinfoblocklabel{spanish}{ourref}{Nuestra referencia}
+\@obb@defineinfoblocklabel{spanish}{ourmessage}{Nuestro mensaje del}
+\@obb@defineinfoblocklabel{spanish}{contactname}{Nombre}
+\@obb@defineinfoblocklabel{spanish}{contactphone}{Tel\'efono}
+\@obb@defineinfoblocklabel{spanish}{contactfax}{Fax}
+\@obb@defineinfoblocklabel{spanish}{contactemail}{E-mail}
+\@obb@defineinfoblocklabel{italian}{yourref}{Vostro rif.}
+\@obb@defineinfoblocklabel{italian}{yourmessage}{Vostra comunic.\ del}
+\@obb@defineinfoblocklabel{italian}{ourref}{Nostro rif.}
+\@obb@defineinfoblocklabel{italian}{ourmessage}{Nostra comunic.\ del}
+\@obb@defineinfoblocklabel{italian}{contactname}{Nome}
+\@obb@defineinfoblocklabel{italian}{contactphone}{Telefono}
+\@obb@defineinfoblocklabel{italian}{contactfax}{Fax}
+\@obb@defineinfoblocklabel{italian}{contactemail}{E-mail}
+\@obb@defineinfoblocklabel{dutch}{yourref}{Uw kenmerk}
+\@obb@defineinfoblocklabel{dutch}{yourmessage}{Uw bericht van}
+\@obb@defineinfoblocklabel{dutch}{ourref}{Ons kenmerk}
+\@obb@defineinfoblocklabel{dutch}{ourmessage}{Ons bericht van}
+\@obb@defineinfoblocklabel{dutch}{contactname}{Naam}
+\@obb@defineinfoblocklabel{dutch}{contactphone}{Telefoon}
+\@obb@defineinfoblocklabel{dutch}{contactfax}{Fax}
+\@obb@defineinfoblocklabel{dutch}{contactemail}{E-mail}
+\@obb@defineinfoblocklabel{polish}{yourref}{Pa\'nstwa znak}
+\@obb@defineinfoblocklabel{polish}{yourmessage}{Pa\'nstwa pismo z dn.}
+\@obb@defineinfoblocklabel{polish}{ourref}{Nasz znak}
+\@obb@defineinfoblocklabel{polish}{ourmessage}{Nasze pismo z dn.}
+\@obb@defineinfoblocklabel{polish}{contactname}{Kontakt}
+\@obb@defineinfoblocklabel{polish}{contactphone}{Telefon}
+\@obb@defineinfoblocklabel{polish}{contactfax}{Faks}
+\@obb@defineinfoblocklabel{polish}{contactemail}{E-mail}
+\newcommand{\@obb@getinfoblocklabel}[1]{%
+  \ifcsname @obb@infoblocklabel@\languagename @#1\endcsname
+    \csname @obb@infoblocklabel@\languagename @#1\endcsname
+  \else
+    \ifcsname @obb@infoblocklabel@\obb@lang @#1\endcsname
+      \csname @obb@infoblocklabel@\obb@lang @#1\endcsname
+    \else
+      \csname @obb@infoblocklabel@german@#1\endcsname
+    \fi
+  \fi
+}
 
 \newcommand{\setreturnaddress}[1]{\renewcommand{\@obb@return}{#1}}
 \newcommand{\setrecipient}[1]{\renewcommand{\@obb@recipient}{#1}}
@@ -274,14 +353,14 @@
     \raggedright
     \renewcommand{\arraystretch}{1.05}%
     \begin{tabular}{@{}p{\@obb@infoblocklabelwidth}@{\hspace{\@obb@infoblockcolsep}}p{\@obb@infoblockvaluewidth}@{}}%
-      \@obb@renderinfoblockrow{Ihr Zeichen}{\@obb@yourref}%
-      \@obb@renderinfoblockrow{Ihre Nachricht vom}{\@obb@yourmessage}%
-      \@obb@renderinfoblockrow{Unser Zeichen}{\@obb@ourref}%
-      \@obb@renderinfoblockrow{Unsere Nachricht vom}{\@obb@ourmessage}%
-      \@obb@renderinfoblockrow{Name}{\@obb@contactname}%
-      \@obb@renderinfoblockrow{Telefon}{\@obb@contactphone}%
-      \@obb@renderinfoblockrow{Telefax}{\@obb@contactfax}%
-      \@obb@renderinfoblockrow{E-Mail}{\@obb@contactemail}%
+      \@obb@renderinfoblockrow{\@obb@getinfoblocklabel{yourref}}{\@obb@yourref}%
+      \@obb@renderinfoblockrow{\@obb@getinfoblocklabel{yourmessage}}{\@obb@yourmessage}%
+      \@obb@renderinfoblockrow{\@obb@getinfoblocklabel{ourref}}{\@obb@ourref}%
+      \@obb@renderinfoblockrow{\@obb@getinfoblocklabel{ourmessage}}{\@obb@ourmessage}%
+      \@obb@renderinfoblockrow{\@obb@getinfoblocklabel{contactname}}{\@obb@contactname}%
+      \@obb@renderinfoblockrow{\@obb@getinfoblocklabel{contactphone}}{\@obb@contactphone}%
+      \@obb@renderinfoblockrow{\@obb@getinfoblocklabel{contactfax}}{\@obb@contactfax}%
+      \@obb@renderinfoblockrow{\@obb@getinfoblocklabel{contactemail}}{\@obb@contactemail}%
     \end{tabular}%
   }%
 }

@@ -19,7 +19,7 @@
 
 \title{onlinebrief24}
 \author{Francesco Luciano}
-\date{2026-03-21}
+\date{2026-03-22}
 
 \begin{document}
 \maketitle
@@ -75,26 +75,26 @@ The \texttt{modern} style additionally loads \texttt{sourcesanspro} and
 \section{Minimal Example}
 
 \begin{Verbatim}[fontsize=\small]
-\documentclass[basic]{onlinebrief24}
+\documentclass[basic,lang=english]{onlinebrief24}
 
-\setreturnaddress{Erika Mustermann, Blumenweg 1, 54321 Blumenstadt}
+\setreturnaddress{Jane Smith, 12 Oak Street, Bristol BS1 4DJ}
 \setrecipient{
-  Mustermann GmbH \& Co. KG \\
-  Herrn Hans Mustermann \\
-  Musterstr. 1 \\
-  12345 Musterstadt
+  Example Services Ltd. \\
+  Mr. John Smith \\
+  24 Market Road \\
+  London SW1A 1AA
 }
 \setsubject{Subject}
-\setplace{Musterstadt}
+\setplace{Bristol}
 \setdate{\today}
 
 \begin{document}
 \begin{letter}{}
-\opening{Sehr geehrter Herr Mustermann,}
+\opening{Dear Mr. Smith,}
 
 This is a sample letter.
 
-\closing{Mit freundlichen Gruessen}
+\closing{Kind regards}
 \end{letter}
 \end{document}
 \end{Verbatim}
@@ -118,7 +118,10 @@ production output. \\
 \texttt{purple}, \texttt{grey}, \texttt{burgundy}, \texttt{black} &
 Accent-color schemes for modern mode. \\
 \texttt{lang=\textit{name}} & Document language passed to \texttt{babel}
-(default: \texttt{german}). Any valid babel language name is accepted. \\
+(default: \texttt{german}). Any valid babel language name is accepted. The
+\texttt{infoblock} labels are localized for \texttt{german},
+\texttt{ngerman}, \texttt{english}, \texttt{french}, \texttt{spanish},
+\texttt{italian}, \texttt{dutch}, and \texttt{polish}. \\
 \bottomrule
 \end{longtable}
 
@@ -138,21 +141,21 @@ Mandatory unless it is passed via \texttt{\string\begin\{letter\}\{...\}}. \\
 \texttt{\string\setplace\{...\}} & Place printed before the date. \\
 \texttt{\string\encl\{...\}} & Enclosures listed below the closing; standard
 KOMA-Script command. \\
-\texttt{\string\setyourref\{...\}} & Information-block field ``Ihr Zeichen''.
+\texttt{\string\setyourref\{...\}} & Information-block field for the recipient's
+reference. \\
+\texttt{\string\setyourmessage\{...\}} & Information-block field for the
+recipient's dated message. \\
+\texttt{\string\setourref\{...\}} & Information-block field for your own
+reference. \\
+\texttt{\string\setourmessage\{...\}} & Information-block field for your own
+dated message. \\
+\texttt{\string\setcontactname\{...\}} & Information-block contact name. \\
+\texttt{\string\setcontactphone\{...\}} & Information-block contact phone
+number. \\
+\texttt{\string\setcontactfax\{...\}} & Information-block contact fax number.
 \\
-\texttt{\string\setyourmessage\{...\}} & Information-block field ``Ihre
-Nachricht vom''. \\
-\texttt{\string\setourref\{...\}} & Information-block field ``Unser Zeichen''.
-\\
-\texttt{\string\setourmessage\{...\}} & Information-block field ``Unsere
-Nachricht vom''. \\
-\texttt{\string\setcontactname\{...\}} & Information-block field ``Name''. \\
-\texttt{\string\setcontactphone\{...\}} & Information-block field ``Telefon''.
-\\
-\texttt{\string\setcontactfax\{...\}} & Information-block field ``Telefax''.
-\\
-\texttt{\string\setcontactemail\{...\}} & Information-block field ``E-Mail''.
-\\
+\texttt{\string\setcontactemail\{...\}} & Information-block contact email
+address. \\
 \texttt{\string\setfromfirstname\{...\}} & Modern-mode first name for the
 header. \\
 \texttt{\string\setfromlastname\{...\}} & Modern-mode last name for the header.
@@ -200,6 +203,9 @@ The package ships with two focused example documents covering:
 \item the basic layout with the DIN-style information block
 \item the modern layout with the DIN-style information block
 \end{itemize}
+
+Both bundled example documents use English sample data so the generated PDFs
+double as immediately readable CTAN previews.
 
 \section{License and Project Status}
 

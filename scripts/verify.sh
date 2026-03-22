@@ -68,6 +68,7 @@ for example in \
   examples/example-onlinebrief24-infoblock.tex \
   examples/example-onlinebrief24-modern.tex \
   examples/example-onlinebrief24-modern-blue.tex \
+  tests/fixtures/infoblock-italian-regression.tex \
   tests/fixtures/signature-regression.tex \
   tests/fixtures/multipage-regression.tex
 do
@@ -79,11 +80,11 @@ done
 # The modern example includes all contact fields; at minimum the email address
 # must appear so we know the footer rendering path is active.
 modern_text=$(pdftotext "$build_dir/example-onlinebrief24-modern.pdf" - | normalize_pdf_text)
-if ! printf '%s' "$modern_text" | grep -F "erika.mustermann@example.com" >/dev/null; then
+if ! printf '%s' "$modern_text" | grep -F "jane.smith@example.com" >/dev/null; then
   printf '%s\n' "Modern footer regression failed: email address not found in PDF." >&2
   exit 1
 fi
-if ! printf '%s' "$modern_text" | grep -F "Mustermann" >/dev/null; then
+if ! printf '%s' "$modern_text" | grep -F "Jane Smith" >/dev/null; then
   printf '%s\n' "Modern header regression failed: sender name not found in PDF." >&2
   exit 1
 fi
@@ -99,8 +100,29 @@ if ! printf '%s' "$infoblock_text" | grep -F "OB24-2026-0322" >/dev/null; then
   printf '%s\n' "Infoblock regression failed: internal reference not found in PDF." >&2
   exit 1
 fi
+if ! printf '%s' "$infoblock_text" | grep -F "Your reference" >/dev/null; then
+  printf '%s\n' "Infoblock regression failed: localized English label not found in PDF." >&2
+  exit 1
+fi
 if ! printf '%s' "$infoblock_text" | grep -F "service@example.com" >/dev/null; then
   printf '%s\n' "Infoblock regression failed: contact email not found in PDF." >&2
+  exit 1
+fi
+
+# Verify a long-language path as well. Italian is a useful regression target
+# because the original DIN-width label column caused visible wrapping for the
+# message-date labels before they were compacted.
+italian_infoblock_text=$(pdftotext "$build_dir/infoblock-italian-regression.pdf" - | normalize_pdf_text)
+if ! printf '%s' "$italian_infoblock_text" | grep -F "Vostra comunic. del" >/dev/null; then
+  printf '%s\n' "Italian infoblock regression failed: compact localized label not found in PDF." >&2
+  exit 1
+fi
+if ! printf '%s' "$italian_infoblock_text" | grep -F "Nostra comunic. del" >/dev/null; then
+  printf '%s\n' "Italian infoblock regression failed: internal-message label not found in PDF." >&2
+  exit 1
+fi
+if ! printf '%s' "$italian_infoblock_text" | grep -F "servizio@example.com" >/dev/null; then
+  printf '%s\n' "Italian infoblock regression failed: contact email not found in PDF." >&2
   exit 1
 fi
 

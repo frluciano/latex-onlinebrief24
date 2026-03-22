@@ -7,12 +7,16 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
 
 ## [Unreleased]
 
+## [2026-03-22]
+
 ### Hinzugefuegt
 - optionale Klassenoption `infoblock` fuer einen festen DIN-nahen
   Informationsblock oben rechts im Briefkopf
 - neue Makros `\setyourref`, `\setyourmessage`, `\setourref`,
   `\setourmessage`, `\setcontactname`, `\setcontactphone`,
   `\setcontactfax` und `\setcontactemail` fuer den Informationsblock
+- lokalisierte `infoblock`-Beschriftungen fuer `german`, `ngerman`,
+  `english`, `french`, `spanish`, `italian`, `dutch` und `polish`
 - neues Beispiel `example-onlinebrief24-infoblock.tex` samt PDF im CTAN-Paket
 - Release-Bundle fuer CTAN mit ZIP, SHA256, `announcement-draft.txt` und
   `release-metadata.json`
@@ -29,8 +33,9 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
 - Tag-Pushes loesen keinen CTAN-Publish mehr aus
 - GitHub-Releases werden jetzt aus dem erfolgreichen `Release CTAN`-Lauf
   nachgelagert synchronisiert, statt losgeloest davon gepflegt zu werden
-- CTAN-Beispielbuilds nehmen jetzt alle gepflegten
-  `example-onlinebrief24-*.tex`-Dateien automatisch ins Paket auf
+- das CTAN-Paket wurde auf zwei fokussierte Beispielbriefe reduziert:
+  `example-onlinebrief24-infoblock` und `example-onlinebrief24-modern`
+- die fokussierten CTAN-Beispiele wurden auf englische Musterdaten umgestellt
 - der CTAN-Announcement-Draft kann nun explizit aus
   `ctan/release-announcement.txt` kommen; sonst wird ein gefilterter Draft aus
   releaserelevanten Commit-Subjects erzeugt
@@ -46,6 +51,8 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
   CTAN-Submit aus
 - `scripts/verify.sh` prueft den neuen Informationsblock engine-robust ueber
   normalisierten PDF-Text fuer XeLaTeX, LuaLaTeX und pdfLaTeX
+- `scripts/verify.sh` enthaelt jetzt einen italienischen Regressionsfall fuer
+  kompakte lokalisierte `infoblock`-Beschriftungen
 
 ## [2026-03-21]
 
