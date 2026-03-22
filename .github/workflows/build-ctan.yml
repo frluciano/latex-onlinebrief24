@@ -85,6 +85,20 @@ jobs:
         if: steps.changes.outputs.ctan != 'true'
         run: echo "No CTAN-package-relevant changes detected; skipping TeX install."
 
+      - name: Write prepare skip summary
+        if: steps.changes.outputs.ctan != 'true'
+        run: |
+          set -eu
+          {
+            printf '## Prepare CTAN Release\n\n'
+            printf 'Heavy CTAN bundle preparation was skipped for this run.\n\n'
+            printf '| Field | Value |\n'
+            printf '| --- | --- |\n'
+            printf '| Event | %s |\n' "${GITHUB_EVENT_NAME}"
+            printf '| Ref | `%s` |\n' "${GITHUB_REF}"
+            printf '| Reason | No CTAN-package-relevant changes detected |\n'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Install TeX tools for the CTAN package build
         if: steps.changes.outputs.ctan == 'true'
         run: |
@@ -155,6 +169,44 @@ jobs:
           printf '%s\n' "Prepare run ID: ${GITHUB_RUN_ID}"
           printf '%s\n' "Prepare run attempt: ${GITHUB_RUN_ATTEMPT}"
           cat "dist/${PREPARE_ARTIFACT_NAME}/release-metadata.json"
+
+      - name: Write prepare summary
+        if: steps.changes.outputs.ctan == 'true'
+        run: |
+          set -eu
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          bundle_dir = Path("dist") / os.environ["PREPARE_ARTIFACT_NAME"]
+          metadata = json.loads((bundle_dir / "release-metadata.json").read_text(encoding="utf-8"))
+          announcement_lines = (
+              (bundle_dir / metadata["announcement_filename"])
+              .read_text(encoding="utf-8")
+              .strip()
+              .splitlines()
+          )
+          announcement_preview = "<br>".join(
+              line.replace("|", "\\|") for line in announcement_lines[:4]
+          ) or "(empty)"
+
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as fh:
+              fh.write("## Prepare CTAN Release\n\n")
+              fh.write("| Field | Value |\n")
+              fh.write("| --- | --- |\n")
+              fh.write(f"| Event | {os.environ['GITHUB_EVENT_NAME']} |\n")
+              fh.write(f"| Prepare run ID | `{os.environ['GITHUB_RUN_ID']}` |\n")
+              fh.write(f"| Prepare run attempt | `{os.environ['GITHUB_RUN_ATTEMPT']}` |\n")
+              fh.write(f"| Source commit | `{metadata['source_commit_sha']}` |\n")
+              fh.write(f"| Version | `{metadata['version']}` |\n")
+              fh.write(f"| Artifact | `{metadata['artifact_filename']}` |\n")
+              fh.write(f"| SHA256 | `{metadata['artifact_sha256']}` |\n")
+              fh.write(f"| Bundle artifact | `{os.environ['PREPARE_ARTIFACT_NAME']}` |\n")
+              fh.write(f"| Announcement draft | `{metadata['announcement_filename']}` |\n\n")
+              fh.write("Announcement preview:\n\n")
+              fh.write(f"{announcement_preview}\n")
+          PY
 
       - name: Upload prepared release bundle
         if: steps.changes.outputs.ctan == 'true'

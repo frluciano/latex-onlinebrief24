@@ -12,9 +12,11 @@
 \newif\if@guidesmode
 \newif\if@modernstyle
 \newif\if@footercenter
+\newif\if@infoblock
 \DeclareOption{guides}{\@guidesmodetrue}
 \DeclareOption{modern}{\@modernstyletrue}
 \DeclareOption{footercenter}{\@footercentertrue}
+\DeclareOption{infoblock}{\@infoblocktrue}
 \DeclareOption{basic}{\@modernstylefalse}
 
 % Color scheme (moderncv-compatible)
@@ -99,6 +101,14 @@
 \newcommand{\@obb@fromweb}{}
 \newcommand{\@obb@fromlinkedin}{}
 \newcommand{\@obb@fromlandline}{}
+\newcommand{\@obb@yourref}{}
+\newcommand{\@obb@yourmessage}{}
+\newcommand{\@obb@ourref}{}
+\newcommand{\@obb@ourmessage}{}
+\newcommand{\@obb@contactname}{}
+\newcommand{\@obb@contactphone}{}
+\newcommand{\@obb@contactfax}{}
+\newcommand{\@obb@contactemail}{}
 
 \newcommand{\setreturnaddress}[1]{\renewcommand{\@obb@return}{#1}}
 \newcommand{\setrecipient}[1]{\renewcommand{\@obb@recipient}{#1}}
@@ -128,6 +138,14 @@
 \newcommand{\setfromweb}[1]{\renewcommand{\@obb@fromweb}{#1}}
 \newcommand{\setfromlinkedin}[1]{\renewcommand{\@obb@fromlinkedin}{#1}}
 \newcommand{\setfromlandline}[1]{\renewcommand{\@obb@fromlandline}{#1}}
+\newcommand{\setyourref}[1]{\renewcommand{\@obb@yourref}{#1}}
+\newcommand{\setyourmessage}[1]{\renewcommand{\@obb@yourmessage}{#1}}
+\newcommand{\setourref}[1]{\renewcommand{\@obb@ourref}{#1}}
+\newcommand{\setourmessage}[1]{\renewcommand{\@obb@ourmessage}{#1}}
+\newcommand{\setcontactname}[1]{\renewcommand{\@obb@contactname}{#1}}
+\newcommand{\setcontactphone}[1]{\renewcommand{\@obb@contactphone}{#1}}
+\newcommand{\setcontactfax}[1]{\renewcommand{\@obb@contactfax}{#1}}
+\newcommand{\setcontactemail}[1]{\renewcommand{\@obb@contactemail}{#1}}
 \newcommand{\@obb@validatereturnaddresswidth}{%
   \begingroup
     \settowidth{\@obb@addrwidth}{{\fontsize{5.8pt}{6.4pt}\sffamily\selectfont\@obb@return}}%
@@ -220,6 +238,57 @@
   }%
   \par
 }
+\newcommand{\@obb@infoblocklabelstyle}{%
+  \fontsize{8pt}{9.5pt}\sffamily\selectfont
+  \if@modernstyle\color{color2}\fi
+}
+\newcommand{\@obb@infoblockvaluestyle}{%
+  \fontsize{8pt}{9.5pt}\sffamily\selectfont
+  \if@modernstyle\color{color0}\fi
+}
+\newcommand{\@obb@renderinfoblockrow}[2]{%
+  \ifdefempty{#2}{}{%
+    {\@obb@infoblocklabelstyle #1} & {\@obb@infoblockvaluestyle #2}\tabularnewline
+  }%
+}
+\newcommand{\@obb@renderinfoblocktable}{%
+  \parbox[t]{70mm}{%
+    \raggedright
+    \renewcommand{\arraystretch}{1.05}%
+    \begin{tabular}{@{}p{30mm}p{40mm}@{}}%
+      \@obb@renderinfoblockrow{Ihr Zeichen}{\@obb@yourref}%
+      \@obb@renderinfoblockrow{Ihre Nachricht vom}{\@obb@yourmessage}%
+      \@obb@renderinfoblockrow{Unser Zeichen}{\@obb@ourref}%
+      \@obb@renderinfoblockrow{Unsere Nachricht vom}{\@obb@ourmessage}%
+      \@obb@renderinfoblockrow{Name}{\@obb@contactname}%
+      \@obb@renderinfoblockrow{Telefon}{\@obb@contactphone}%
+      \@obb@renderinfoblockrow{Telefax}{\@obb@contactfax}%
+      \@obb@renderinfoblockrow{E-Mail}{\@obb@contactemail}%
+    \end{tabular}%
+  }%
+}
+\newcommand{\@obb@renderinfoblockoverlay}{%
+  \if@infoblock
+    \ifboolexpr{
+      not test {\ifdefempty{\@obb@yourref}} or
+      not test {\ifdefempty{\@obb@yourmessage}} or
+      not test {\ifdefempty{\@obb@ourref}} or
+      not test {\ifdefempty{\@obb@ourmessage}} or
+      not test {\ifdefempty{\@obb@contactname}} or
+      not test {\ifdefempty{\@obb@contactphone}} or
+      not test {\ifdefempty{\@obb@contactfax}} or
+      not test {\ifdefempty{\@obb@contactemail}}
+    }{%
+      % Render the DIN-style information block independently from the text
+      % flow so the first-page body start stays stable in both styles.
+      \begin{tikzpicture}[remember picture, overlay]
+        \node[anchor=north east, inner sep=0pt] at ($(current page.north west)+(190mm,-50mm)$) {%
+          \@obb@renderinfoblocktable
+        };
+      \end{tikzpicture}%
+    }{}%
+  \fi
+}
 
 % --- Page overlay drawing ---
 \newcommand{\@obb@firstpageoverlay}{%
@@ -300,6 +369,8 @@
       }%
     }%
   \fi
+
+  \@obb@renderinfoblockoverlay
 
   % --- Guides mode (technical overlay) ---
   \if@guidesmode

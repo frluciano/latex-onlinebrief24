@@ -41,11 +41,31 @@ build_dir="$repo_root/dist/verify/$engine"
 rm -rf "$build_dir"
 mkdir -p "$build_dir"
 
+normalize_pdf_text() {
+  python3 -c '
+import sys
+
+text = sys.stdin.read()
+translation = {
+    ord("\u00a0"): " ",  # no-break space
+    ord("\u00ad"): "",   # soft hyphen
+    ord("\u2010"): "-",  # hyphen
+    ord("\u2011"): "-",  # non-breaking hyphen
+    ord("\u2012"): "-",  # figure dash
+    ord("\u2013"): "-",  # en dash
+    ord("\u2014"): "-",  # em dash
+    ord("\u2212"): "-",  # minus sign
+}
+sys.stdout.write(text.translate(translation))
+'
+}
+
 # Rebuild every maintained example and regression fixture. The `-g` flag forces
 # a fresh build so engine switches do not accidentally reuse stale artifacts
 # from earlier runs.
 for example in \
   examples/example-onlinebrief24-basic.tex \
+  examples/example-onlinebrief24-infoblock.tex \
   examples/example-onlinebrief24-modern.tex \
   examples/example-onlinebrief24-modern-blue.tex \
   tests/fixtures/signature-regression.tex \
@@ -58,7 +78,7 @@ done
 # Verify that the modern-style footer fields are rendered in the output PDF.
 # The modern example includes all contact fields; at minimum the email address
 # must appear so we know the footer rendering path is active.
-modern_text=$(pdftotext "$build_dir/example-onlinebrief24-modern.pdf" -)
+modern_text=$(pdftotext "$build_dir/example-onlinebrief24-modern.pdf" - | normalize_pdf_text)
 if ! printf '%s' "$modern_text" | grep -F "erika.mustermann@example.com" >/dev/null; then
   printf '%s\n' "Modern footer regression failed: email address not found in PDF." >&2
   exit 1
@@ -67,11 +87,27 @@ if ! printf '%s' "$modern_text" | grep -F "Mustermann" >/dev/null; then
   printf '%s\n' "Modern header regression failed: sender name not found in PDF." >&2
   exit 1
 fi
+if ! printf '%s' "$modern_text" | grep -F "INF-2026-17" >/dev/null; then
+  printf '%s\n' "Modern infoblock regression failed: your reference not found in PDF." >&2
+  exit 1
+fi
+
+# Verify that the dedicated infoblock example renders the fixed DIN-style
+# fields and keeps the field values accessible in the PDF text layer.
+infoblock_text=$(pdftotext "$build_dir/example-onlinebrief24-infoblock.pdf" - | normalize_pdf_text)
+if ! printf '%s' "$infoblock_text" | grep -F "OB24-2026-0322" >/dev/null; then
+  printf '%s\n' "Infoblock regression failed: internal reference not found in PDF." >&2
+  exit 1
+fi
+if ! printf '%s' "$infoblock_text" | grep -F "service@example.com" >/dev/null; then
+  printf '%s\n' "Infoblock regression failed: contact email not found in PDF." >&2
+  exit 1
+fi
 
 # Verify the signature regression: both the closing phrase and the explicit
 # signature must appear in the PDF. The original bug caused the closing to be
 # mis-aligned when the signature text was longer than the closing phrase.
-sig_text=$(pdftotext "$build_dir/signature-regression.pdf" -)
+sig_text=$(pdftotext "$build_dir/signature-regression.pdf" - | normalize_pdf_text)
 if ! printf '%s' "$sig_text" | grep -F "Viele" >/dev/null; then
   printf '%s\n' "Signature regression failed: closing phrase not found in PDF." >&2
   exit 1
@@ -84,7 +120,7 @@ fi
 # Extract plain text and positioned text from page 2 of the multipage regression
 # PDF. The plain-text pass checks for leaked address-window content, while the
 # bbox pass gives us the first text Y position on the second page.
-page_two_text=$(pdftotext -f 2 -l 2 "$build_dir/multipage-regression.pdf" -)
+page_two_text=$(pdftotext -f 2 -l 2 "$build_dir/multipage-regression.pdf" - | normalize_pdf_text)
 page_two_bbox=$(pdftotext -f 2 -l 2 -bbox "$build_dir/multipage-regression.pdf" -)
 page_two_first_ymin=$(printf '%s\n' "$page_two_bbox" | sed -n 's/.*yMin="\([0-9.]*\)".*/\1/p' | head -n 1)
 

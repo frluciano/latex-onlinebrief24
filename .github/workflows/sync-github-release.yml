@@ -158,3 +158,33 @@ jobs:
           sh scripts/sync-github-release.sh \
             "${{ steps.download_validated_bundle.outputs.bundle_dir }}" \
             "${{ steps.source_run.outputs.release_run_id }}"
+
+      - name: Write GitHub release sync summary
+        env:
+          TRIGGER_EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -eu
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          bundle_dir = Path("${{ steps.download_validated_bundle.outputs.bundle_dir }}")
+          metadata = json.loads((bundle_dir / "release-metadata.json").read_text(encoding="utf-8"))
+          resolved = json.loads((bundle_dir / "resolved-release-metadata.json").read_text(encoding="utf-8"))
+          version = metadata["version"]
+          release_url = f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/releases/tag/{version}"
+
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as fh:
+              fh.write("## GitHub release sync completed\n\n")
+              fh.write("| Field | Value |\n")
+              fh.write("| --- | --- |\n")
+              fh.write(f"| Trigger | `{os.environ['TRIGGER_EVENT_NAME']}` |\n")
+              fh.write(f"| Prepare run | `{metadata['prepare_run_id']}` |\n")
+              fh.write(f"| Release run | `{resolved['release_run_id']}` |\n")
+              fh.write(f"| Source commit | `{metadata['source_commit_sha']}` |\n")
+              fh.write(f"| Version / tag | `{version}` |\n")
+              fh.write(f"| Artifact | `{metadata['artifact_filename']}` |\n")
+              fh.write(f"| SHA256 | `{metadata['artifact_sha256']}` |\n")
+              fh.write(f"| Release URL | {release_url} |\n")
+          PY

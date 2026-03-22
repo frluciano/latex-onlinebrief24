@@ -18,6 +18,7 @@ Das Paket ist auch über CTAN verfügbar:
 - DIN-5008-Typ-B-Grundlayout mit für [onlinebrief24.de](https://onlinebrief24.de) kalibriertem Fensterbereich
 - `basic`-Stil ohne Kopf- und Fußzeile
 - `modern`-Stil mit Kopfzeile, Fußzeile und Farbschemata
+- optionale DIN-nahe rechte Informationsspalte über `infoblock`
 - `guides`-Modus zur technischen Sichtprüfung von Zonen, Abständen und Falzmarken
 - Option `footercenter` für zentrierte Fußzeile im `modern`-Stil
 - Arial als bevorzugte Schrift mit Fallback auf `TeX Gyre Heros`
@@ -99,6 +100,7 @@ Danach kannst du `\documentclass{onlinebrief24}` aus beliebigen Projekten verwen
 Die Dateien im Verzeichnis `examples/` sind lauffähige Referenzen für die unterstützten Varianten:
 
 - `example-onlinebrief24-basic.tex`: einfacher Brief ohne Kopf- und Fußzeile
+- `example-onlinebrief24-infoblock.tex`: Brief mit festem DIN-nahem Informationsblock
 - `example-onlinebrief24-modern.tex`: moderner Stil mit Kontaktdaten
 - `example-onlinebrief24-modern-blue.tex`: moderner Stil mit alternativem Farbschema
 
@@ -131,6 +133,7 @@ xelatex example-onlinebrief24-basic.tex
 | --- | --- |
 | `basic` | Einfaches Layout ohne Kopf- und Fußzeile |
 | `modern` | Moderner Stil mit Kopfzeile, Fußzeile und Akzentfarbe |
+| `infoblock` | Blendet oben rechts einen festen DIN-nahen Informationsblock mit Bezugs- und Kontaktdaten ein |
 | `guides` | Technischer Overlay-Modus zur Layoutprüfung; blendet Hilfslinien und Markierungen ein und ist daher nur zur Prüfung gedacht |
 | `footercenter` | Zentriert die Fußzeile im `modern`-Stil |
 | `lang=<sprache>` | Dokumentsprache als babel-Name (Standard: `german`); z.B. `english`, `french`, `spanish`, `italian`, `dutch`, `polish` etc. |
@@ -170,6 +173,36 @@ Alternativ kann der Empfänger auch an `\begin{letter}{...}` übergeben werden. 
 - `\setplace{...}`: Ort vor dem Datum
 - `\encl{...}`: Anlagenverzeichnis unterhalb der Grußformel (KOMA-Script-Standard)
 
+### Feste Felder für `infoblock`
+
+Die Option `infoblock` aktiviert einen rechten Informationsblock oberhalb des
+Brieftexts. Angezeigt werden nur Felder, die tatsächlich gesetzt sind.
+
+- `\setyourref{...}`: `Ihr Zeichen`
+- `\setyourmessage{...}`: `Ihre Nachricht vom`
+- `\setourref{...}`: `Unser Zeichen`
+- `\setourmessage{...}`: `Unsere Nachricht vom`
+- `\setcontactname{...}`: `Name`
+- `\setcontactphone{...}`: `Telefon`
+- `\setcontactfax{...}`: `Telefax`
+- `\setcontactemail{...}`: `E-Mail`
+
+Das Briefdatum bleibt an seiner bisherigen Stelle und wird nicht zusätzlich im
+Informationsblock wiederholt.
+
+Beispiel:
+
+```latex
+\documentclass[basic, infoblock]{onlinebrief24}
+
+\setyourref{RM-7741}
+\setyourmessage{2026-03-18}
+\setourref{OB24-2026-0322}
+\setcontactname{Erika Mustermann}
+\setcontactphone{0123 / 456 789}
+\setcontactemail{service@example.com}
+```
+
 ### Zusatzangaben für `modern`
 
 - `\setfromfirstname{...}`
@@ -203,6 +236,7 @@ Aktueller Stand:
 - Verifizierte Workflows: `xelatex`, `lualatex` und `pdflatex`
 - Mehrseitige Briefe sind abgesichert: Fensterbereich, Falzmarken und optionaler Modern-Header/Footer erscheinen nur auf Seite 1
 - Die Klasse prüft beim Start des Briefs automatisch, ob Rücksendeadresse und Empfänger für das Adressfenster korrekt gesetzt sind
+- Der optionale `infoblock` zeigt nur gesetzte Felder und verändert den eigentlichen Textbeginn nicht
 - CI-Workflow und lokale Verifikation sind im Repository enthalten
 - Konfigurierbare Dokumentsprache über `lang=`-Option (jeder babel-Sprachname, Standard: `german`)
 
