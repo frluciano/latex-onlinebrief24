@@ -27,9 +27,11 @@ cp "$repo_root/LICENSE" "$package_root/"
 cp "$ctan_src_dir/README.md" "$package_root/README"
 cp "$ctan_src_dir/onlinebrief24-doc.tex" "$package_root/"
 cp "$doc_build_dir/onlinebrief24-doc.pdf" "$package_root/"
-# Copy all maintained examples and strip the relative class path so they work
-# in TeX distributions where onlinebrief24.cls is installed system-wide.
-for ex_path in "$repo_root"/examples/example-onlinebrief24-*.tex; do
+# Keep the CTAN bundle focused on the two representative examples:
+# one basic letter with the DIN-style information block and one modern
+# letter with the same feature enabled.
+for ex_name in example-onlinebrief24-infoblock.tex example-onlinebrief24-modern.tex; do
+  ex_path="$repo_root/examples/$ex_name"
   ex=$(basename "$ex_path")
   sed 's|{../onlinebrief24}|{onlinebrief24}|' \
     "$ex_path" > "$package_root/examples/$ex"

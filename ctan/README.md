@@ -48,14 +48,10 @@ limitations.
 - `onlinebrief24.cls`: class file
 - `onlinebrief24-doc.tex`: documentation source
 - `onlinebrief24-doc.pdf`: compiled documentation
-- `examples/example-onlinebrief24-basic.tex`: plain example letter
-- `examples/example-onlinebrief24-basic.pdf`: compiled plain example
-- `examples/example-onlinebrief24-infoblock.tex`: information-block example
-- `examples/example-onlinebrief24-infoblock.pdf`: compiled information-block example
-- `examples/example-onlinebrief24-modern.tex`: modern example letter
-- `examples/example-onlinebrief24-modern.pdf`: compiled modern example
-- `examples/example-onlinebrief24-modern-blue.tex`: alternate modern color-scheme example
-- `examples/example-onlinebrief24-modern-blue.pdf`: compiled alternate modern example
+- `examples/example-onlinebrief24-infoblock.tex`: basic example with DIN-style information block
+- `examples/example-onlinebrief24-infoblock.pdf`: compiled basic information-block example
+- `examples/example-onlinebrief24-modern.tex`: modern example with DIN-style information block
+- `examples/example-onlinebrief24-modern.pdf`: compiled modern information-block example
 - `LICENSE`: LPPL 1.3c license text
 
 ## Project URLs
