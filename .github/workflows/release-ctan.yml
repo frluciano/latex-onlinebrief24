@@ -34,31 +34,34 @@ jobs:
       # The publish job checks out and labels itself against the exact commit
       # and version already frozen into the prepared bundle.
       artifact_filename: ${{ steps.metadata.outputs.artifact_filename }}
+      bundle_dir: ${{ steps.download_prepare_bundle.outputs.bundle_dir }}
       prepare_run_id: ${{ steps.metadata.outputs.prepare_run_id }}
       source_commit_sha: ${{ steps.metadata.outputs.source_commit_sha }}
       version: ${{ steps.metadata.outputs.version }}
 
     steps:
       - name: Download prepared release bundle
+        id: download_prepare_bundle
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -eu
-          # `gh run download` may either recreate the artifact directory or
-          # unpack files directly into the destination. Normalize both shapes so
-          # every later step can address a stable bundle path.
-          rm -rf prepared prepared-download
+          # `gh run download` is not consistent about the exact extraction path.
+          # Resolve the real bundle directory from the downloaded metadata file
+          # instead of assuming a fixed folder shape.
+          rm -rf prepared-download
           mkdir -p prepared-download
           gh run download "${{ inputs.prepare_run_id }}" \
             --repo "${GITHUB_REPOSITORY}" \
             --name "${PREPARE_ARTIFACT_NAME}" \
             --dir prepared-download
-          mkdir -p "prepared/${PREPARE_ARTIFACT_NAME}"
-          if [ -d "prepared-download/${PREPARE_ARTIFACT_NAME}" ]; then
-            mv "prepared-download/${PREPARE_ARTIFACT_NAME}/"* "prepared/${PREPARE_ARTIFACT_NAME}/"
-          else
-            mv prepared-download/* "prepared/${PREPARE_ARTIFACT_NAME}/"
+          metadata_path=$(find prepared-download -type f -name release-metadata.json -print | head -n 1)
+          if [ -z "$metadata_path" ]; then
+            printf '%s\n' "::error::Could not locate release-metadata.json in the prepared release artifact."
+            exit 1
           fi
+          bundle_dir=$(dirname "$metadata_path")
+          printf '%s\n' "bundle_dir=$bundle_dir" >> "$GITHUB_OUTPUT"
 
       - name: Validate prepare run provenance
         env:
@@ -106,10 +109,9 @@ jobs:
           # structural validation happens in the dedicated validation script.
           python3 - <<'PY'
           import json
-          import os
           from pathlib import Path
 
-          bundle_dir = Path("prepared") / os.environ["PREPARE_ARTIFACT_NAME"]
+          bundle_dir = Path("${{ steps.download_prepare_bundle.outputs.bundle_dir }}")
           metadata_path = bundle_dir / "release-metadata.json"
           if not metadata_path.exists():
               raise SystemExit(f"::error file={metadata_path}::Missing prepared release metadata.")
@@ -136,7 +138,7 @@ jobs:
         run: |
           set -eu
           sh scripts/validate-release-inputs.sh \
-            "prepared/${PREPARE_ARTIFACT_NAME}" \
+            "${{ steps.download_prepare_bundle.outputs.bundle_dir }}" \
             "${{ inputs.prepare_run_id }}"
 
       - name: Verify prepare run SHA matches bundle metadata
@@ -163,7 +165,7 @@ jobs:
           from datetime import datetime, timezone
           from pathlib import Path
 
-          bundle_dir = Path("prepared") / os.environ["PREPARE_ARTIFACT_NAME"]
+          bundle_dir = Path("${{ steps.download_prepare_bundle.outputs.bundle_dir }}")
           metadata_path = bundle_dir / "release-metadata.json"
           resolved_path = bundle_dir / "resolved-release-metadata.json"
 
@@ -190,7 +192,7 @@ jobs:
           # The publish job reuses the already validated bundle from this same
           # workflow run after the protected environment gate is approved.
           name: ${{ env.VALIDATED_ARTIFACT_NAME }}
-          path: prepared/${{ env.PREPARE_ARTIFACT_NAME }}
+          path: ${{ steps.download_prepare_bundle.outputs.bundle_dir }}
           if-no-files-found: error
           retention-days: 7
 
@@ -220,24 +222,28 @@ jobs:
           sudo install /tmp/ctan-o-mat/ctan-o-mat.pl /usr/local/bin/ctan-o-mat
 
       - name: Download validated release bundle
+        id: download_validated_bundle
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -eu
           # Reuse the post-validation bundle produced by this workflow rather
           # than re-downloading the original artifact and reintroducing drift.
-          rm -rf validated validated-download
+          # Resolve the actual extraction directory dynamically for the same
+          # reason as in the validate job.
+          rm -rf validated-download
           mkdir -p validated-download
           gh run download "${GITHUB_RUN_ID}" \
             --repo "${GITHUB_REPOSITORY}" \
             --name "${VALIDATED_ARTIFACT_NAME}" \
             --dir validated-download
-          mkdir -p "validated/${VALIDATED_ARTIFACT_NAME}"
-          if [ -d "validated-download/${VALIDATED_ARTIFACT_NAME}" ]; then
-            mv "validated-download/${VALIDATED_ARTIFACT_NAME}/"* "validated/${VALIDATED_ARTIFACT_NAME}/"
-          else
-            mv validated-download/* "validated/${VALIDATED_ARTIFACT_NAME}/"
+          metadata_path=$(find validated-download -type f -name release-metadata.json -print | head -n 1)
+          if [ -z "$metadata_path" ]; then
+            printf '%s\n' "::error::Could not locate release-metadata.json in the validated release artifact."
+            exit 1
           fi
+          bundle_dir=$(dirname "$metadata_path")
+          printf '%s\n' "bundle_dir=$bundle_dir" >> "$GITHUB_OUTPUT"
 
       - name: Publish prepared artifact to CTAN
         env:
@@ -247,5 +253,5 @@ jobs:
         run: |
           set -eu
           sh scripts/release-ctan.sh \
-            "validated/${VALIDATED_ARTIFACT_NAME}" \
+            "${{ steps.download_validated_bundle.outputs.bundle_dir }}" \
             "${{ needs.validate-release-inputs.outputs.prepare_run_id }}"
