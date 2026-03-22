@@ -61,18 +61,19 @@ package jobs.
 
 ### Missing announcement prevention
 
-The prepare workflow generates `announcement-draft.txt` from one of two
-explicit sources:
+The prepare workflow generates `announcement-draft.txt` from exactly one
+explicit source:
 
-1. `ctan/release-announcement.txt`, if that file exists and is non-empty
-2. otherwise a deterministic draft from filtered Git commit subjects since the
-   last release tag
+1. `ctan/release-announcement.txt`
 
-The generated commit-based draft intentionally skips obviously internal commit
-types such as `merge`, `chore:`, `ci:`, `docs:`, `test:`, `build:`, `style:`,
-and `release:`. If nothing releasable remains after filtering, prepare fails
-closed and the maintainer must provide `ctan/release-announcement.txt`
-explicitly.
+`Prepare CTAN Release` fails closed if that file is missing, empty, or contains
+only whitespace. There is no commit-based fallback and no implicit default
+announcement.
+
+On `pull_request` runs, the workflow does not fail just because the file is
+absent; instead it skips release-bundle preparation and records that the branch
+is not yet release-ready. On `push` to `main` and on manual prepare runs, the
+missing file is a hard error.
 
 The release workflow fails hard if:
 
@@ -80,7 +81,9 @@ The release workflow fails hard if:
 - the file is empty
 - the file contains only whitespace
 
-There is no fallback text and no implicit default announcement.
+After a successful release, remove `ctan/release-announcement.txt` from the
+working tree or the repository so the next prepare run cannot accidentally
+reuse the previous announcement text.
 
 ### Prepare trigger strategy
 
@@ -97,6 +100,8 @@ This is a deliberate trade-off:
 - instead, a lightweight change-detection step keeps the workflow visible while
   skipping the heavy TeX installation and bundle build when CTAN inputs did not
   change
+- when CTAN inputs changed but `ctan/release-announcement.txt` is still absent
+  on a PR, the workflow records that the branch is not release-ready yet
 
 This keeps the default safe and predictable without paying the full packaging
 cost on every PR.
@@ -243,8 +248,8 @@ This preserves the guarantee that a retry never triggers a second CTAN submit.
   the sync must fail hard; fix the tag state explicitly before retrying
 - GitHub Release exists but is incomplete:
   rerun `Sync GitHub Release`; it will update notes and replace assets in place
-- Announcement draft is poor or too internal:
-  add `ctan/release-announcement.txt` before the prepare run and regenerate the
+- Announcement is missing or needs revision:
+  create or update `ctan/release-announcement.txt`, then regenerate the prepare
   bundle
 
 ## Requirements
@@ -275,10 +280,8 @@ Important changes:
 - CTAN release credentials are no longer available to the prepare workflow
 - CTAN publishing now requires a manually selected prepare run
 - CTAN publishing now requires approval through the protected environment
-- the CTAN announcement now comes from `announcement-draft.txt` in the prepared
-  bundle and must not be empty
-- `ctan/release-announcement.txt` can now be used as an explicit curated source
-  for the announcement draft; otherwise a filtered commit-based draft is used
+- the CTAN announcement now comes only from `ctan/release-announcement.txt`,
+  via `announcement-draft.txt` in the prepared bundle, and must not be empty
 - GitHub Releases are now synchronized from successful CTAN releases instead of
   being maintained independently
 

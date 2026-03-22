@@ -99,8 +99,64 @@ jobs:
             printf '| Reason | No CTAN-package-relevant changes detected |\n'
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Install TeX tools for the CTAN package build
+      - name: Check explicit announcement source
+        id: announcement
         if: steps.changes.outputs.ctan == 'true'
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -eu
+          announcement_path="ctan/release-announcement.txt"
+
+          if [ ! -f "$announcement_path" ]; then
+            if [ "$EVENT_NAME" = "pull_request" ]; then
+              printf '%s\n' "ready=false" >> "$GITHUB_OUTPUT"
+              printf '%s\n' "reason=Missing ctan/release-announcement.txt on pull request" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+
+            printf '%s\n' "::error file=$announcement_path::Missing explicit CTAN announcement file."
+            exit 1
+          fi
+
+          announcement_trimmed=$(
+            python3 - "$announcement_path" <<'PY'
+            import sys
+            from pathlib import Path
+
+            print(Path(sys.argv[1]).read_text(encoding="utf-8").strip())
+            PY
+          )
+
+          if [ -z "$announcement_trimmed" ]; then
+            printf '%s\n' "::error file=$announcement_path::Explicit CTAN announcement file is empty."
+            exit 1
+          fi
+
+          printf '%s\n' "ready=true" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "reason=Explicit announcement file present" >> "$GITHUB_OUTPUT"
+
+      - name: Skip CTAN bundle preparation when announcement file is absent on pull request
+        if: steps.changes.outputs.ctan == 'true' && steps.announcement.outputs.ready != 'true'
+        run: echo "No explicit CTAN announcement file present on this pull request; skipping releasable bundle preparation."
+
+      - name: Write announcement skip summary
+        if: steps.changes.outputs.ctan == 'true' && steps.announcement.outputs.ready != 'true'
+        run: |
+          set -eu
+          {
+            printf '## Prepare CTAN Release\n\n'
+            printf 'Releasable CTAN bundle preparation was skipped for this run.\n\n'
+            printf '| Field | Value |\n'
+            printf '| --- | --- |\n'
+            printf '| Event | %s |\n' "${GITHUB_EVENT_NAME}"
+            printf '| Ref | `%s` |\n' "${GITHUB_REF}"
+            printf '| Reason | %s |\n' "${{ steps.announcement.outputs.reason }}"
+            printf '\nCreate `ctan/release-announcement.txt` explicitly when you want a release-ready CTAN bundle.\n'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Install TeX tools for the CTAN package build
+        if: steps.changes.outputs.ctan == 'true' && steps.announcement.outputs.ready == 'true'
         run: |
           set -eu
           # This workflow intentionally installs only build-time dependencies.
@@ -114,13 +170,13 @@ jobs:
             zip
 
       - name: Build CTAN payload
-        if: steps.changes.outputs.ctan == 'true'
+        if: steps.changes.outputs.ctan == 'true' && steps.announcement.outputs.ready == 'true'
         run: |
           set -eu
           sh scripts/build-ctan.sh
 
       - name: Assemble prepared release bundle
-        if: steps.changes.outputs.ctan == 'true'
+        if: steps.changes.outputs.ctan == 'true' && steps.announcement.outputs.ready == 'true'
         run: |
           set -eu
 
@@ -146,7 +202,7 @@ jobs:
             "$bundle_dir/release-metadata.json"
 
       - name: Validate prepared release bundle
-        if: steps.changes.outputs.ctan == 'true'
+        if: steps.changes.outputs.ctan == 'true' && steps.announcement.outputs.ready == 'true'
         run: |
           set -eu
           # Fail the prepare run before artifact upload if any release input is
@@ -154,13 +210,13 @@ jobs:
           sh scripts/validate-release-inputs.sh "dist/${PREPARE_ARTIFACT_NAME}"
 
       - name: Show prepared package files
-        if: steps.changes.outputs.ctan == 'true'
+        if: steps.changes.outputs.ctan == 'true' && steps.announcement.outputs.ready == 'true'
         run: |
           set -eu
           unzip -l "dist/${PREPARE_ARTIFACT_NAME}"/onlinebrief24-*.zip
 
       - name: Log prepare traceability
-        if: steps.changes.outputs.ctan == 'true'
+        if: steps.changes.outputs.ctan == 'true' && steps.announcement.outputs.ready == 'true'
         run: |
           set -eu
           # Keep the key release identifiers visible in the job log so the
@@ -171,7 +227,7 @@ jobs:
           cat "dist/${PREPARE_ARTIFACT_NAME}/release-metadata.json"
 
       - name: Write prepare summary
-        if: steps.changes.outputs.ctan == 'true'
+        if: steps.changes.outputs.ctan == 'true' && steps.announcement.outputs.ready == 'true'
         run: |
           set -eu
           python3 - <<'PY'
@@ -209,7 +265,7 @@ jobs:
           PY
 
       - name: Upload prepared release bundle
-        if: steps.changes.outputs.ctan == 'true'
+        if: steps.changes.outputs.ctan == 'true' && steps.announcement.outputs.ready == 'true'
         uses: actions/upload-artifact@v6
         with:
           name: ${{ env.PREPARE_ARTIFACT_NAME }}
