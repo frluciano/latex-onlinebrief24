@@ -192,11 +192,13 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           # The publish job reuses the already validated bundle from this same
-          # workflow run after the protected environment gate is approved.
+          # workflow run after the protected environment gate is approved. Keep
+          # it long enough that a failed GitHub-release sync can be retried
+          # without ever re-submitting to CTAN.
           name: ${{ env.VALIDATED_ARTIFACT_NAME }}
           path: ${{ steps.download_prepare_bundle.outputs.bundle_dir }}
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 30
 
   publish-to-ctan:
     needs: validate-release-inputs
