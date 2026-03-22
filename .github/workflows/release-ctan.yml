@@ -1,99 +1,251 @@
-# Automatically build, upload to CTAN, and create a GitHub Release when a
-# date-based tag (YYYY-MM-DD) is pushed.
+# Publish a previously prepared CTAN artifact only after explicit manual
+# approval. This workflow never rebuilds the package and never runs
+# automatically on tags or pushes.
 name: Release CTAN
 
 on:
-  push:
-    tags:
-      - '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'
+  workflow_dispatch:
+    inputs:
+      prepare_run_id:
+        description: "GitHub Actions run ID of a successful 'Prepare CTAN Release' workflow"
+        required: true
+        type: string
 
 permissions:
-  contents: write
+  actions: read
+  contents: read
+
+concurrency:
+  # Release attempts for the same prepared artifact must serialize so one human
+  # approval cannot accidentally green-light two publishes at once.
+  group: ${{ github.workflow }}-${{ inputs.prepare_run_id }}
+  cancel-in-progress: false
+
+env:
+  # The manual release consumes the prepare workflow bundle as-is and then
+  # republishes the validated copy inside the same workflow after approval.
+  PREPARE_ARTIFACT_NAME: onlinebrief24-ctan-release-bundle
+  VALIDATED_ARTIFACT_NAME: validated-onlinebrief24-ctan-release-bundle
 
 jobs:
-  release:
+  validate-release-inputs:
     runs-on: ubuntu-latest
+    outputs:
+      # The publish job checks out and labels itself against the exact commit
+      # and version already frozen into the prepared bundle.
+      artifact_filename: ${{ steps.metadata.outputs.artifact_filename }}
+      prepare_run_id: ${{ steps.metadata.outputs.prepare_run_id }}
+      source_commit_sha: ${{ steps.metadata.outputs.source_commit_sha }}
+      version: ${{ steps.metadata.outputs.version }}
 
     steps:
-      - uses: actions/checkout@v6
-
-      - name: Extract version from tag
-        id: version
-        run: echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
-
-      - name: Verify version matches cls
+      - name: Download prepared release bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          cls_date=$(sed -n 's|.*\\ProvidesClass{onlinebrief24}\[\([0-9/]*\).*|\1|p' onlinebrief24.cls | tr '/' '-')
-          if [ "$cls_date" != "${{ steps.version.outputs.version }}" ]; then
-            echo "::error::Tag ${{ steps.version.outputs.version }} does not match cls version $cls_date"
+          set -eu
+          # `gh run download` may either recreate the artifact directory or
+          # unpack files directly into the destination. Normalize both shapes so
+          # every later step can address a stable bundle path.
+          rm -rf prepared prepared-download
+          mkdir -p prepared-download
+          gh run download "${{ inputs.prepare_run_id }}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --name "${PREPARE_ARTIFACT_NAME}" \
+            --dir prepared-download
+          mkdir -p "prepared/${PREPARE_ARTIFACT_NAME}"
+          if [ -d "prepared-download/${PREPARE_ARTIFACT_NAME}" ]; then
+            mv "prepared-download/${PREPARE_ARTIFACT_NAME}/"* "prepared/${PREPARE_ARTIFACT_NAME}/"
+          else
+            mv prepared-download/* "prepared/${PREPARE_ARTIFACT_NAME}/"
+          fi
+
+      - name: Validate prepare run provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREPARE_RUN_ID_INPUT: ${{ inputs.prepare_run_id }}
+        run: |
+          set -eu
+          # Only a successful prepare run from a push to main is eligible for
+          # CTAN publishing. This blocks PR artifacts and ad-hoc untrusted runs.
+          python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+          import sys
+
+          run_id = os.environ["PREPARE_RUN_ID_INPUT"]
+          repo = os.environ["GITHUB_REPOSITORY"]
+          raw = subprocess.check_output(
+              ["gh", "api", f"repos/{repo}/actions/runs/{run_id}"],
+              text=True,
+          )
+          data = json.loads(raw)
+          errors = []
+
+          if data.get("name") != "Prepare CTAN Release":
+              errors.append(f"prepare run {run_id} is not from 'Prepare CTAN Release'")
+          if data.get("event") != "push":
+              errors.append(f"prepare run {run_id} must come from a push event")
+          if data.get("head_branch") != "main":
+              errors.append(f"prepare run {run_id} must come from main, got {data.get('head_branch')!r}")
+          if data.get("status") != "completed" or data.get("conclusion") != "success":
+              errors.append(f"prepare run {run_id} must be completed successfully")
+
+          if errors:
+              for message in errors:
+                  print(f"::error::{message}")
+              sys.exit(1)
+          PY
+
+      - name: Read prepared metadata
+        id: metadata
+        run: |
+          set -eu
+          # Read only the fields needed to wire the rest of the workflow. Full
+          # structural validation happens in the dedicated validation script.
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          bundle_dir = Path("prepared") / os.environ["PREPARE_ARTIFACT_NAME"]
+          metadata_path = bundle_dir / "release-metadata.json"
+          if not metadata_path.exists():
+              raise SystemExit(f"::error file={metadata_path}::Missing prepared release metadata.")
+
+          data = json.loads(metadata_path.read_text(encoding="utf-8"))
+          required = ("artifact_filename", "prepare_run_id", "source_commit_sha", "version")
+          missing = [key for key in required if not data.get(key)]
+          if missing:
+              raise SystemExit(f"::error file={metadata_path}::Missing required metadata fields: {', '.join(missing)}")
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as fh:
+              for key in required:
+                  fh.write(f"{key}={data[key]}\n")
+          PY
+
+      - uses: actions/checkout@v6
+        with:
+          # Validate and later publish against the exact prepared commit rather
+          # than the commit currently checked out in the default branch.
+          fetch-depth: 0
+          ref: ${{ steps.metadata.outputs.source_commit_sha }}
+
+      - name: Validate prepared release bundle
+        run: |
+          set -eu
+          sh scripts/validate-release-inputs.sh \
+            "prepared/${PREPARE_ARTIFACT_NAME}" \
+            "${{ inputs.prepare_run_id }}"
+
+      - name: Verify prepare run SHA matches bundle metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          # The artifact payload and the GitHub run record must agree on the
+          # commit SHA. A mismatch would mean the bundle is not trustworthy.
+          run_sha=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${{ inputs.prepare_run_id }}" --jq '.head_sha')
+          if [ "$run_sha" != "${{ steps.metadata.outputs.source_commit_sha }}" ]; then
+            printf '%s\n' "::error::Prepare run head SHA $run_sha does not match bundle metadata SHA ${{ steps.metadata.outputs.source_commit_sha }}"
             exit 1
           fi
 
-      - name: Install TeX tools and ctan-o-mat
+      - name: Record resolved release metadata
         run: |
+          set -eu
+          # Preserve the mapping from prepared bundle to release attempt so a
+          # later audit can see who requested publication and in which run.
+          python3 - <<'PY'
+          import json
+          import os
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          bundle_dir = Path("prepared") / os.environ["PREPARE_ARTIFACT_NAME"]
+          metadata_path = bundle_dir / "release-metadata.json"
+          resolved_path = bundle_dir / "resolved-release-metadata.json"
+
+          data = json.loads(metadata_path.read_text(encoding="utf-8"))
+          data["release_run_id"] = os.environ["GITHUB_RUN_ID"]
+          data["release_run_attempt"] = os.environ["GITHUB_RUN_ATTEMPT"]
+          data["release_requested_by"] = os.environ["GITHUB_ACTOR"]
+          data["release_timestamp_utc"] = datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+          resolved_path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+          PY
+
+      - name: Log release traceability
+        run: |
+          set -eu
+          printf '%s\n' "Prepared run: ${{ inputs.prepare_run_id }}"
+          printf '%s\n' "Prepared artifact: ${{ steps.metadata.outputs.artifact_filename }}"
+          printf '%s\n' "Prepared commit: ${{ steps.metadata.outputs.source_commit_sha }}"
+          printf '%s\n' "Prepared version: ${{ steps.metadata.outputs.version }}"
+
+      - name: Upload validated release bundle
+        uses: actions/upload-artifact@v6
+        with:
+          # The publish job reuses the already validated bundle from this same
+          # workflow run after the protected environment gate is approved.
+          name: ${{ env.VALIDATED_ARTIFACT_NAME }}
+          path: prepared/${{ env.PREPARE_ARTIFACT_NAME }}
+          if-no-files-found: error
+          retention-days: 7
+
+  publish-to-ctan:
+    needs: validate-release-inputs
+    runs-on: ubuntu-latest
+    # The protected environment is the visible human approval gate and the only
+    # place where CTAN release credentials are exposed.
+    environment: ctan-release
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # Publish from the exact prepared commit so the release context matches
+          # the bundle provenance that was just validated.
+          fetch-depth: 0
+          ref: ${{ needs.validate-release-inputs.outputs.source_commit_sha }}
+
+      - name: Install ctan-o-mat
+        run: |
+          set -eu
+          # Install submission tooling only in the publish job. The prepare
+          # workflow must remain physically incapable of performing a submit.
           sudo apt-get update
-          sudo apt-get install -y \
-            latexmk \
-            libwww-perl \
-            texlive-fonts-extra \
-            texlive-lang-german \
-            texlive-latex-extra \
-            zip
+          sudo apt-get install -y libwww-perl
           git clone --depth 1 https://github.com/ge-ne/ctan-o-mat.git /tmp/ctan-o-mat
           sudo install /tmp/ctan-o-mat/ctan-o-mat.pl /usr/local/bin/ctan-o-mat
 
-      - name: Build CTAN package
-        run: sh scripts/build-ctan.sh
-
-      - name: Record archive checksum
-        run: |
-          archive=$(ls dist/ctan/onlinebrief24-*.zip)
-          sha256sum "$archive" > "$archive.sha256"
-
-      - name: Extract announcement from tag
-        id: announcement
-        run: |
-          # Use the tag annotation message as the CTAN announcement.
-          # Fall back to a default if the tag has no message body.
-          body=$(git tag -l --format='%(contents:body)' "${{ steps.version.outputs.version }}")
-          if [ -z "$body" ]; then
-            body="onlinebrief24 ${{ steps.version.outputs.version }} — see https://github.com/frluciano/latex-onlinebrief24/releases/tag/${{ steps.version.outputs.version }}"
-          fi
-          # Write to file to preserve newlines.
-          echo "$body" > /tmp/announcement.txt
-
-      - name: Prepare ctan-o-mat config
-        run: |
-          version="${{ steps.version.outputs.version }}"
-          archive=$(ls dist/ctan/onlinebrief24-*.zip)
-          sed \
-            -e "s|\${VERSION}|${version}|g" \
-            -e "s|\${CTAN_EMAIL}|${{ secrets.CTAN_EMAIL }}|g" \
-            -e "s|\${CTAN_ZIP}|${archive}|g" \
-            ctan/onlinebrief24.pkg > /tmp/onlinebrief24.pkg
-          perl -0pi -e '
-            open my $fh, "<", "/tmp/announcement.txt" or die $!;
-            local $/;
-            my $announcement = <$fh>;
-            chomp $announcement;
-            s/\$\{ANNOUNCEMENT\}/$announcement/s;
-          ' /tmp/onlinebrief24.pkg
-
-      - name: Validate CTAN package
-        run: perl /usr/local/bin/ctan-o-mat --validate /tmp/onlinebrief24.pkg
-
-      - name: Upload to CTAN
-        run: perl /usr/local/bin/ctan-o-mat --submit /tmp/onlinebrief24.pkg
-
-      - name: Create GitHub Release
+      - name: Download validated release bundle
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          version="${{ steps.version.outputs.version }}"
-          archive=$(ls dist/ctan/onlinebrief24-*.zip)
-          checksum="${archive}.sha256"
-          announcement=$(cat /tmp/announcement.txt)
-          gh release create "$version" \
-            "$archive" "$checksum" \
-            --title "$version" \
-            --notes "$announcement"
+          set -eu
+          # Reuse the post-validation bundle produced by this workflow rather
+          # than re-downloading the original artifact and reintroducing drift.
+          rm -rf validated validated-download
+          mkdir -p validated-download
+          gh run download "${GITHUB_RUN_ID}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --name "${VALIDATED_ARTIFACT_NAME}" \
+            --dir validated-download
+          mkdir -p "validated/${VALIDATED_ARTIFACT_NAME}"
+          if [ -d "validated-download/${VALIDATED_ARTIFACT_NAME}" ]; then
+            mv "validated-download/${VALIDATED_ARTIFACT_NAME}/"* "validated/${VALIDATED_ARTIFACT_NAME}/"
+          else
+            mv validated-download/* "validated/${VALIDATED_ARTIFACT_NAME}/"
+          fi
+
+      - name: Publish prepared artifact to CTAN
+        env:
+          # This secret is intentionally scoped to the protected environment so
+          # no earlier step can access publish credentials.
+          CTAN_EMAIL: ${{ secrets.CTAN_EMAIL }}
+        run: |
+          set -eu
+          sh scripts/release-ctan.sh \
+            "validated/${VALIDATED_ARTIFACT_NAME}" \
+            "${{ needs.validate-release-inputs.outputs.prepare_run_id }}"
