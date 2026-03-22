@@ -100,8 +100,8 @@ Danach kannst du `\documentclass{onlinebrief24}` aus beliebigen Projekten verwen
 Die Dateien im Verzeichnis `examples/` sind lauffähige Referenzen für die unterstützten Varianten:
 
 - `example-onlinebrief24-basic.tex`: einfacher Brief ohne Kopf- und Fußzeile
-- `example-onlinebrief24-infoblock.tex`: Brief mit festem DIN-nahem Informationsblock
-- `example-onlinebrief24-modern.tex`: moderner Stil mit Kontaktdaten
+- `example-onlinebrief24-infoblock.tex`: englischer Beispielbrief mit festem DIN-nahem Informationsblock
+- `example-onlinebrief24-modern.tex`: englischer moderner Stil mit Kontaktdaten und Informationsblock
 - `example-onlinebrief24-modern-blue.tex`: moderner Stil mit alternativem Farbschema
 
 Die reinen Regressionstests für `scripts/verify.sh` liegen bewusst getrennt unter `tests/fixtures/` und sind **nicht** im CTAN-Paket enthalten:
@@ -109,11 +109,11 @@ Die reinen Regressionstests für `scripts/verify.sh` liegen bewusst getrennt unt
 - `signature-regression.tex`: Regressionsfall für kurze Grußformel mit expliziter Signatur
 - `multipage-regression.tex`: Mehrseiten-Regressionsfall
 
-Visuelle Vorschau der beiden Varianten:
+Visuelle Vorschau der beiden gebündelten CTAN-Beispiele:
 
-| Basic | Modern Blue |
+| Basic + Infoblock | Modern + Infoblock |
 | --- | --- |
-| ![Preview of the basic letter style](docs/assets/example-onlinebrief24-basic.png) | ![Preview of the modern blue letter style](docs/assets/example-onlinebrief24-modern-blue.png) |
+| ![Preview of the basic letter style with information block](docs/assets/example-onlinebrief24-infoblock.png) | ![Preview of the modern letter style with information block](docs/assets/example-onlinebrief24-modern.png) |
 
 Hinweis: Die Beispiel-Dateien referenzieren die Klasse absichtlich relativ über `../onlinebrief24`, damit sie direkt aus dem Repository heraus gebaut werden können.
 
@@ -121,7 +121,7 @@ Beispiel-Build:
 
 ```bash
 cd examples
-xelatex example-onlinebrief24-basic.tex
+xelatex example-onlinebrief24-infoblock.tex
 ```
 
 
@@ -136,7 +136,7 @@ xelatex example-onlinebrief24-basic.tex
 | `infoblock` | Blendet oben rechts einen festen DIN-nahen Informationsblock mit Bezugs- und Kontaktdaten ein |
 | `guides` | Technischer Overlay-Modus zur Layoutprüfung; blendet Hilfslinien und Markierungen ein und ist daher nur zur Prüfung gedacht |
 | `footercenter` | Zentriert die Fußzeile im `modern`-Stil |
-| `lang=<sprache>` | Dokumentsprache als babel-Name (Standard: `german`); z.B. `english`, `french`, `spanish`, `italian`, `dutch`, `polish` etc. |
+| `lang=<sprache>` | Dokumentsprache als babel-Name (Standard: `german`); z.B. `english`, `french`, `spanish`, `italian`, `dutch`, `polish` etc. Die Beschriftungen des `infoblock` werden fuer `german`, `ngerman`, `english`, `french`, `spanish`, `italian`, `dutch` und `polish` lokalisiert. |
 
 ### Farbschemata für `modern`
 
@@ -186,6 +186,11 @@ Brieftexts. Angezeigt werden nur Felder, die tatsächlich gesetzt sind.
 - `\setcontactphone{...}`: `Telefon`
 - `\setcontactfax{...}`: `Telefax`
 - `\setcontactemail{...}`: `E-Mail`
+
+Die Feldnamen folgen der gewaehlten Dokumentsprache fuer `german`, `ngerman`,
+`english`, `french`, `spanish`, `italian`, `dutch` und `polish`.
+Laengere Uebersetzungen werden dabei bewusst kompakt gehalten, damit der
+DIN-nahe Block nicht unschoen umbrechen muss.
 
 Das Briefdatum bleibt an seiner bisherigen Stelle und wird nicht zusätzlich im
 Informationsblock wiederholt.
