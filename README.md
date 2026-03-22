@@ -109,11 +109,11 @@ Die reinen Regressionstests für `scripts/verify.sh` liegen bewusst getrennt unt
 - `signature-regression.tex`: Regressionsfall für kurze Grußformel mit expliziter Signatur
 - `multipage-regression.tex`: Mehrseiten-Regressionsfall
 
-Visuelle Vorschau der beiden Varianten:
+Visuelle Vorschau der beiden gebündelten CTAN-Beispiele:
 
-| Basic | Modern Blue |
+| Basic + Infoblock | Modern + Infoblock |
 | --- | --- |
-| ![Preview of the basic letter style](docs/assets/example-onlinebrief24-basic.png) | ![Preview of the modern blue letter style](docs/assets/example-onlinebrief24-modern-blue.png) |
+| ![Preview of the basic letter style with information block](docs/assets/example-onlinebrief24-infoblock.png) | ![Preview of the modern letter style with information block](docs/assets/example-onlinebrief24-modern.png) |
 
 Hinweis: Die Beispiel-Dateien referenzieren die Klasse absichtlich relativ über `../onlinebrief24`, damit sie direkt aus dem Repository heraus gebaut werden können.
 
@@ -121,7 +121,7 @@ Beispiel-Build:
 
 ```bash
 cd examples
-xelatex example-onlinebrief24-basic.tex
+xelatex example-onlinebrief24-infoblock.tex
 ```
 
 
