@@ -109,6 +109,23 @@
 \newcommand{\@obb@contactphone}{}
 \newcommand{\@obb@contactfax}{}
 \newcommand{\@obb@contactemail}{}
+\newlength{\@obb@infoblocklabelwidth}
+\newlength{\@obb@infoblockvaluewidth}
+\newlength{\@obb@infoblockcolsep}
+\newlength{\@obb@infoblockrightedge}
+\newlength{\@obb@infoblocktopoffset}
+\newcommand{\@obb@usedininfoblocklayout}{%
+  % Public DIN-5008 summaries usually place the information block for Form B
+  % at roughly 50mm from the top, beginning around 125mm from the left with a
+  % maximum width of 75mm. Keep that as the shared class default for both the
+  % basic and modern styles so the reference area stays consistent.
+  \setlength{\@obb@infoblocklabelwidth}{30mm}%
+  \setlength{\@obb@infoblockcolsep}{2mm}%
+  \setlength{\@obb@infoblockvaluewidth}{43mm}%
+  \setlength{\@obb@infoblockrightedge}{200mm}%
+  \setlength{\@obb@infoblocktopoffset}{50mm}%
+}
+\@obb@usedininfoblocklayout
 
 \newcommand{\setreturnaddress}[1]{\renewcommand{\@obb@return}{#1}}
 \newcommand{\setrecipient}[1]{\renewcommand{\@obb@recipient}{#1}}
@@ -252,10 +269,11 @@
   }%
 }
 \newcommand{\@obb@renderinfoblocktable}{%
-  \parbox[t]{70mm}{%
+  \@obb@usedininfoblocklayout
+  \parbox[t]{\dimexpr\@obb@infoblocklabelwidth+\@obb@infoblockcolsep+\@obb@infoblockvaluewidth\relax}{%
     \raggedright
     \renewcommand{\arraystretch}{1.05}%
-    \begin{tabular}{@{}p{30mm}p{40mm}@{}}%
+    \begin{tabular}{@{}p{\@obb@infoblocklabelwidth}@{\hspace{\@obb@infoblockcolsep}}p{\@obb@infoblockvaluewidth}@{}}%
       \@obb@renderinfoblockrow{Ihr Zeichen}{\@obb@yourref}%
       \@obb@renderinfoblockrow{Ihre Nachricht vom}{\@obb@yourmessage}%
       \@obb@renderinfoblockrow{Unser Zeichen}{\@obb@ourref}%
@@ -282,7 +300,7 @@
       % Render the DIN-style information block independently from the text
       % flow so the first-page body start stays stable in both styles.
       \begin{tikzpicture}[remember picture, overlay]
-        \node[anchor=north east, inner sep=0pt] at ($(current page.north west)+(190mm,-50mm)$) {%
+        \node[anchor=north east, inner sep=0pt] at ($(current page.north west)+(\@obb@infoblockrightedge,-\@obb@infoblocktopoffset)$) {%
           \@obb@renderinfoblocktable
         };
       \end{tikzpicture}%

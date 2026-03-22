@@ -47,8 +47,11 @@ for ex_path in "$package_root"/examples/example-onlinebrief24-*.tex; do
   cp "$example_build_dir/${ex_name%.tex}.pdf" "$package_root/examples/"
 done
 
-# Refresh the unpacked release directory and the upload archive.
-rm -rf "$dist_root/onlinebrief24" "$dist_root/onlinebrief24-"*.zip
+# Refresh the unpacked release directory and every stale local variant from
+# earlier manual experiments so `dist/ctan` contains only the current package.
+find "$dist_root" -mindepth 1 -maxdepth 1 \
+  \( -name 'onlinebrief24' -o -name 'onlinebrief24 *' -o -name 'onlinebrief24.zip' -o -name 'onlinebrief24-*.zip' \) \
+  -exec rm -rf {} +
 mv "$package_root" "$dist_root/onlinebrief24"
 (cd "$dist_root" && zip -qr "onlinebrief24-${version}.zip" "onlinebrief24")
 
