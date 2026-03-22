@@ -7,6 +7,13 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
 
 ## [Unreleased]
 
+### Geaendert
+- CTAN-Announcements werden kuenftig nur noch aus
+  `ctan/release-announcement.txt` erzeugt; der bisherige Fallback aus
+  gefilterten Commit-Subjects wurde entfernt
+- `Prepare CTAN Release` scheitert jetzt absichtlich, wenn
+  `ctan/release-announcement.txt` fehlt oder leer ist
+
 ## [2026-03-22]
 
 ### Hinzugefuegt
