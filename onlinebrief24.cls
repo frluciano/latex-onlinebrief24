@@ -37,7 +37,9 @@
 \LoadClass[fontsize=11pt, parskip=half]{scrlttr2}
 
 % --- Packages ---
-\expandafter\RequirePackage\expandafter[\obb@lang]{babel}
+% `provide=*` lets babel fall back to locale-INI based language data on leaner
+% TeX installations where a legacy `<language>.ldf` file is not installed.
+\expandafter\RequirePackage\expandafter[main=\obb@lang,provide=*]{babel}
 \RequirePackage{geometry}
 \RequirePackage{iftex}
 \RequirePackage{eso-pic}
