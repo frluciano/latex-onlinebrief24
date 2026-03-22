@@ -1,6 +1,7 @@
-# Rebuild the exact CTAN upload payload in CI so future package updates can be
-# reproduced without relying on a developer's local TeX installation.
-name: Build CTAN Package
+# Prepare a releasable CTAN artifact without ever publishing it. The workflow
+# produces a validated release bundle that the dedicated release workflow can
+# later consume.
+name: Prepare CTAN Release
 
 on:
   push:
@@ -16,19 +17,27 @@ permissions:
   pull-requests: read
 
 concurrency:
-  # Keep only the newest package build per branch or PR.
+  # Keep only the newest prepare run per branch or PR.
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+env:
+  # The prepare workflow always emits the same bundle name so the manual release
+  # workflow only needs a run ID and does not rely on ad-hoc artifact naming.
+  PREPARE_ARTIFACT_NAME: onlinebrief24-ctan-release-bundle
+
 jobs:
+  # Keep the historical job context `ctan-package` so the existing protected
+  # branch requirement on `main` does not need to change during the refactor.
   ctan-package:
     runs-on: ubuntu-latest
 
     steps:
-      # The package build is repository-local. CI only needs the checked-out
-      # sources plus a TeX toolchain capable of building the English package
-      # documentation.
       - uses: actions/checkout@v6
+        with:
+          # The announcement draft is derived from Git history, so a shallow
+          # checkout would make the release input incomplete or misleading.
+          fetch-depth: 0
 
       - name: Detect CTAN-package-relevant changes
         id: changes
@@ -41,6 +50,8 @@ jobs:
         run: |
           set -eu
 
+          # Manual runs are explicit preparation requests and should always build
+          # a fresh release bundle even when the diff-based heuristic would skip.
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             echo "ctan=true" >> "$GITHUB_OUTPUT"
             exit 0
@@ -64,7 +75,7 @@ jobs:
           echo "$changed_files"
 
           if printf '%s\n' "$changed_files" | grep -Eq \
-            '^(\.github/workflows/build-ctan\.yml|\.github/workflows/release-ctan\.yml|onlinebrief24\.cls|ctan/|examples/|scripts/build-ctan\.sh|LICENSE$)'; then
+            '^(\.github/workflows/build-ctan\.yml|\.github/workflows/release-ctan\.yml|onlinebrief24\.cls|ctan/|examples/|scripts/build-ctan\.sh|scripts/generate-announcement-draft\.sh|scripts/generate-release-metadata\.sh|scripts/validate-release-inputs\.sh|LICENSE$)'; then
             echo "ctan=true" >> "$GITHUB_OUTPUT"
           else
             echo "ctan=false" >> "$GITHUB_OUTPUT"
@@ -77,10 +88,9 @@ jobs:
       - name: Install TeX tools for the CTAN package build
         if: steps.changes.outputs.ctan == 'true'
         run: |
-          # The CTAN payload build compiles the English documentation plus the
-          # packaged `basic` and `modern` example PDFs. The modern example uses
-          # `sourcesanspro` and `fontawesome5`, both provided by
-          # `texlive-fonts-extra`.
+          set -eu
+          # This workflow intentionally installs only build-time dependencies.
+          # No CTAN submission tooling or secrets are ever available here.
           sudo apt-get update
           sudo apt-get install -y \
             latexmk \
@@ -91,25 +101,66 @@ jobs:
 
       - name: Build CTAN payload
         if: steps.changes.outputs.ctan == 'true'
-        run: sh scripts/build-ctan.sh
+        run: |
+          set -eu
+          sh scripts/build-ctan.sh
 
-      - name: Record archive checksum
+      - name: Assemble prepared release bundle
         if: steps.changes.outputs.ctan == 'true'
         run: |
+          set -eu
+
+          # Freeze every release input into one bundle so the release workflow
+          # can publish exactly these files without rebuilding anything.
+          bundle_dir="dist/${PREPARE_ARTIFACT_NAME}"
           archive=$(ls dist/ctan/onlinebrief24-*.zip)
-          sha256sum "$archive" > "$archive.sha256"
+          archive_filename=$(basename "$archive")
 
-      - name: Show packaged files
+          rm -rf "$bundle_dir"
+          mkdir -p "$bundle_dir"
+
+          cp "$archive" "$bundle_dir/$archive_filename"
+          (
+            cd "$bundle_dir"
+            sha256sum "$archive_filename" > "$archive_filename.sha256"
+          )
+
+          sh scripts/generate-announcement-draft.sh "$bundle_dir/announcement-draft.txt"
+          sh scripts/generate-release-metadata.sh \
+            "$bundle_dir/$archive_filename" \
+            "$bundle_dir/announcement-draft.txt" \
+            "$bundle_dir/release-metadata.json"
+
+      - name: Validate prepared release bundle
         if: steps.changes.outputs.ctan == 'true'
-        run: unzip -l dist/ctan/onlinebrief24-*.zip
+        run: |
+          set -eu
+          # Fail the prepare run before artifact upload if any release input is
+          # missing, blank, or internally inconsistent.
+          sh scripts/validate-release-inputs.sh "dist/${PREPARE_ARTIFACT_NAME}"
 
-      - name: Upload CTAN artifact
+      - name: Show prepared package files
+        if: steps.changes.outputs.ctan == 'true'
+        run: |
+          set -eu
+          unzip -l "dist/${PREPARE_ARTIFACT_NAME}"/onlinebrief24-*.zip
+
+      - name: Log prepare traceability
+        if: steps.changes.outputs.ctan == 'true'
+        run: |
+          set -eu
+          # Keep the key release identifiers visible in the job log so the
+          # later manual release can be traced back to this exact preparation.
+          printf '%s\n' "Prepare workflow: ${GITHUB_WORKFLOW}"
+          printf '%s\n' "Prepare run ID: ${GITHUB_RUN_ID}"
+          printf '%s\n' "Prepare run attempt: ${GITHUB_RUN_ATTEMPT}"
+          cat "dist/${PREPARE_ARTIFACT_NAME}/release-metadata.json"
+
+      - name: Upload prepared release bundle
         if: steps.changes.outputs.ctan == 'true'
         uses: actions/upload-artifact@v6
         with:
-          name: onlinebrief24-ctan-package
-          path: |
-            dist/ctan/onlinebrief24-*.zip
-            dist/ctan/onlinebrief24-*.zip.sha256
+          name: ${{ env.PREPARE_ARTIFACT_NAME }}
+          path: dist/${{ env.PREPARE_ARTIFACT_NAME }}
           if-no-files-found: error
           retention-days: 30

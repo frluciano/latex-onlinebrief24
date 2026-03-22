@@ -1,116 +1,175 @@
 # CTAN Release Workflow
 
-This file documents the release process for `onlinebrief24`. Releases are
-automated via the `Release CTAN` GitHub Actions workflow.
+This project now uses two strictly separated GitHub Actions workflows:
 
-## Release Principles
+- `Prepare CTAN Release`
+- `Release CTAN`
 
-- `main` is the release branch
-- pushing a date tag (`YYYY-MM-DD`) triggers the automated release pipeline
-- the class version in `onlinebrief24.cls` must match the tag
-- the CTAN upload, GitHub Release, and artifact creation happen automatically
+The prepare workflow never publishes to CTAN and has no access to CTAN release
+credentials. The release workflow publishes only a previously prepared artifact
+and only after explicit human approval.
 
-## Files To Update Before A Release
+## Architecture Note
 
-At minimum, review these files before every release:
+### Separation of prepare and release
 
-- `onlinebrief24.cls` — version/date in `\ProvidesClass`
-- `ctan/onlinebrief24-doc.tex` — documentation date and content
-- `ctan/README.md` — package README for CTAN
-- `README.md` — German project README (keep feature list in sync with ctan/README.md)
-- `ctan/onlinebrief24.pkg` — announcement text (if changed)
+`Prepare CTAN Release` is responsible for:
 
-Typical release edits:
+- building the CTAN ZIP
+- generating the SHA256 checksum
+- generating `announcement-draft.txt`
+- generating `release-metadata.json`
+- validating the prepared release bundle
+- uploading the prepared bundle as a GitHub artifact
 
-- update the version/date in `\ProvidesClass{onlinebrief24}[...]`
-- adjust the CTAN documentation date if needed
-- refresh the announcement text in `ctan/onlinebrief24.pkg`
-- confirm the package contents still match `scripts/build-ctan.sh`
+`Release CTAN` is responsible for:
+
+- downloading exactly one previously prepared release bundle
+- accepting only successful `Prepare CTAN Release` runs from `push` events on
+  `main`
+- validating artifact, checksum, metadata, and announcement draft
+- waiting for explicit human approval through the protected GitHub Environment
+  `ctan-release`
+- publishing to CTAN only after all checks pass
+
+The release workflow never rebuilds the CTAN package. It always publishes the
+prepared ZIP from the selected prepare run.
+
+### Approval gate
+
+Approval happens at the `publish-to-ctan` job via the protected GitHub
+Environment `ctan-release`.
+
+This environment must use Required Reviewers. Until a reviewer approves the
+job, the workflow cannot access the CTAN release secret and cannot submit
+anything to CTAN.
+
+### Credential isolation
+
+- `Prepare CTAN Release` runs without CTAN secrets.
+- `Release CTAN` validates inputs before the publish job starts.
+- Only the `publish-to-ctan` job in the protected environment receives
+  `CTAN_EMAIL`.
+
+This enforces least privilege and prevents accidental publishing from build or
+package jobs.
+
+### Missing announcement prevention
+
+The prepare workflow generates `announcement-draft.txt` from the Git commit
+subjects since the last release tag.
+
+The release workflow fails hard if:
+
+- `announcement-draft.txt` is missing
+- the file is empty
+- the file contains only whitespace
+
+There is no fallback text and no implicit default announcement.
+
+## Prepared Release Bundle
+
+The prepare workflow uploads one artifact named
+`onlinebrief24-ctan-release-bundle`.
+
+The bundle contains:
+
+- `onlinebrief24-YYYY-MM-DD.zip`
+- `onlinebrief24-YYYY-MM-DD.zip.sha256`
+- `announcement-draft.txt`
+- `release-metadata.json`
+
+### Metadata format
+
+`release-metadata.json` is the machine-readable contract between prepare and
+release.
+
+```json
+{
+  "schema_version": 1,
+  "package_name": "onlinebrief24",
+  "version": "2026-03-22",
+  "artifact_filename": "onlinebrief24-2026-03-22.zip",
+  "artifact_sha256": "<sha256>",
+  "source_commit_sha": "<git-sha>",
+  "prepare_run_id": 123456789,
+  "prepare_run_attempt": 1,
+  "build_timestamp_utc": "2026-03-22T14:11:12Z",
+  "announcement_filename": "announcement-draft.txt"
+}
+```
 
 ## Standard Release Flow
 
 1. Make the intended code and documentation changes on a feature branch.
-2. If the package behavior changes, update the examples, verification logic, or
-   CTAN docs as needed.
-3. Bump the version date (updates both `onlinebrief24.cls` and `ctan/onlinebrief24-doc.tex`):
+2. If package behaviour changes, update examples, verification logic, or CTAN
+   docs as needed.
+3. Bump the version date:
    ```bash
    sh scripts/bump-version.sh YYYY-MM-DD
    ```
-4. Update the announcement in `ctan/onlinebrief24.pkg` if noteworthy.
-6. Merge the finished work into `main`.
-7. Wait for both CI workflows on `main` to pass:
+4. Merge the changes into `main`.
+5. Wait for these workflows on `main`:
    - `Build LaTeX Verification`
-   - `Build CTAN Package`
-8. Push an annotated tag matching the version date:
-   ```bash
-   git tag -a YYYY-MM-DD -m "YYYY-MM-DD — short description"
-   git push origin YYYY-MM-DD
-   ```
-   Write the tag annotation body in English. The release workflow reuses that
-   text as both the CTAN announcement and the GitHub Release notes.
-9. The `Release CTAN` workflow will automatically:
-   - build the CTAN package
-   - validate against the CTAN API
-   - upload to CTAN
-   - create a GitHub Release with the ZIP and checksum attached
+   - `Prepare CTAN Release`
+6. Open the finished prepare run and note its `run_id`.
+7. Download or inspect the prepared artifact and review:
+   - the ZIP contents
+   - `release-metadata.json`
+   - `announcement-draft.txt`
+8. Start `Release CTAN` manually with the selected `prepare_run_id`.
+9. Review and approve the `ctan-release` environment gate.
+10. After approval, the workflow validates again and then submits the prepared
+    artifact to CTAN.
 
 ## Requirements
 
-- GitHub Secret `CTAN_EMAIL` must be set to the registered CTAN uploader email
-- The package must already exist on CTAN (first upload was manual)
-- The tag must match the date in `\ProvidesClass{onlinebrief24}[YYYY/MM/DD ...]`
+- GitHub Environment `ctan-release` must exist.
+- `ctan-release` must use Required Reviewers.
+- Secret `CTAN_EMAIL` must be stored only in the `ctan-release` environment.
+- The package must already exist on CTAN because the workflow submits updates.
 
 ## CI Workflows
 
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
 | `Build LaTeX Verification` | push, PR | Build and verify examples across all engines |
-| `Build CTAN Package` | push, PR | Build CTAN ZIP artifact for validation |
-| `Release CTAN` | date tag push | Build, upload to CTAN, create GitHub Release |
+| `Prepare CTAN Release` | push, PR, manual | Build and validate a non-publishing CTAN release bundle |
+| `Release CTAN` | manual only | Validate a prepared bundle, wait for approval, publish to CTAN |
+
+## Migration Note
+
+The previous automation coupled tag pushes directly to CTAN publishing. That
+path has been removed.
+
+Important changes:
+
+- pushing a date tag no longer publishes anything
+- build/package preparation alone can never publish to CTAN
+- CTAN release credentials are no longer available to the prepare workflow
+- CTAN publishing now requires a manually selected prepare run
+- CTAN publishing now requires approval through the protected environment
+- the CTAN announcement now comes from `announcement-draft.txt` in the prepared
+  bundle and must not be empty
 
 ## Local Fallback
 
-If CI is temporarily unavailable, you can rebuild and upload manually:
+The local build step is still:
 
 ```bash
 sh scripts/build-ctan.sh
 ```
 
-Expected output:
-
-- `dist/ctan/onlinebrief24/`
-- `dist/ctan/onlinebrief24-YYYY-MM-DD.zip`
-
-For manual CTAN upload, use the web form or run ctan-o-mat locally:
+For release-bundle preparation outside GitHub Actions you can additionally run:
 
 ```bash
-ctan-o-mat --submit ctan/onlinebrief24.pkg
+sh scripts/generate-announcement-draft.sh dist/announcement-draft.txt
+sh scripts/generate-release-metadata.sh \
+  dist/ctan/onlinebrief24-YYYY-MM-DD.zip \
+  dist/announcement-draft.txt \
+  dist/release-metadata.json
 ```
 
-## Suggested CTAN Metadata
-
-Summary:
-
-`LaTeX class for DIN 5008 type-B business letters calibrated for use with the onlinebrief24.de service.`
-
-Long description:
-
-`onlinebrief24` is a LaTeX letter class based on KOMA-Script `scrlttr2`. It is
-calibrated against the practical preview behavior of onlinebrief24.de and
-provides:
-
-- a plain letter layout
-- a modern layout with header, footer, and accent colors
-- a guides mode for technical layout inspection
-- validated address-window inputs
-- verified pdfLaTeX, XeLaTeX, and LuaLaTeX workflows
-
-The package is intended for German business letters and currently supports one
-letter per document as the hardened use case.
-
-onlinebrief24.de is a hybrid mail service for business customers: documents
-are submitted digitally, and the service handles printing, enveloping,
-franking, and postal delivery.
-
-The trademark holders have formally authorized the maintainer to use the
-onlinebrief24.de mark in connection with this LaTeX class.
+Manual CTAN submission is intentionally no longer documented as the primary
+path here. The supported automation path is the dedicated `Release CTAN`
+workflow with explicit approval.
