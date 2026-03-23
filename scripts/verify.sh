@@ -73,6 +73,11 @@ for example in \
   examples/example-onlinebrief24-modern-blue.tex \
   examples/example-onlinebrief24-guides.tex \
   tests/fixtures/infoblock-italian-regression.tex \
+  tests/fixtures/infoblock-german-regression.tex \
+  tests/fixtures/infoblock-french-regression.tex \
+  tests/fixtures/infoblock-spanish-regression.tex \
+  tests/fixtures/infoblock-dutch-regression.tex \
+  tests/fixtures/infoblock-polish-regression.tex \
   tests/fixtures/signature-regression.tex \
   tests/fixtures/multipage-regression.tex \
   tests/fixtures/guides-regression.tex \
@@ -129,6 +134,61 @@ if ! printf '%s' "$italian_infoblock_text" | grep -F "Nostra comunic. del" >/dev
 fi
 if ! printf '%s' "$italian_infoblock_text" | grep -F "servizio@example.com" >/dev/null; then
   printf '%s\n' "Italian infoblock regression failed: contact email not found in PDF." >&2
+  exit 1
+fi
+
+# Verify German infoblock labels.
+german_infoblock_text=$(pdftotext "$build_dir/infoblock-german-regression.pdf" - | normalize_pdf_text)
+if ! printf '%s' "$german_infoblock_text" | grep -F "Ihr Zeichen" >/dev/null; then
+  printf '%s\n' "German infoblock regression failed: localized label not found in PDF." >&2
+  exit 1
+fi
+if ! printf '%s' "$german_infoblock_text" | grep -F "Ihre Nachricht vom" >/dev/null; then
+  printf '%s\n' "German infoblock regression failed: localized message label not found in PDF." >&2
+  exit 1
+fi
+
+# Verify French infoblock labels.
+french_infoblock_text=$(pdftotext "$build_dir/infoblock-french-regression.pdf" - | normalize_pdf_text)
+if ! printf '%s' "$french_infoblock_text" | grep -F "Vos références" >/dev/null; then
+  printf '%s\n' "French infoblock regression failed: localized label not found in PDF." >&2
+  exit 1
+fi
+if ! printf '%s' "$french_infoblock_text" | grep -F "Votre message du" >/dev/null; then
+  printf '%s\n' "French infoblock regression failed: localized message label not found in PDF." >&2
+  exit 1
+fi
+
+# Verify Spanish infoblock labels.
+spanish_infoblock_text=$(pdftotext "$build_dir/infoblock-spanish-regression.pdf" - | normalize_pdf_text)
+if ! printf '%s' "$spanish_infoblock_text" | grep -F "Su referencia" >/dev/null; then
+  printf '%s\n' "Spanish infoblock regression failed: localized label not found in PDF." >&2
+  exit 1
+fi
+if ! printf '%s' "$spanish_infoblock_text" | grep -F "Su mensaje del" >/dev/null; then
+  printf '%s\n' "Spanish infoblock regression failed: localized message label not found in PDF." >&2
+  exit 1
+fi
+
+# Verify Dutch infoblock labels.
+dutch_infoblock_text=$(pdftotext "$build_dir/infoblock-dutch-regression.pdf" - | normalize_pdf_text)
+if ! printf '%s' "$dutch_infoblock_text" | grep -F "Uw kenmerk" >/dev/null; then
+  printf '%s\n' "Dutch infoblock regression failed: localized label not found in PDF." >&2
+  exit 1
+fi
+if ! printf '%s' "$dutch_infoblock_text" | grep -F "Uw bericht van" >/dev/null; then
+  printf '%s\n' "Dutch infoblock regression failed: localized message label not found in PDF." >&2
+  exit 1
+fi
+
+# Verify Polish infoblock labels.
+polish_infoblock_text=$(pdftotext "$build_dir/infoblock-polish-regression.pdf" - | normalize_pdf_text)
+if ! printf '%s' "$polish_infoblock_text" | grep -F "Państwa znak" >/dev/null; then
+  printf '%s\n' "Polish infoblock regression failed: localized label not found in PDF." >&2
+  exit 1
+fi
+if ! printf '%s' "$polish_infoblock_text" | grep -F "Państwa pismo z dn." >/dev/null; then
+  printf '%s\n' "Polish infoblock regression failed: localized message label not found in PDF." >&2
   exit 1
 fi
 

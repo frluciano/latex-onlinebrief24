@@ -136,7 +136,7 @@ xelatex example-onlinebrief24-infoblock.tex
 | `infoblock` | Blendet oben rechts einen festen DIN-nahen Informationsblock mit Bezugs- und Kontaktdaten ein |
 | `guides` | Technischer Overlay-Modus zur Layoutprüfung; blendet Hilfslinien und Markierungen ein und ist daher nur zur Prüfung gedacht |
 | `footercenter` | Zentriert die Fußzeile im `modern`-Stil |
-| `lang=<sprache>` | Dokumentsprache als babel-Name (Standard: `german`); z.B. `english`, `french`, `spanish`, `italian`, `dutch`, `polish` etc. Die Beschriftungen des `infoblock` werden fuer `german`, `ngerman`, `english`, `french`, `spanish`, `italian`, `dutch` und `polish` lokalisiert. |
+| `lang=<sprache>` | Dokumentsprache als babel-Name (Standard: `german`); z.B. `english`, `french`, `spanish`, `italian`, `dutch`, `polish` etc. Die Beschriftungen des `infoblock` werden fuer `german`, `english`, `french`, `spanish`, `italian`, `dutch` und `polish` lokalisiert. |
 
 ### Farbschemata für `modern`
 
@@ -187,7 +187,7 @@ Brieftexts. Angezeigt werden nur Felder, die tatsächlich gesetzt sind.
 - `\setcontactfax{...}`: `Telefax`
 - `\setcontactemail{...}`: `E-Mail`
 
-Die Feldnamen folgen der gewaehlten Dokumentsprache fuer `german`, `ngerman`,
+Die Feldnamen folgen der gewaehlten Dokumentsprache fuer `german`,
 `english`, `french`, `spanish`, `italian`, `dutch` und `polish`.
 Laengere Uebersetzungen werden dabei bewusst kompakt gehalten, damit der
 DIN-nahe Block nicht unschoen umbrechen muss.

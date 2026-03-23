@@ -7,15 +7,56 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
 
 ## [Unreleased]
 
+### Hinzugefuegt
+- `\addfooteritem{icon}{text}` fuer zusaetzliche Footer-Eintraege im
+  modernen Stil
+- `\addinfoblockrow{label}{value}` fuer benutzerdefinierte Zusatzzeilen im
+  DIN-nahen Informationsblock
+- oeffentliche Layout-Makros `\setinfoblocktopoffset`,
+  `\setinfoblockrightedge` und `\setinfoblockcolwidths` zur Feinjustierung des
+  Informationsblocks aus dem Dokument heraus
+- neues Beispiel `examples/example-onlinebrief24-guides.tex` fuer den
+  technischen Guides-Modus
+- `CONTRIBUTING.md` und GitHub-Issue-Templates fuer strukturierte Mitarbeit
+
+### Behoben
+- CI-Regression in den Overlay-Helfern behoben: ungueltige interne
+  Makronamen und die versehentlich entfernte Abhaengigkeit `eso-pic` brechen
+  den Klassen-Load nicht mehr
+- eingebettete Python-Heredocs in den Release-Workflows entfernt; die
+  Workflows `Prepare CTAN Release`, `Release CTAN` und `Sync GitHub Release`
+  sind wieder shell-parsebar
+- nicht-ASCII-Zeichen in Kommentaren und Guides-Beschriftungen durch
+  ASCII-sichere Varianten ersetzt, damit Builds ueber alle unterstuetzten
+  Engines robuster laufen
+- Leerzeilen zwischen den lokalisierten `infoblock`-Label-Bloecken entfernt,
+  damit beim Laden der Klasse keine stoerenden `\par`-Token entstehen
+
 ### Entfernt
 - `ngerman`-Infoblock-Labels entfernt; `lang=german` deckt beide Varianten ab
 
 ### Geaendert
+- CTAN-Dokumentation erweitert: neuer Abschnitt zum Guides-Modus,
+  Extensibility-Abschnitt und API-Dokumentation fuer die neuen Makros
+- KOMA-Script-Interna rund um `\opening` sind nun im Klassenfile mit
+  Begruendung sowie Risiko-/Mitigationshinweisen dokumentiert
 - CTAN-Announcements werden kuenftig nur noch aus
   `ctan/release-announcement.txt` erzeugt; der bisherige Fallback aus
   gefilterten Commit-Subjects wurde entfernt
 - `Prepare CTAN Release` scheitert jetzt absichtlich, wenn
   `ctan/release-announcement.txt` fehlt oder leer ist
+
+### Intern
+- Rueckadress-Fontgroessen als benannte Makros zentralisiert, um
+  Duplikation im Klassenfile zu reduzieren
+- DIN-5008-Fenster- und Overlay-Koordinaten als benannte interne Makros
+  herausgezogen
+- Herkunft der moderncv-Farbschema-RGB-Werte im Klassenfile kommentiert
+- Regressionsabdeckung fuer Guides-Modus und `footercenter` erweitert
+- `scripts/check-tooling.sh` integriert ShellCheck mit graceful fallback und
+  prueft zusaetzlich die Python-Helfer auf Syntax
+- Python-Validierungslogik in `scripts/lib/release_validation.py`
+  ausgelagert; `validate-release-inputs.sh` wurde dadurch vereinfacht
 
 ## [2026-03-22]
 

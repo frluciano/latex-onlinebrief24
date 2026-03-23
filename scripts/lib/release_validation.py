@@ -93,12 +93,12 @@ def cmd_read_announcement(announcement_path_str):
     print(stripped)
 
 
-def cmd_validate_zip(artifact_path_str, expected_version):
+def get_zip_versions(artifact_path):
     cls_member = "onlinebrief24/onlinebrief24.cls"
     doc_member = "onlinebrief24/onlinebrief24-doc.tex"
 
     try:
-        with zipfile.ZipFile(artifact_path_str) as archive:
+        with zipfile.ZipFile(artifact_path) as archive:
             try:
                 cls_text = archive.read(cls_member).decode("utf-8")
             except KeyError as exc:
@@ -114,7 +114,7 @@ def cmd_validate_zip(artifact_path_str, expected_version):
                 ) from exc
     except zipfile.BadZipFile as exc:
         raise SystemExit(
-            f"Prepared artifact is not a readable ZIP archive: {artifact_path_str}"
+            f"Prepared artifact is not a readable ZIP archive: {artifact_path}"
         ) from exc
 
     cls_match = re.search(
@@ -134,6 +134,12 @@ def cmd_validate_zip(artifact_path_str, expected_version):
 
     cls_version = cls_match.group(1).replace("/", "-")
     doc_version = doc_match.group(1)
+
+    return cls_version, doc_version
+
+
+def cmd_validate_zip(artifact_path_str, expected_version):
+    cls_version, doc_version = get_zip_versions(artifact_path_str)
 
     if cls_version != expected_version:
         raise SystemExit(

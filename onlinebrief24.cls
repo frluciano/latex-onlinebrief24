@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{onlinebrief24}[2026/03/22 Precision Layout Class with Guides]
+\ProvidesClass{onlinebrief24}[2026/03/23 Precision Layout Class with Guides]
 
 % --- Option declarations (all before ProcessOptions) ---
 

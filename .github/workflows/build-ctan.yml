@@ -96,12 +96,7 @@ jobs:
             exit 0
           fi
 
-          announcement_trimmed=$(python3 scripts/lib/release_validation.py read-announcement "$announcement_path" || true)
-
-          if [ -z "$announcement_trimmed" ]; then
-            printf '%s\n' "::error file=$announcement_path::Explicit CTAN announcement file is empty."
-            exit 1
-          fi
+          announcement_trimmed=$(python3 scripts/lib/release_validation.py read-announcement "$announcement_path")
 
           printf '%s\n' "ready=true" >> "$GITHUB_OUTPUT"
           printf '%s\n' "reason=Explicit announcement file present" >> "$GITHUB_OUTPUT"

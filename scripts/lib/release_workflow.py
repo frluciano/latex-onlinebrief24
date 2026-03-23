@@ -38,6 +38,8 @@ import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 
+from . import release_validation
+
 
 def load_json(path_str):
     path = Path(path_str)
@@ -92,30 +94,13 @@ def extract_zip_versions(bundle_dir, metadata):
             f"::error file={artifact_path}::Could not derive version from artifact filename."
         )
 
-    with zipfile.ZipFile(artifact_path) as archive:
-        cls_text = archive.read("onlinebrief24/onlinebrief24.cls").decode("utf-8")
-        doc_text = archive.read("onlinebrief24/onlinebrief24-doc.tex").decode("utf-8")
-
-    cls_match = re.search(
-        r"\\ProvidesClass\{onlinebrief24\}\[([0-9]{4}/[0-9]{2}/[0-9]{2})\b",
-        cls_text,
-    )
-    if not cls_match:
-        raise SystemExit(
-            f"::error file={artifact_path}::Could not extract version from onlinebrief24.cls in artifact."
-        )
-
-    doc_match = re.search(r"\\date\{([0-9]{4}-[0-9]{2}-[0-9]{2})\}", doc_text)
-    if not doc_match:
-        raise SystemExit(
-            f"::error file={artifact_path}::Could not extract date from onlinebrief24-doc.tex in artifact."
-        )
+    cls_version, doc_version = release_validation.get_zip_versions(artifact_path)
 
     return (
         artifact_path,
         artifact_version_match.group(1),
-        cls_match.group(1).replace("/", "-"),
-        doc_match.group(1),
+        cls_version,
+        doc_version,
     )
 
 

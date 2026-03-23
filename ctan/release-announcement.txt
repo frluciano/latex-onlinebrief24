@@ -12,7 +12,13 @@ New commands:
 
 Removed:
 - dedicated ngerman infoblock label duplicates dropped; the German labels now
-  serve as the shared fallback
+  serve as the shared fallback for both German variants
+
+Internationalization:
+- Expanded localized infoblock labels: now fully supports and verifies
+  german, english, french, spanish, italian, dutch, and polish
+- Regression test coverage expanded to verify all supported languages
+  in the automated CI pipeline
 
 Internal improvements:
 - Return-address font size centralised as named macros to eliminate duplication

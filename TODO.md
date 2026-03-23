@@ -9,15 +9,18 @@
 
 *(Alle Änderungen sind implementiert und bereit; Release folgt separat.)*
 
-- [ ] Version-Datum in `onlinebrief24.cls` und `ctan/onlinebrief24-doc.tex` auf Release-Datum setzen — `sh scripts/bump-version.sh YYYY-MM-DD`
-- [ ] `ctan/release-announcement.txt` erstellen — Zusammenfassung der Änderungen für CTAN
-- [ ] CTAN-Paket bauen und validieren — `sh scripts/build-ctan.sh`
+- [x] Version-Datum in `onlinebrief24.cls` und `ctan/onlinebrief24-doc.tex` auf Release-Datum setzen — `sh scripts/bump-version.sh 2026-03-23`
+- [x] `ctan/release-announcement.txt` erstellen — Zusammenfassung der Änderungen für CTAN
+- [x] CTAN-Paket bauen und validieren — `sh scripts/build-ctan.sh`
 - [ ] Prepare CTAN Release Workflow auslösen — GitHub Actions
 
 ## Done
 
+- [x] Fehlerbehandlung in `.github/workflows/build-ctan.yml` korrigieren — `|| true` entfernt
+- [x] Gemeinsame Release-Bundle-Pruefungen konsolidieren — `get_zip_versions` in `release_validation.py`
+- [x] Regressionsabdeckung fuer alle dokumentierten `infoblock`-Sprachen ergaenzen — german, french, spanish, dutch, polish
+- [x] `lang=ngerman` final abkuendigen — Verweise in README entfernt, german ist Standard
 - [x] KOMA-Interna dokumentieren — ausführliche Kommentare vor `\opening` in `onlinebrief24.cls`
-- [x] Ungenutzte Abhängigkeit `eso-pic` entfernen — aus `onlinebrief24.cls` entfernt
 - [x] Font-Größen zentralisieren — `\@obb@returnaddressfontsz` / `\@obb@returnaddresslinesz` in `onlinebrief24.cls`
 - [x] Fenster-Koordinaten als benannte Macros — `\@obb@picwindowx`, `\@obb@piczone1y`, `\@obb@piczone3y`, `\@obb@picfoldmarki`, `\@obb@picfoldmarkii` in `onlinebrief24.cls`
 - [x] Farbschema-RGB-Werte kommentieren — moderncv-Palette-Herkunft in `onlinebrief24.cls` dokumentiert
@@ -32,4 +35,3 @@
 - [x] Öffentliche Layout-API — `\setinfoblocktopoffset`, `\setinfoblockrightedge`, `\setinfoblockcolwidths` in `onlinebrief24.cls`
 - [x] Python-Validierungslogik extrahiert — `scripts/lib/release_validation.py` (3 Subcommands), `validate-release-inputs.sh` vereinfacht
 - [x] CTAN-Doku erweitert — Guides-Abschnitt, Erweiterbarkeits-Abschnitt, neue Macros in API-Tabelle in `ctan/onlinebrief24-doc.tex`
-
