@@ -1,0 +1,80 @@
+# Keep lightweight repository tooling checks separate from the expensive TeX
+# jobs so release-script and workflow changes still get CI coverage.
+name: Validate Tooling
+
+on:
+  push:
+    # Only run directly on `main`. Feature branches are covered via
+    # `pull_request` so the same commit does not get duplicate CI.
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  # When a branch changes repeatedly, only the newest tooling validation is
+  # still relevant.
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tooling:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Detect tooling-relevant changes
+        id: changes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PUSH_AFTER: ${{ github.sha }}
+        run: |
+          set -eu
+          changed=$(sh scripts/ci-detect-changes.sh tooling)
+          printf '%s\n' "tooling=$changed" >> "$GITHUB_OUTPUT"
+
+      - name: Skip tooling checks when inputs are unchanged
+        if: steps.changes.outputs.tooling != 'true'
+        run: echo "No tooling-relevant changes detected; skipping lightweight checks."
+
+      - name: Write tooling skip summary
+        if: steps.changes.outputs.tooling != 'true'
+        run: |
+          set -eu
+          {
+            printf '## Validate Tooling\n\n'
+            printf 'Lightweight tooling checks were skipped for this run.\n\n'
+            printf '| Field | Value |\n'
+            printf '| --- | --- |\n'
+            printf '| Event | %s |\n' "${GITHUB_EVENT_NAME}"
+            printf '| Ref | `%s` |\n' "${GITHUB_REF}"
+            printf '| Reason | No tooling-relevant changes detected |\n'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Run tooling checks
+        if: steps.changes.outputs.tooling == 'true'
+        run: |
+          set -eu
+          sh scripts/check-tooling.sh
+
+      - name: Write tooling summary
+        if: steps.changes.outputs.tooling == 'true'
+        run: |
+          set -eu
+          {
+            printf '## Validate Tooling\n\n'
+            printf 'Lightweight tooling checks passed.\n\n'
+            printf '| Field | Value |\n'
+            printf '| --- | --- |\n'
+            printf '| Event | %s |\n' "${GITHUB_EVENT_NAME}"
+            printf '| Ref | `%s` |\n' "${GITHUB_REF}"
+            printf '| Checked | Shell syntax, workflow YAML parsing, CTAN template placeholders |\n'
+          } >> "$GITHUB_STEP_SUMMARY"
