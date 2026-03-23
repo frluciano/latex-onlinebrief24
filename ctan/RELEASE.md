@@ -201,12 +201,18 @@ matching tag and GitHub Release from the same validated bundle.
 7. Download or inspect the prepared artifact and review:
    - the ZIP contents
    - `release-metadata.json`
+   - the version in `release-metadata.json` matches `onlinebrief24.cls` and
+     `onlinebrief24-doc.tex` inside the ZIP
    - `announcement-draft.txt`
 8. Start `Release CTAN` manually with the selected `prepare_run_id`.
 9. Review and approve the `ctan-release` environment gate.
 10. After approval, the workflow validates again and then submits the prepared
-    artifact to CTAN.
-11. Wait for `Sync GitHub Release` to create or update the Git tag and GitHub
+    artifact to CTAN, including a version consistency check between metadata
+    and the package files inside the ZIP.
+11. The same release run archives a redacted
+    `onlinebrief24-release-audit.pkg` copy so the exact CTAN upload metadata
+    remains inspectable afterwards without exposing the CTAN contact email.
+12. Wait for `Sync GitHub Release` to create or update the Git tag and GitHub
     Release from the validated release bundle.
 
 ## Live Validation and Retry Protocol

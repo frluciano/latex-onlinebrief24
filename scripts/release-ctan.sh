@@ -48,6 +48,7 @@ eval "$metadata_values"
 artifact_path="$bundle_dir/$ARTIFACT_FILENAME"
 announcement_path="$bundle_dir/$ANNOUNCEMENT_FILENAME"
 rendered_pkg="$bundle_dir/onlinebrief24-release.pkg"
+audit_pkg="$bundle_dir/onlinebrief24-release-audit.pkg"
 
 # Render the ctan-o-mat input from the frozen bundle contents instead of any
 # mutable workspace state.
@@ -75,6 +76,20 @@ content = content.replace("${ANNOUNCEMENT}", announcement)
 output_path.write_text(content, encoding="utf-8")
 PY
 
+# Keep an inspectable audit copy without exposing the CTAN contact secret in
+# workflow artifacts.
+python3 - "$rendered_pkg" "$audit_pkg" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+source_path = Path(sys.argv[1])
+audit_path = Path(sys.argv[2])
+content = source_path.read_text(encoding="utf-8")
+content = re.sub(r"\\email\{[^}]*\}", r"\\email{[redacted]}", content)
+audit_path.write_text(content, encoding="utf-8")
+PY
+
 # Log the publication mapping explicitly so the CTAN submit can always be traced
 # back to the prepare run and commit that produced the artifact.
 printf '%s\n' "Publishing prepared CTAN artifact"
@@ -82,6 +97,8 @@ printf '%s\n' "Prepare run ID: $PREPARE_RUN_ID"
 printf '%s\n' "Prepared commit: $SOURCE_COMMIT_SHA"
 printf '%s\n' "Prepared version: $VERSION"
 printf '%s\n' "Prepared artifact: $ARTIFACT_FILENAME"
+printf '%s\n' "Rendered ctan-o-mat input: $rendered_pkg"
+printf '%s\n' "Redacted ctan-o-mat audit copy: $audit_pkg"
 
 perl "$ctan_o_mat_bin" --validate "$rendered_pkg"
 perl "$ctan_o_mat_bin" --submit "$rendered_pkg"
