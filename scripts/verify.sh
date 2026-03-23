@@ -3,7 +3,10 @@ set -eu
 
 # Resolve the repository root relative to this script so the verification
 # works regardless of the caller's current working directory.
-repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$script_dir/lib/common.sh"
+
+repo_root=$(repo_root_from_dir "$script_dir")
 cd "$repo_root"
 
 # Select the TeX engine from the environment. XeLaTeX remains the default

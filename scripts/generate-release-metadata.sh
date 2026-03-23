@@ -9,17 +9,13 @@ fi
 artifact_path=$1
 announcement_path=$2
 output_path=$3
-repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$script_dir/lib/common.sh"
 
-if [ ! -f "$artifact_path" ]; then
-  printf '%s\n' "Artifact ZIP not found: $artifact_path" >&2
-  exit 1
-fi
+repo_root=$(repo_root_from_dir "$script_dir")
 
-if [ ! -f "$announcement_path" ]; then
-  printf '%s\n' "Announcement draft not found: $announcement_path" >&2
-  exit 1
-fi
+require_file "$artifact_path" "Artifact ZIP not found: $artifact_path"
+require_file "$announcement_path" "Announcement draft not found: $announcement_path"
 
 artifact_filename=$(basename "$artifact_path")
 announcement_filename=$(basename "$announcement_path")

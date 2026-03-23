@@ -7,14 +7,14 @@ if [ "$#" -ne 1 ]; then
 fi
 
 output_path=$1
-repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$script_dir/lib/common.sh"
+
+repo_root=$(repo_root_from_dir "$script_dir")
 manual_announcement_path="$repo_root/ctan/release-announcement.txt"
 
-if [ ! -f "$manual_announcement_path" ]; then
-  printf '%s\n' "Manual CTAN announcement file not found: $manual_announcement_path" >&2
-  printf '%s\n' "Create ctan/release-announcement.txt explicitly before running Prepare CTAN Release." >&2
-  exit 1
-fi
+require_file "$manual_announcement_path" "Manual CTAN announcement file not found: $manual_announcement_path
+Create ctan/release-announcement.txt explicitly before running Prepare CTAN Release."
 
 manual_trimmed=$(
   python3 - "$manual_announcement_path" <<'PY'
@@ -26,8 +26,7 @@ PY
 )
 
 if [ -z "$manual_trimmed" ]; then
-  printf '%s\n' "Manual CTAN announcement file is empty: $manual_announcement_path" >&2
-  exit 1
+  fail "Manual CTAN announcement file is empty: $manual_announcement_path"
 fi
 
 mkdir -p "$(dirname "$output_path")"
