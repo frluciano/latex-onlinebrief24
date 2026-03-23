@@ -71,9 +71,14 @@ for example in \
   examples/example-onlinebrief24-infoblock.tex \
   examples/example-onlinebrief24-modern.tex \
   examples/example-onlinebrief24-modern-blue.tex \
+  examples/example-onlinebrief24-guides.tex \
   tests/fixtures/infoblock-italian-regression.tex \
   tests/fixtures/signature-regression.tex \
-  tests/fixtures/multipage-regression.tex
+  tests/fixtures/multipage-regression.tex \
+  tests/fixtures/modern-orange-regression.tex \
+  tests/fixtures/guides-regression.tex \
+  tests/fixtures/footercenter-regression.tex \
+  tests/fixtures/modern-french-regression.tex
 do
   latexmk "$latexmk_engine_flag" -g -interaction=nonstopmode -halt-on-error \
     -cd -outdir="$build_dir" "$example"
@@ -172,6 +177,31 @@ fi
 # depending on an exact font metric.
 if ! awk "BEGIN { exit !($page_two_first_ymin < 120) }"; then
   printf '%s\n' "Multipage regression failed: page 2 text still starts too low (yMin=$page_two_first_ymin)." >&2
+  exit 1
+fi
+
+# Verify that the footercenter regression compiles with footer content present.
+footercenter_text=$(pdftotext "$build_dir/footercenter-regression.pdf" - | normalize_pdf_text)
+if ! printf '%s' "$footercenter_text" | grep -F "max.mustermann@example.com" >/dev/null; then
+  printf '%s\n' "Footercenter regression failed: email address not found in PDF." >&2
+  exit 1
+fi
+
+# Verify that the French infoblock regression renders localised labels.
+french_text=$(pdftotext "$build_dir/modern-french-regression.pdf" - | normalize_pdf_text)
+if ! printf '%s' "$french_text" | grep -F "Vos r" >/dev/null; then
+  printf '%s\n' "French infoblock regression failed: French 'yourref' label not found in PDF." >&2
+  exit 1
+fi
+if ! printf '%s' "$french_text" | grep -F "OB24-2026-0323" >/dev/null; then
+  printf '%s\n' "French infoblock regression failed: internal reference not found in PDF." >&2
+  exit 1
+fi
+
+# Verify that the orange color-scheme fixture compiles and renders the sender name.
+orange_text=$(pdftotext "$build_dir/modern-orange-regression.pdf" - | normalize_pdf_text)
+if ! printf '%s' "$orange_text" | grep -F "Mustermann" >/dev/null; then
+  printf '%s\n' "Orange color-scheme regression failed: sender name not found in PDF." >&2
   exit 1
 fi
 

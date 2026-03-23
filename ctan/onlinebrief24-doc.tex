@@ -169,6 +169,24 @@ header. \\
 \texttt{\string\setfromlinkedin\{...\}} & Optional modern-mode footer field. \\
 \texttt{\string\setfromname\{...\}} & Legacy fallback if first and last name are
 not split. \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Extensibility}} \\
+\midrule
+\texttt{\string\addfooteritem\{\textit{icon}\}\{\textit{text}\}} &
+Append a custom item to the modern-mode footer. The icon is a
+\texttt{fontawesome5} command. Multiple calls append in order. \\
+\texttt{\string\addinfoblockrow\{\textit{label}\}\{\textit{value}\}} &
+Append a custom row to the DIN-style information block. Empty values are
+silently omitted. \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Layout tuning}} \\
+\midrule
+\texttt{\string\setinfoblocktopoffset\{\textit{dim}\}} &
+Vertical offset from the page top to the information block (default: 50mm). \\
+\texttt{\string\setinfoblockrightedge\{\textit{dim}\}} &
+Horizontal distance from the left page edge to the block's right edge (default: 200mm). \\
+\texttt{\string\setinfoblockcolwidths\{\textit{label}\}\{\textit{sep}\}\{\textit{value}\}} &
+Column widths for the information-block tabular (defaults: 30mm, 2mm, 43mm). \\
 \bottomrule
 \end{longtable}
 
@@ -194,6 +212,77 @@ The layout is calibrated against the practical preview behavior of
 nominal measurement graphic. In practice, the class uses effective window zones
 of 50--52\,mm, 52--72\,mm, and 72--92\,mm to match the real preview more
 closely.
+
+\section{Guides Mode}
+
+The \texttt{guides} option enables a technical overlay that visualises all DIN
+5008 layout zones, fold marks, and the text-start line directly in the PDF.
+It is intended for calibration and debugging, not for final output.
+
+\begin{Verbatim}[fontsize=\small]
+\documentclass[guides]{onlinebrief24}
+\end{Verbatim}
+
+The overlay draws:
+
+\begin{itemize}
+\item \textbf{Zone 1} (blue, 50--52\,mm from top): the 2\,mm sender line.
+\item \textbf{Zone 2} (red, 52--72\,mm from top): reserved area for postal
+      codes and franking marks.
+\item \textbf{Zone 3} (green, 72--92\,mm from top): the recipient address block.
+\item Fold-mark annotations at 105\,mm and 205\,mm from the top, matching the
+      two fold positions for a DIN C6/5 window envelope.
+\item A dashed text-start line at 110\,mm and a vertical text-alignment guide
+      at the 25\,mm left margin.
+\end{itemize}
+
+The \texttt{guides} option can be combined with \texttt{basic} or
+\texttt{modern}; remove it before submitting to the print service.
+
+\section{Extensibility}
+
+\subsection{Custom footer items (\texttt{modern} style)}
+
+In modern mode the footer can be extended with additional contact fields using
+\texttt{\string\addfooteritem}:
+
+\begin{Verbatim}[fontsize=\small]
+\documentclass[modern]{onlinebrief24}
+\addfooteritem{\faGithub}{github.com/example}
+\addfooteritem{\faXTwitter}{@example}
+\end{Verbatim}
+
+Each item requires a \texttt{fontawesome5} icon command and a text label. Items
+are appended after the standard footer fields (landline, mobile, email, web,
+LinkedIn) and separated by the standard vertical-bar separator. The macro must
+be called in the preamble.
+
+\subsection{Custom infoblock rows (\texttt{infoblock} option)}
+
+Additional rows can be appended to the DIN-style information block:
+
+\begin{Verbatim}[fontsize=\small]
+\documentclass[infoblock]{onlinebrief24}
+\addinfoblockrow{Department}{Engineering}
+\addinfoblockrow{Project}{OB24-2026}
+\end{Verbatim}
+
+Custom rows follow the same column widths and typography as the built-in rows.
+Empty values are silently omitted, consistent with the built-in row behaviour.
+
+\subsection{Information block layout tuning}
+
+The position and column widths of the information block can be adjusted without
+editing the class file:
+
+\begin{Verbatim}[fontsize=\small]
+\setinfoblocktopoffset{55mm}         % vertical offset from page top
+\setinfoblockrightedge{195mm}        % right edge from left page margin
+\setinfoblockcolwidths{28mm}{2mm}{45mm} % label / gap / value widths
+\end{Verbatim}
+
+These macros must be called in the preamble after \verb|\documentclass|.
+The defaults match the DIN 5008 Form B reference geometry.
 
 \section{Examples}
 

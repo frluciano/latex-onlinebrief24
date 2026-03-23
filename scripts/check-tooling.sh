@@ -8,6 +8,7 @@ repo_root=$(repo_root_from_dir "$script_dir")
 cd "$repo_root"
 
 # Catch shell syntax errors before release or CI logic changes land on main.
+# shellcheck disable=SC2044
 for script in $(find scripts -type f -name '*.sh' | sort); do
   first_line=$(sed -n '1p' "$script")
   second_line=$(sed -n '2p' "$script")
@@ -51,5 +52,17 @@ if missing:
         + ", ".join(missing)
     )
 PY
+
+# Static analysis for all shell scripts. shellcheck is pre-installed on
+# ubuntu-latest and available in most developer environments via the system
+# package manager.  Use --shell=sh because all scripts target POSIX sh.
+if command -v shellcheck >/dev/null 2>&1; then
+  # shellcheck disable=SC2044
+  for script in $(find scripts -type f -name '*.sh' | sort); do
+    shellcheck --shell=sh "$script"
+  done
+else
+  printf '%s\n' "Warning: shellcheck not found; skipping static analysis." >&2
+fi
 
 printf '%s\n' "Tooling checks passed."

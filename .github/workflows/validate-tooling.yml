@@ -76,5 +76,5 @@ jobs:
             printf '| --- | --- |\n'
             printf '| Event | %s |\n' "${GITHUB_EVENT_NAME}"
             printf '| Ref | `%s` |\n' "${GITHUB_REF}"
-            printf '| Checked | Shell syntax, workflow YAML parsing, CTAN template placeholders |\n'
+            printf '| Checked | Shell syntax, ShellCheck static analysis, workflow YAML parsing, CTAN template placeholders |\n'
           } >> "$GITHUB_STEP_SUMMARY"

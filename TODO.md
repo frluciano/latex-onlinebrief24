@@ -2,14 +2,36 @@
 
 ## Offen ausserhalb des Repos
 
-- [ ] Beim naechsten absichtlich freigegebenen echten CTAN-Release den
-      End-to-End-Pfad live verifizieren:
-      `Prepare CTAN Release` -> `Release CTAN` -> Approval ->
-      erfolgreicher CTAN-Submit -> automatischer `Sync GitHub Release`
-- [ ] Dabei konkret pruefen:
-      Git-Tag entspricht der Version, Tag zeigt auf `source_commit_sha`,
-      GitHub Release enthaelt ZIP, SHA256, `announcement-draft.txt`,
-      `release-metadata.json` und `resolved-release-metadata.json`
-- [ ] Falls der GitHub-Release-Sync nach erfolgreichem CTAN-Submit einmal
-      fehlschlaegt, den dokumentierten Retry-Fall praktisch durchspielen:
-      nur `Sync GitHub Release` erneut starten, niemals `Release CTAN`
+
+## Queued
+
+## Für nächsten CTAN-Release
+
+*(Alle Änderungen sind implementiert und bereit; Release folgt separat.)*
+
+- [ ] Version-Datum in `onlinebrief24.cls` und `ctan/onlinebrief24-doc.tex` auf Release-Datum setzen — `sh scripts/bump-version.sh YYYY-MM-DD`
+- [ ] `ctan/release-announcement.txt` erstellen — Zusammenfassung der Änderungen für CTAN
+- [ ] CTAN-Paket bauen und validieren — `sh scripts/build-ctan.sh`
+- [ ] Prepare CTAN Release Workflow auslösen — GitHub Actions
+
+## Done
+
+- [x] KOMA-Interna dokumentieren — ausführliche Kommentare vor `\opening` in `onlinebrief24.cls`
+- [x] Ungenutzte Abhängigkeit `eso-pic` entfernen — aus `onlinebrief24.cls` entfernt
+- [x] Font-Größen zentralisieren — `\@obb@returnaddressfontsz` / `\@obb@returnaddresslinesz` in `onlinebrief24.cls`
+- [x] Fenster-Koordinaten als benannte Macros — `\@obb@picwindowx`, `\@obb@piczone1y`, `\@obb@piczone3y`, `\@obb@picfoldmarki`, `\@obb@picfoldmarkii` in `onlinebrief24.cls`
+- [x] Farbschema-RGB-Werte kommentieren — moderncv-Palette-Herkunft in `onlinebrief24.cls` dokumentiert
+- [x] Regressionstests für nicht-blaue Farbschemata — `tests/fixtures/modern-orange-regression.tex`, `verify.sh` ergänzt
+- [x] Regressionstests für Guides-Modus — `tests/fixtures/guides-regression.tex`
+- [x] Regressionstests für `footercenter`-Option — `tests/fixtures/footercenter-regression.tex`, Text-Check in `verify.sh`
+- [x] Regressionstests für Multi-Language-Footer — `tests/fixtures/modern-french-regression.tex`, Französisch-Labels in `verify.sh`
+- [x] ShellCheck in `scripts/check-tooling.sh` integriert — graceful fallback wenn nicht vorhanden
+- [x] Guides-Modus-Beispiel in `examples/` — `examples/example-onlinebrief24-guides.tex`
+- [x] CONTRIBUTING.md erstellt
+- [x] GitHub Issue-Templates erstellt — `.github/ISSUE_TEMPLATE/bug_report.md` und `feature_request.md`
+- [x] `\addfooteritem{icon}{text}` — Custom-Footer-Felder im modern-Stil (erweiterbar)
+- [x] `\addinfoblockrow{label}{value}` — Custom-Infoblock-Zeilen (erweiterbar)
+- [x] Öffentliche Layout-API — `\setinfoblocktopoffset`, `\setinfoblockrightedge`, `\setinfoblockcolwidths` in `onlinebrief24.cls`
+- [x] Python-Validierungslogik extrahiert — `scripts/lib/release_validation.py` (3 Subcommands), `validate-release-inputs.sh` vereinfacht
+- [x] CTAN-Doku erweitert — Guides-Abschnitt, Erweiterbarkeits-Abschnitt, neue Macros in API-Tabelle in `ctan/onlinebrief24-doc.tex`
+

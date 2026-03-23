@@ -42,7 +42,6 @@
 \expandafter\RequirePackage\expandafter[main=\obb@lang,provide=*]{babel}
 \RequirePackage{geometry}
 \RequirePackage{iftex}
-\RequirePackage{eso-pic}
 \RequirePackage{xcolor}
 \RequirePackage{calc}
 \RequirePackage{tikz} % Used for precise drawing in guides mode
@@ -130,6 +129,31 @@
   \setlength{\@obb@infoblocktopoffset}{50mm}%
 }
 \@obb@usedininfoblocklayout
+
+% --- Public layout API for the information block ---
+% These macros let users tune the infoblock position and column widths without
+% accessing the internal lengths directly.  Call them in the preamble after
+% \documentclass.
+
+% \setinfoblocktopoffset{50mm}
+%   Vertical distance from the top of the page to the information block.
+%   Default: 50mm (DIN 5008 Form B reference position).
+\newcommand{\setinfoblocktopoffset}[1]{\setlength{\@obb@infoblocktopoffset}{#1}}
+
+% \setinfoblockrightedge{200mm}
+%   Horizontal distance from the left page edge to the right edge of the block.
+%   Default: 200mm (aligns the block near the right text boundary).
+\newcommand{\setinfoblockrightedge}[1]{\setlength{\@obb@infoblockrightedge}{#1}}
+
+% \setinfoblockcolwidths{labelwidth}{colsep}{valuewidth}
+%   Column widths for the infoblock tabular.
+%   Defaults: 30mm label, 2mm separator, 43mm value.
+\newcommand{\setinfoblockcolwidths}[3]{%
+  \setlength{\@obb@infoblocklabelwidth}{#1}%
+  \setlength{\@obb@infoblockcolsep}{#2}%
+  \setlength{\@obb@infoblockvaluewidth}{#3}%
+}
+
 % Keep localized information-block labels compact enough to fit the shared
 % DIN-style geometry without forcing awkward line breaks in longer languages.
 \@obb@defineinfoblocklabel{german}{yourref}{Ihr Zeichen}
@@ -244,9 +268,16 @@
 \newcommand{\setcontactphone}[1]{\renewcommand{\@obb@contactphone}{#1}}
 \newcommand{\setcontactfax}[1]{\renewcommand{\@obb@contactfax}{#1}}
 \newcommand{\setcontactemail}[1]{\renewcommand{\@obb@contactemail}{#1}}
+% --- Calibrated font dimensions (DIN 5008 / onlinebrief24.de) ---
+% The return address uses a reduced font so the full address fits the 72mm
+% sender zone on a single line. Both size and leading appear in the validation
+% and rendering code; centralising them here keeps the two in sync.
+\newcommand{\@obb@returnaddressfontsz}{5.8pt}
+\newcommand{\@obb@returnaddresslinesz}{6.4pt}
+
 \newcommand{\@obb@validatereturnaddresswidth}{%
   \begingroup
-    \settowidth{\@obb@addrwidth}{{\fontsize{5.8pt}{6.4pt}\sffamily\selectfont\@obb@return}}%
+    \settowidth{\@obb@addrwidth}{{\fontsize{\@obb@returnaddressfontsz}{\@obb@returnaddresslinesz}\sffamily\selectfont\@obb@return}}%
     \ifdim\@obb@addrwidth>72mm
       \endgroup
       \ClassError{onlinebrief24}{Return address too long}{Shorten the return address so it fits on a single line within the 72mm sender zone.}%
@@ -289,20 +320,38 @@
   \definecolor{color0}{rgb}{0,0,0}% Text (black)
   \definecolor{color2}{rgb}{0.45,0.45,0.45}% Secondary text (dark gray)
 
-  % color1 (accent color) selected by the chosen scheme
-  \ifdefstring{\@obb@colorscheme}{blue}{\definecolor{color1}{rgb}{0.22,0.45,0.70}}{}%
-  \ifdefstring{\@obb@colorscheme}{orange}{\definecolor{color1}{rgb}{0.95,0.55,0.15}}{}%
-  \ifdefstring{\@obb@colorscheme}{green}{\definecolor{color1}{rgb}{0.35,0.70,0.30}}{}%
-  \ifdefstring{\@obb@colorscheme}{red}{\definecolor{color1}{rgb}{0.95,0.20,0.20}}{}%
-  \ifdefstring{\@obb@colorscheme}{purple}{\definecolor{color1}{rgb}{0.50,0.33,0.80}}{}%
-  \ifdefstring{\@obb@colorscheme}{grey}{\definecolor{color1}{rgb}{0.55,0.55,0.55}}{}%
-  \ifdefstring{\@obb@colorscheme}{burgundy}{\definecolor{color1}{rgb}{0.596,0,0}}{}%
-  \ifdefstring{\@obb@colorscheme}{black}{\definecolor{color1}{rgb}{0,0,0}}{}%
+  % color1 (accent color) selected by the chosen scheme.
+  % RGB values mirror the moderncv package's built-in palette so that letters
+  % compiled alongside a moderncv résumé share a visually consistent accent
+  % color without requiring any manual coordination between the two packages.
+  \ifdefstring{\@obb@colorscheme}{blue}{\definecolor{color1}{rgb}{0.22,0.45,0.70}}{}%   % moderncv blue
+  \ifdefstring{\@obb@colorscheme}{orange}{\definecolor{color1}{rgb}{0.95,0.55,0.15}}{}%  % moderncv orange
+  \ifdefstring{\@obb@colorscheme}{green}{\definecolor{color1}{rgb}{0.35,0.70,0.30}}{}%   % moderncv green
+  \ifdefstring{\@obb@colorscheme}{red}{\definecolor{color1}{rgb}{0.95,0.20,0.20}}{}%     % moderncv red
+  \ifdefstring{\@obb@colorscheme}{purple}{\definecolor{color1}{rgb}{0.50,0.33,0.80}}{}%  % moderncv purple
+  \ifdefstring{\@obb@colorscheme}{grey}{\definecolor{color1}{rgb}{0.55,0.55,0.55}}{}%    % moderncv grey
+  \ifdefstring{\@obb@colorscheme}{burgundy}{\definecolor{color1}{rgb}{0.596,0,0}}{}%     % moderncv burgundy
+  \ifdefstring{\@obb@colorscheme}{black}{\definecolor{color1}{rgb}{0,0,0}}{}%            % moderncv black
 \fi
 
 % --- Footer helper macros (defined outside AddToShipoutPictureBG) ---
 \newif\if@obb@firstfooteritem
 \newcommand{\@obb@footersep}{~\textbar~}
+
+% Extra footer items appended by \addfooteritem (empty by default).
+\newcommand{\@obb@extrafooterlist}{}
+
+% \addfooteritem{icon}{text}
+%   Appends a custom item to the modern-mode footer. The icon is a fontawesome5
+%   command (e.g. \faGithub); it is raised to match the footer baseline. Items
+%   are separated by the standard footer separator (\textbar). Must be called in
+%   the document preamble, before \begin{document}.
+\newcommand{\addfooteritem}[2]{%
+  \g@addto@macro\@obb@extrafooterlist{%
+    \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
+    \@obb@icon{#1}\ #2%
+  }%
+}
 % Normalize fontawesome5 icon metrics to strut height so icons do not
 % shift the footer baseline via oversized ascenders or descenders.
 \newcommand{\@obb@icon}[1]{\raisebox{0pt}[\ht\strutbox][\dp\strutbox]{#1}}
@@ -349,8 +398,21 @@
     {\@obb@infoblocklabelstyle #1} & {\@obb@infoblockvaluestyle #2}\tabularnewline
   }%
 }
+% Extra infoblock rows appended by \addinfoblockrow (empty by default).
+\newcommand{\@obb@extrainfoblockrows}{}
+
+% \addinfoblockrow{label}{value}
+%   Appends a custom row to the DIN-style information block. Both label and
+%   value are rendered with the same style as the built-in rows. The row is
+%   silently omitted when value is empty so callers do not need to guard it.
+%   Must be called in the document preamble, before \begin{document}.
+\newcommand{\addinfoblockrow}[2]{%
+  \g@addto@macro\@obb@extrainfoblockrows{%
+    \@obb@renderinfoblockrow{#1}{#2}%
+  }%
+}
+
 \newcommand{\@obb@renderinfoblocktable}{%
-  \@obb@usedininfoblocklayout
   \parbox[t]{\dimexpr\@obb@infoblocklabelwidth+\@obb@infoblockcolsep+\@obb@infoblockvaluewidth\relax}{%
     \raggedright
     \renewcommand{\arraystretch}{1.05}%
@@ -363,6 +425,7 @@
       \@obb@renderinfoblockrow{\@obb@getinfoblocklabel{contactphone}}{\@obb@contactphone}%
       \@obb@renderinfoblockrow{\@obb@getinfoblocklabel{contactfax}}{\@obb@contactfax}%
       \@obb@renderinfoblockrow{\@obb@getinfoblocklabel{contactemail}}{\@obb@contactemail}%
+      \@obb@extrainfoblockrows
     \end{tabular}%
   }%
 }
@@ -389,6 +452,16 @@
   \fi
 }
 
+% --- DIN 5008 window coordinates (picture mode, unitlength=1mm) ---
+% In LaTeX picture mode y increases upward from the page bottom. With
+% unitlength=1mm these values are millimetres measured from the bottom of an
+% A4 sheet (height = 297mm), so y_pic = 297 - y_from_top.
+\newcommand{\@obb@picwindowx}{20}       % left edge of address window: 20mm from left
+\newcommand{\@obb@piczone1y}{245.00}    % Zone 1 (sender, 2mm high): top at 50mm from top → 297-50=247, bottom at 245mm
+\newcommand{\@obb@piczone3y}{204}       % Zone 3 (recipient): calibrated 1mm below the 72mm mark
+\newcommand{\@obb@picfoldmarki}{192}    % 1st fold mark: 105mm from top → 297-105=192
+\newcommand{\@obb@picfoldmarkii}{92}    % 2nd fold mark: 205mm from top → 297-205=92
+
 % --- Page overlay drawing ---
 \newcommand{\@obb@firstpageoverlay}{%
   \setlength{\unitlength}{1mm}%
@@ -397,21 +470,21 @@
 
       % Zone 1 is tuned separately so the return address stays entirely
       % inside the 2mm sender line without shifting zones 2 and 3.
-      \put(20, 245.00){%
+      \put(\@obb@picwindowx, \@obb@piczone1y){%
         \parbox[b][2mm][c]{72mm}{%
-          \fontsize{5.8pt}{6.4pt}\sffamily\selectfont
+          \fontsize{\@obb@returnaddressfontsz}{\@obb@returnaddresslinesz}\sffamily\selectfont
           \if@guidesmode\color{darkgray}\fi
           \@obb@return
         }%
       }%
       % Keep the underline for zone 1 fully above the 52mm boundary.
-      \settowidth{\@obb@addrwidth}{{\fontsize{5.8pt}{6.4pt}\sffamily\selectfont\@obb@return}}%
+      \settowidth{\@obb@addrwidth}{{\fontsize{\@obb@returnaddressfontsz}{\@obb@returnaddresslinesz}\sffamily\selectfont\@obb@return}}%
       \ifdim\@obb@addrwidth>72mm\@obb@addrwidth=72mm\fi
-      \put(20, 245.00){\rule{\@obb@addrwidth}{0.2pt}}
+      \put(\@obb@picwindowx, \@obb@piczone1y){\rule{\@obb@addrwidth}{0.2pt}}
 
   % Zone 3: recipient block, calibrated 1mm lower to match the onlinebrief24.de preview.
   % Left-aligned at 20mm in line with the reference layout.
-  \put(20, 204){%
+  \put(\@obb@picwindowx, \@obb@piczone3y){%
     \parbox[b][20mm][t]{72mm}{%
       \raggedright
       \fontsize{11pt}{13pt}\sffamily\selectfont
@@ -420,8 +493,8 @@
   }%
 
   % Fold marks (always visible, but subtle)
-  \put(5, 192){\line(1,0){5}}
-  \put(5, 92){\line(1,0){5}}
+  \put(5, \@obb@picfoldmarki){\line(1,0){5}}
+  \put(5, \@obb@picfoldmarkii){\line(1,0){5}}
 
   % --- Modern style (header and footer) ---
   \if@modernstyle
@@ -465,6 +538,7 @@
           \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
           \@obb@icon{\faLinkedin}\ \@obb@fromlinkedin
         }%
+        \@obb@extrafooterlist
       }%
     }%
   \fi
@@ -545,6 +619,40 @@
 }
 
 % --- Render the subject line manually ---
+%
+% \opening reimplements the scrlttr2 version so the document body starts at
+% the precise vertical offset required by DIN 5008 Form B rather than at
+% KOMA's default placement.
+%
+% Internal KOMA macros used here and why they are safe to call:
+%
+%   \@PapersizeWarning   — issues a warning if the PDF paper size does not
+%                          match the document class paper option.  Harmless
+%                          when the paper size is correct; kept for safety.
+%
+%   \@foldmarks          — renders the KOMA fold-mark ticks.  Disabled via
+%                          KOMAoptions{foldmarks=false} above, so this is a
+%                          no-op.  Called so future KOMA hooks still fire.
+%
+%   \@firstheadfootfield — renders the KOMA letterhead and footer.  Disabled
+%                          via KOMAoptions{firsthead=false,firstfoot=false},
+%                          no-op.
+%
+%   \@addrfield          — renders the KOMA address field.  Disabled via
+%                          KOMAoptions{addrfield=false}, no-op.
+%
+%   \@locfield           — renders the KOMA location field.  Not configured;
+%                          no-op.
+%
+% By disabling these components above but still calling them here, any hooks
+% or assertions KOMA adds in future versions will continue to be exercised.
+%
+% Risk: a KOMA update that changes the signature of these macros will break
+% \opening.  Mitigation: verify.sh regression tests cover this on every CI run.
+%
+% The \setparsizes line resets the paragraph shape inside the salutation (#1)
+% so no indentation or extra space from the body settings leaks into the
+% opening line.  \par@updaterelative flushes the change before the paragraph.
 \renewcommand{\opening}[1]{%
   \@PapersizeWarning
   \thispagestyle{empty}%

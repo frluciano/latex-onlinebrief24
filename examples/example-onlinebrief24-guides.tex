@@ -1,0 +1,38 @@
+\documentclass[guides, lang=german]{../onlinebrief24}
+
+% guides: renders DIN-5008 zone overlays (Zone 1/2/3, fold marks, text-start
+% line) as coloured TikZ annotations. Useful for calibration and debugging.
+% Remove the guides option for the final print version.
+
+\setreturnaddress{Erika Mustermann, Blumenweg 1, 54321 Blumenstadt}
+\setrecipient{%
+  Mustermann GmbH \& Co.~KG \\
+  Herrn Max Mustermann \\
+  Industriestraße 42 \\
+  98765 Industriestadt%
+}
+\setsubject{Kalibrierungshilfe mit DIN-5008-Zonen}
+\setplace{Blumenstadt}
+\setdate{2026-03-23}
+
+\begin{document}
+\begin{letter}{}
+\opening{Sehr geehrter Herr Mustermann,}
+
+der \textbf{guides}-Modus zeichnet die DIN-5008-Zonen als farbige Überlagerung:
+
+\begin{itemize}
+  \item \textcolor{blue!60}{Blau} — Zone 1 (Absenderzeile, 2\,mm)
+  \item \textcolor{red!60}{Rot} — Zone 2 (Sperrzone / Freimachungszone, 20\,mm)
+  \item \textcolor{green!60}{Grün} — Zone 3 (Empfängeradresse, 20\,mm)
+\end{itemize}
+
+Die gestrichelte Linie markiert den Textbeginn (110\,mm vom oberen Blattrand),
+die rote senkrechte Linie die Textfluchtlinie (25\,mm vom linken Rand).
+
+Zum Drucken das \texttt{guides}-Argument in
+\verb|\documentclass| entfernen.
+
+\closing{Mit freundlichen Grüßen}
+\end{letter}
+\end{document}
