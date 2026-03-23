@@ -42,6 +42,7 @@
 \expandafter\RequirePackage\expandafter[main=\obb@lang,provide=*]{babel}
 \RequirePackage{geometry}
 \RequirePackage{iftex}
+\RequirePackage{eso-pic}
 \RequirePackage{xcolor}
 \RequirePackage{calc}
 \RequirePackage{tikz} % Used for precise drawing in guides mode
@@ -458,11 +459,13 @@
 % In LaTeX picture mode y increases upward from the page bottom. With
 % unitlength=1mm these values are millimetres measured from the bottom of an
 % A4 sheet (height = 297mm), so y_pic = 297 - y_from_top.
-\newcommand{\@obb@picwindowx}{20}       % left edge of address window: 20mm from left
-\newcommand{\@obb@piczone1y}{245.00}    % Zone 1 (sender, 2mm high): top at 50mm from top (297-50=247), bottom at 245mm
-\newcommand{\@obb@piczone3y}{204}       % Zone 3 (recipient): calibrated 1mm below the 72mm mark
-\newcommand{\@obb@picfoldmarki}{192}    % 1st fold mark: 105mm from top (297-105=192)
-\newcommand{\@obb@picfoldmarkii}{92}    % 2nd fold mark: 205mm from top (297-205=92)
+% Macro names must stay alphabetic here; digits terminate TeX control sequence
+% names and would make these constants unusable in \newcommand arguments.
+\newcommand{\@obb@picwindowx}{20}         % left edge of address window: 20mm from left
+\newcommand{\@obb@piczoneoney}{245.00}    % Zone 1 (sender, 2mm high): top at 50mm from top (297-50=247), bottom at 245mm
+\newcommand{\@obb@piczonethreey}{204}     % Zone 3 (recipient): calibrated 1mm below the 72mm mark
+\newcommand{\@obb@picfoldmarki}{192}      % 1st fold mark: 105mm from top (297-105=192)
+\newcommand{\@obb@picfoldmarkii}{92}      % 2nd fold mark: 205mm from top (297-205=92)
 
 % --- Page overlay drawing ---
 \newcommand{\@obb@firstpageoverlay}{%
@@ -472,7 +475,7 @@
 
       % Zone 1 is tuned separately so the return address stays entirely
       % inside the 2mm sender line without shifting zones 2 and 3.
-      \put(\@obb@picwindowx, \@obb@piczone1y){%
+      \put(\@obb@picwindowx, \@obb@piczoneoney){%
         \parbox[b][2mm][c]{72mm}{%
           \fontsize{\@obb@returnaddressfontsz}{\@obb@returnaddresslinesz}\sffamily\selectfont
           \if@guidesmode\color{darkgray}\fi
@@ -482,11 +485,11 @@
       % Keep the underline for zone 1 fully above the 52mm boundary.
       \settowidth{\@obb@addrwidth}{{\fontsize{\@obb@returnaddressfontsz}{\@obb@returnaddresslinesz}\sffamily\selectfont\@obb@return}}%
       \ifdim\@obb@addrwidth>72mm\@obb@addrwidth=72mm\fi
-      \put(\@obb@picwindowx, \@obb@piczone1y){\rule{\@obb@addrwidth}{0.2pt}}
+      \put(\@obb@picwindowx, \@obb@piczoneoney){\rule{\@obb@addrwidth}{0.2pt}}
 
   % Zone 3: recipient block, calibrated 1mm lower to match the onlinebrief24.de preview.
   % Left-aligned at 20mm in line with the reference layout.
-  \put(\@obb@picwindowx, \@obb@piczone3y){%
+  \put(\@obb@picwindowx, \@obb@piczonethreey){%
     \parbox[b][20mm][t]{72mm}{%
       \raggedright
       \fontsize{11pt}{13pt}\sffamily\selectfont
