@@ -8,18 +8,14 @@ fi
 
 bundle_dir=$1
 expected_prepare_run_id=${2:-}
-repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$script_dir/lib/common.sh"
+
+repo_root=$(repo_root_from_dir "$script_dir")
 metadata_path="$bundle_dir/release-metadata.json"
 
-if [ ! -d "$bundle_dir" ]; then
-  printf '%s\n' "Prepared release bundle directory not found: $bundle_dir" >&2
-  exit 1
-fi
-
-if [ ! -f "$metadata_path" ]; then
-  printf '%s\n' "Prepared release metadata not found: $metadata_path" >&2
-  exit 1
-fi
+require_dir "$bundle_dir" "Prepared release bundle directory not found: $bundle_dir"
+require_file "$metadata_path" "Prepared release metadata not found: $metadata_path"
 
 # Parse and validate the JSON contract in Python so the shell only deals with
 # already-normalized scalar values.
@@ -104,20 +100,9 @@ if [ -n "$expected_prepare_run_id" ] && [ "$PREPARE_RUN_ID" != "$expected_prepar
   exit 1
 fi
 
-if [ ! -f "$artifact_path" ]; then
-  printf '%s\n' "Prepared artifact ZIP not found: $artifact_path" >&2
-  exit 1
-fi
-
-if [ ! -f "$checksum_path" ]; then
-  printf '%s\n' "Prepared checksum file not found: $checksum_path" >&2
-  exit 1
-fi
-
-if [ ! -f "$announcement_path" ]; then
-  printf '%s\n' "Prepared announcement draft not found: $announcement_path" >&2
-  exit 1
-fi
+require_file "$artifact_path" "Prepared artifact ZIP not found: $artifact_path"
+require_file "$checksum_path" "Prepared checksum file not found: $checksum_path"
+require_file "$announcement_path" "Prepared announcement draft not found: $announcement_path"
 
 announcement_trimmed=$(
   python3 - "$announcement_path" <<'PY'

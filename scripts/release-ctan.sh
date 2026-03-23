@@ -8,19 +8,16 @@ fi
 
 bundle_dir=$1
 expected_prepare_run_id=${2:-}
-repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$script_dir/lib/common.sh"
+
+repo_root=$(repo_root_from_dir "$script_dir")
 metadata_path="$bundle_dir/release-metadata.json"
 
-if [ -z "${CTAN_EMAIL:-}" ]; then
-  printf '%s\n' "CTAN_EMAIL is required in the release context. Refusing to publish." >&2
-  exit 1
-fi
+require_env CTAN_EMAIL "CTAN_EMAIL is required in the release context. Refusing to publish."
 
 ctan_o_mat_bin=${CTAN_O_MAT_BIN:-/usr/local/bin/ctan-o-mat}
-if [ ! -f "$ctan_o_mat_bin" ]; then
-  printf '%s\n' "ctan-o-mat executable not found at $ctan_o_mat_bin" >&2
-  exit 1
-fi
+require_file "$ctan_o_mat_bin" "ctan-o-mat executable not found at $ctan_o_mat_bin"
 
 # Re-run the bundle validation in the publish context so approval cannot bypass
 # any prepare-time guarantees.

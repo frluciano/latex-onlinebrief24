@@ -10,7 +10,10 @@ set -eu
 
 date=${1:-$(date +%Y-%m-%d)}
 
-repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$script_dir/lib/common.sh"
+
+repo_root=$(repo_root_from_dir "$script_dir")
 cls_file="$repo_root/onlinebrief24.cls"
 doc_file="$repo_root/ctan/onlinebrief24-doc.tex"
 
