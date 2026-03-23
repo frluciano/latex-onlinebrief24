@@ -5,7 +5,7 @@ Alle wesentlichen Aenderungen an `onlinebrief24` werden in dieser Datei dokument
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-DD).
 
-## [Unreleased]
+## [2026-03-23]
 
 ### Hinzugefuegt
 - `\addfooteritem{icon}{text}` fuer zusaetzliche Footer-Eintraege im
@@ -31,6 +31,8 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
   Engines robuster laufen
 - Leerzeilen zwischen den lokalisierten `infoblock`-Label-Bloecken entfernt,
   damit beim Laden der Klasse keine stoerenden `\par`-Token entstehen
+- Layout-Overflow in der CTAN-Dokumentation behoben: lange Befehlsnamen in
+  Tabellen werden nun umgebrochen
 
 ### Entfernt
 - `ngerman`-Infoblock-Labels entfernt; `lang=german` deckt beide Varianten ab
@@ -44,7 +46,8 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
   `ctan/release-announcement.txt` erzeugt; der bisherige Fallback aus
   gefilterten Commit-Subjects wurde entfernt
 - `Prepare CTAN Release` scheitert jetzt absichtlich, wenn
-  `ctan/release-announcement.txt` fehlt oder leer ist
+  `ctan/release-announcement.txt` fehlt oder leer ist; Maskierung von Fehlern
+  durch `|| true` wurde entfernt
 
 ### Intern
 - Rueckadress-Fontgroessen als benannte Makros zentralisiert, um
@@ -53,10 +56,14 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
   herausgezogen
 - Herkunft der moderncv-Farbschema-RGB-Werte im Klassenfile kommentiert
 - Regressionsabdeckung fuer Guides-Modus und `footercenter` erweitert
+- automatisierte Inhaltsvalidierung auf alle lokalisierten Sprachen erweitert:
+  `german`, `english`, `french`, `spanish`, `italian`, `dutch` und `polish`
+  werden im CI-Pfad verifiziert
 - `scripts/check-tooling.sh` integriert ShellCheck mit graceful fallback und
   prueft zusaetzlich die Python-Helfer auf Syntax
 - Python-Validierungslogik in `scripts/lib/release_validation.py`
-  ausgelagert; `validate-release-inputs.sh` wurde dadurch vereinfacht
+  ausgelagert; `get_zip_versions` konsolidiert die ZIP-Pruefung fuer alle
+  Release-Skripte
 
 ## [2026-03-22]
 
