@@ -164,14 +164,6 @@
 \@obb@defineinfoblocklabel{german}{contactphone}{Telefon}
 \@obb@defineinfoblocklabel{german}{contactfax}{Telefax}
 \@obb@defineinfoblocklabel{german}{contactemail}{E-Mail}
-\@obb@defineinfoblocklabel{ngerman}{yourref}{Ihr Zeichen}
-\@obb@defineinfoblocklabel{ngerman}{yourmessage}{Ihre Nachricht vom}
-\@obb@defineinfoblocklabel{ngerman}{ourref}{Unser Zeichen}
-\@obb@defineinfoblocklabel{ngerman}{ourmessage}{Unsere Nachricht vom}
-\@obb@defineinfoblocklabel{ngerman}{contactname}{Name}
-\@obb@defineinfoblocklabel{ngerman}{contactphone}{Telefon}
-\@obb@defineinfoblocklabel{ngerman}{contactfax}{Telefax}
-\@obb@defineinfoblocklabel{ngerman}{contactemail}{E-Mail}
 \@obb@defineinfoblocklabel{english}{yourref}{Your reference}
 \@obb@defineinfoblocklabel{english}{yourmessage}{Your message of}
 \@obb@defineinfoblocklabel{english}{ourref}{Our reference}

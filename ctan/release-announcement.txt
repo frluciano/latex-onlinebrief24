@@ -1,0 +1,27 @@
+This release adds extensibility features, improves code quality, and expands
+documentation and test coverage.
+
+New commands:
+- \addfooteritem{icon}{text} appends custom items to the modern-mode footer
+  (fontawesome5 icon + label, separated by the standard vertical bar)
+- \addinfoblockrow{label}{value} appends custom rows to the DIN-style
+  information block (empty values are silently omitted)
+- \setinfoblocktopoffset, \setinfoblockrightedge, \setinfoblockcolwidths
+  allow tuning the information-block position and column widths from the
+  document preamble without editing the class file
+
+Removed:
+- ngerman infoblock labels dropped; lang=german covers both German variants
+
+Internal improvements:
+- Removed unused eso-pic dependency
+- Return-address font size centralised as named macros to eliminate duplication
+- DIN 5008 window coordinates extracted as named macros for maintainability
+- KOMA-Script internal macros used in \opening are now fully documented
+  with rationale and risk/mitigation notes
+
+Documentation:
+- New Guides Mode section explaining the DIN 5008 zone overlay
+- New Extensibility section covering \addfooteritem, \addinfoblockrow,
+  and the layout-tuning API
+- CONTRIBUTING.md and GitHub Issue Templates added for community contributions

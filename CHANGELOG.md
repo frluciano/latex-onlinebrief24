@@ -7,6 +7,9 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
 
 ## [Unreleased]
 
+### Entfernt
+- `ngerman`-Infoblock-Labels entfernt; `lang=german` deckt beide Varianten ab
+
 ### Geaendert
 - CTAN-Announcements werden kuenftig nur noch aus
   `ctan/release-announcement.txt` erzeugt; der bisherige Fallback aus
