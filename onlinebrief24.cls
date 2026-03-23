@@ -329,7 +329,7 @@
 
   % color1 (accent color) selected by the chosen scheme.
   % RGB values mirror the moderncv package's built-in palette so that letters
-  % compiled alongside a moderncv résumé share a visually consistent accent
+  % compiled alongside a moderncv resume share a visually consistent accent
   % color without requiring any manual coordination between the two packages.
   \ifdefstring{\@obb@colorscheme}{blue}{\definecolor{color1}{rgb}{0.22,0.45,0.70}}{}%   % moderncv blue
   \ifdefstring{\@obb@colorscheme}{orange}{\definecolor{color1}{rgb}{0.95,0.55,0.15}}{}%  % moderncv orange
@@ -464,10 +464,10 @@
 % unitlength=1mm these values are millimetres measured from the bottom of an
 % A4 sheet (height = 297mm), so y_pic = 297 - y_from_top.
 \newcommand{\@obb@picwindowx}{20}       % left edge of address window: 20mm from left
-\newcommand{\@obb@piczone1y}{245.00}    % Zone 1 (sender, 2mm high): top at 50mm from top → 297-50=247, bottom at 245mm
+\newcommand{\@obb@piczone1y}{245.00}    % Zone 1 (sender, 2mm high): top at 50mm from top (297-50=247), bottom at 245mm
 \newcommand{\@obb@piczone3y}{204}       % Zone 3 (recipient): calibrated 1mm below the 72mm mark
-\newcommand{\@obb@picfoldmarki}{192}    % 1st fold mark: 105mm from top → 297-105=192
-\newcommand{\@obb@picfoldmarkii}{92}    % 2nd fold mark: 205mm from top → 297-205=92
+\newcommand{\@obb@picfoldmarki}{192}    % 1st fold mark: 105mm from top (297-105=192)
+\newcommand{\@obb@picfoldmarkii}{92}    % 2nd fold mark: 205mm from top (297-205=92)
 
 % --- Page overlay drawing ---
 \newcommand{\@obb@firstpageoverlay}{%
@@ -582,7 +582,7 @@
 
       % Zone 3 (recipient): 72mm to 92mm
       \draw[guide line, guide fill, fill=green!22] ($(TL)+(20mm, -72mm)$) rectangle ++(72mm, -20mm);
-      \node[guide text, anchor=west] at ($(TL)+(92mm, -82mm)$) {Zone 3 (Empfänger)};
+      \node[guide text, anchor=west] at ($(TL)+(92mm, -82mm)$) {Zone 3 (Empfaenger)};
 
       % --- Dimension markers (left of the window) ---
 
@@ -633,22 +633,22 @@
 %
 % Internal KOMA macros used here and why they are safe to call:
 %
-%   \@PapersizeWarning   — issues a warning if the PDF paper size does not
+%   \@PapersizeWarning   -- issues a warning if the PDF paper size does not
 %                          match the document class paper option.  Harmless
 %                          when the paper size is correct; kept for safety.
 %
-%   \@foldmarks          — renders the KOMA fold-mark ticks.  Disabled via
+%   \@foldmarks          -- renders the KOMA fold-mark ticks.  Disabled via
 %                          KOMAoptions{foldmarks=false} above, so this is a
 %                          no-op.  Called so future KOMA hooks still fire.
 %
-%   \@firstheadfootfield — renders the KOMA letterhead and footer.  Disabled
+%   \@firstheadfootfield -- renders the KOMA letterhead and footer.  Disabled
 %                          via KOMAoptions{firsthead=false,firstfoot=false},
 %                          no-op.
 %
-%   \@addrfield          — renders the KOMA address field.  Disabled via
+%   \@addrfield          -- renders the KOMA address field.  Disabled via
 %                          KOMAoptions{addrfield=false}, no-op.
 %
-%   \@locfield           — renders the KOMA location field.  Not configured;
+%   \@locfield           -- renders the KOMA location field.  Not configured;
 %                          no-op.
 %
 % By disabling these components above but still calling them here, any hooks
