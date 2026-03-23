@@ -6,6 +6,9 @@ if [ "$#" -ne 1 ]; then
   exit 1
 fi
 
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$script_dir/lib/common.sh"
+
 mode=$1
 
 case "$mode" in
@@ -41,14 +44,12 @@ if [ "$event_name" = "workflow_dispatch" ]; then
 fi
 
 if [ -z "$repository" ]; then
-  printf '%s\n' "GITHUB_REPOSITORY is required." >&2
-  exit 1
+  fail "GITHUB_REPOSITORY is required."
 fi
 
 if [ "$event_name" = "pull_request" ]; then
   if [ -z "$pr_number" ]; then
-    printf '%s\n' "PR_NUMBER is required for pull_request events." >&2
-    exit 1
+    fail "PR_NUMBER is required for pull_request events."
   fi
   changed_files=$(gh api \
     "repos/${repository}/pulls/${pr_number}/files" \

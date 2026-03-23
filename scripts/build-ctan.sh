@@ -1,7 +1,10 @@
 #!/bin/sh
 set -eu
 
-repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$script_dir/lib/common.sh"
+
+repo_root=$(repo_root_from_dir "$script_dir")
 # Extract the version date (YYYY/MM/DD) from \ProvidesClass and convert to YYYY-MM-DD.
 version=$(sed -n 's/.*\\ProvidesClass{onlinebrief24}\[\([0-9/]*\).*/\1/p' "$repo_root/onlinebrief24.cls" | tr '/' '-')
 ctan_src_dir="$repo_root/ctan"

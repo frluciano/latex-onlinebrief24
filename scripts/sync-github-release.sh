@@ -8,7 +8,10 @@ fi
 
 bundle_dir=$1
 expected_release_run_id=${2:-}
-repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$script_dir/lib/common.sh"
+
+repo_root=$(repo_root_from_dir "$script_dir")
 metadata_path="$bundle_dir/release-metadata.json"
 resolved_metadata_path="$bundle_dir/resolved-release-metadata.json"
 
@@ -17,20 +20,9 @@ if [ -z "${GH_TOKEN:-}" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
   export GH_TOKEN
 fi
 
-if [ -z "${GH_TOKEN:-}" ]; then
-  printf '%s\n' "GH_TOKEN or GITHUB_TOKEN is required to create the GitHub release." >&2
-  exit 1
-fi
-
-if [ -z "${GITHUB_REPOSITORY:-}" ]; then
-  printf '%s\n' "GITHUB_REPOSITORY is required in the GitHub release sync context." >&2
-  exit 1
-fi
-
-if [ ! -f "$resolved_metadata_path" ]; then
-  printf '%s\n' "Resolved release metadata not found: $resolved_metadata_path" >&2
-  exit 1
-fi
+require_env GH_TOKEN "GH_TOKEN or GITHUB_TOKEN is required to create the GitHub release."
+require_env GITHUB_REPOSITORY "GITHUB_REPOSITORY is required in the GitHub release sync context."
+require_file "$resolved_metadata_path" "Resolved release metadata not found: $resolved_metadata_path"
 
 # Reuse the existing CTAN bundle validation so the GitHub release is built from
 # exactly the same checked inputs that were accepted for CTAN publication.

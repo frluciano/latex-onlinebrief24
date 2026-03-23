@@ -1,11 +1,25 @@
 #!/bin/sh
 set -eu
 
-repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$script_dir/lib/common.sh"
+
+repo_root=$(repo_root_from_dir "$script_dir")
 cd "$repo_root"
 
 # Catch shell syntax errors before release or CI logic changes land on main.
-for script in scripts/*.sh; do
+for script in $(find scripts -type f -name '*.sh' | sort); do
+  first_line=$(sed -n '1p' "$script")
+  second_line=$(sed -n '2p' "$script")
+
+  if [ "$first_line" != '#!/bin/sh' ]; then
+    fail "$script must start with #!/bin/sh"
+  fi
+
+  if [ "$second_line" != 'set -eu' ]; then
+    fail "$script must enable set -eu on line 2"
+  fi
+
   sh -n "$script"
 done
 
