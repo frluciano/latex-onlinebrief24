@@ -11,10 +11,10 @@ New commands:
   document preamble without editing the class file
 
 Removed:
-- ngerman infoblock labels dropped; lang=german covers both German variants
+- dedicated ngerman infoblock label duplicates dropped; the German labels now
+  serve as the shared fallback
 
 Internal improvements:
-- Removed unused eso-pic dependency
 - Return-address font size centralised as named macros to eliminate duplication
 - DIN 5008 window coordinates extracted as named macros for maintainability
 - KOMA-Script internal macros used in \opening are now fully documented

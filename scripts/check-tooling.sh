@@ -33,6 +33,12 @@ Dir.glob(".github/workflows/*.yml").sort.each do |path|
 end
 RUBY
 
+# Release validation and workflow-summary helpers live in Python. Compile them
+# ahead of time so CI catches syntax errors before GitHub Actions executes them.
+# shellcheck disable=SC2046
+PYTHONPYCACHEPREFIX="${TMPDIR:-/tmp}/ob24-pycache" \
+  python3 -m py_compile $(find scripts -type f -name '*.py' | sort)
+
 # The release template must keep the placeholders that the publish script
 # injects at submit time.
 python3 - <<'PY'

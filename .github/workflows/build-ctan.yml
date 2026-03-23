@@ -96,14 +96,7 @@ jobs:
             exit 0
           fi
 
-          announcement_trimmed=$(
-            python3 - "$announcement_path" <<'PY'
-            import sys
-            from pathlib import Path
-
-            print(Path(sys.argv[1]).read_text(encoding="utf-8").strip())
-            PY
-          )
+          announcement_trimmed=$(python3 scripts/lib/release_validation.py read-announcement "$announcement_path" || true)
 
           if [ -z "$announcement_trimmed" ]; then
             printf '%s\n' "::error file=$announcement_path::Explicit CTAN announcement file is empty."
@@ -207,39 +200,12 @@ jobs:
         if: steps.changes.outputs.ctan == 'true' && steps.announcement.outputs.ready == 'true'
         run: |
           set -eu
-          python3 - <<'PY'
-          import json
-          import os
-          from pathlib import Path
-
-          bundle_dir = Path("dist") / os.environ["PREPARE_ARTIFACT_NAME"]
-          metadata = json.loads((bundle_dir / "release-metadata.json").read_text(encoding="utf-8"))
-          announcement_lines = (
-              (bundle_dir / metadata["announcement_filename"])
-              .read_text(encoding="utf-8")
-              .strip()
-              .splitlines()
-          )
-          announcement_preview = "<br>".join(
-              line.replace("|", "\\|") for line in announcement_lines[:4]
-          ) or "(empty)"
-
-          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as fh:
-              fh.write("## Prepare CTAN Release\n\n")
-              fh.write("| Field | Value |\n")
-              fh.write("| --- | --- |\n")
-              fh.write(f"| Event | {os.environ['GITHUB_EVENT_NAME']} |\n")
-              fh.write(f"| Prepare run ID | `{os.environ['GITHUB_RUN_ID']}` |\n")
-              fh.write(f"| Prepare run attempt | `{os.environ['GITHUB_RUN_ATTEMPT']}` |\n")
-              fh.write(f"| Source commit | `{metadata['source_commit_sha']}` |\n")
-              fh.write(f"| Version | `{metadata['version']}` |\n")
-              fh.write(f"| Artifact | `{metadata['artifact_filename']}` |\n")
-              fh.write(f"| SHA256 | `{metadata['artifact_sha256']}` |\n")
-              fh.write(f"| Bundle artifact | `{os.environ['PREPARE_ARTIFACT_NAME']}` |\n")
-              fh.write(f"| Announcement draft | `{metadata['announcement_filename']}` |\n\n")
-              fh.write("Announcement preview:\n\n")
-              fh.write(f"{announcement_preview}\n")
-          PY
+          python3 scripts/lib/release_workflow.py write-prepare-summary \
+            "dist/${PREPARE_ARTIFACT_NAME}" \
+            "${GITHUB_EVENT_NAME}" \
+            "${GITHUB_RUN_ID}" \
+            "${GITHUB_RUN_ATTEMPT}" \
+            "${PREPARE_ARTIFACT_NAME}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload prepared release bundle
         if: steps.changes.outputs.ctan == 'true' && steps.announcement.outputs.ready == 'true'

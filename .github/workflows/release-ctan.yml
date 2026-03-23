@@ -73,35 +73,9 @@ jobs:
           set -eu
           # Only a successful prepare run from a push to main is eligible for
           # CTAN publishing. This blocks PR artifacts and ad-hoc untrusted runs.
-          python3 - <<'PY'
-          import json
-          import os
-          import subprocess
-          import sys
-
-          run_id = os.environ["PREPARE_RUN_ID_INPUT"]
-          repo = os.environ["GITHUB_REPOSITORY"]
-          raw = subprocess.check_output(
-              ["gh", "api", f"repos/{repo}/actions/runs/{run_id}"],
-              text=True,
-          )
-          data = json.loads(raw)
-          errors = []
-
-          if data.get("name") != "Prepare CTAN Release":
-              errors.append(f"prepare run {run_id} is not from 'Prepare CTAN Release'")
-          if data.get("event") != "push":
-              errors.append(f"prepare run {run_id} must come from a push event")
-          if data.get("head_branch") != "main":
-              errors.append(f"prepare run {run_id} must come from main, got {data.get('head_branch')!r}")
-          if data.get("status") != "completed" or data.get("conclusion") != "success":
-              errors.append(f"prepare run {run_id} must be completed successfully")
-
-          if errors:
-              for message in errors:
-                  print(f"::error::{message}")
-              sys.exit(1)
-          PY
+          python3 scripts/lib/release_workflow.py validate-prepare-run-provenance \
+            "${GITHUB_REPOSITORY}" \
+            "${PREPARE_RUN_ID_INPUT}"
 
       - name: Read prepared metadata
         id: metadata
@@ -109,26 +83,8 @@ jobs:
           set -eu
           # Read only the fields needed to wire the rest of the workflow. Full
           # structural validation happens in the dedicated validation script.
-          python3 - <<'PY'
-          import json
-          import os
-          from pathlib import Path
-
-          bundle_dir = Path("${{ steps.download_prepare_bundle.outputs.bundle_dir }}")
-          metadata_path = bundle_dir / "release-metadata.json"
-          if not metadata_path.exists():
-              raise SystemExit(f"::error file={metadata_path}::Missing prepared release metadata.")
-
-          data = json.loads(metadata_path.read_text(encoding="utf-8"))
-          required = ("artifact_filename", "prepare_run_id", "source_commit_sha", "version")
-          missing = [key for key in required if not data.get(key)]
-          if missing:
-              raise SystemExit(f"::error file={metadata_path}::Missing required metadata fields: {', '.join(missing)}")
-
-          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as fh:
-              for key in required:
-                  fh.write(f"{key}={data[key]}\n")
-          PY
+          python3 scripts/lib/release_workflow.py read-prepared-metadata \
+            "${{ steps.download_prepare_bundle.outputs.bundle_dir }}" >> "$GITHUB_OUTPUT"
 
       - uses: actions/checkout@v6
         with:
@@ -162,24 +118,11 @@ jobs:
           set -eu
           # Preserve the mapping from prepared bundle to release attempt so a
           # later audit can see who requested publication and in which run.
-          python3 - <<'PY'
-          import json
-          import os
-          from datetime import datetime, timezone
-          from pathlib import Path
-
-          bundle_dir = Path("${{ steps.download_prepare_bundle.outputs.bundle_dir }}")
-          metadata_path = bundle_dir / "release-metadata.json"
-          resolved_path = bundle_dir / "resolved-release-metadata.json"
-
-          data = json.loads(metadata_path.read_text(encoding="utf-8"))
-          data["release_run_id"] = os.environ["GITHUB_RUN_ID"]
-          data["release_run_attempt"] = os.environ["GITHUB_RUN_ATTEMPT"]
-          data["release_requested_by"] = os.environ["GITHUB_ACTOR"]
-          data["release_timestamp_utc"] = datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
-
-          resolved_path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
-          PY
+          python3 scripts/lib/release_workflow.py record-resolved-release-metadata \
+            "${{ steps.download_prepare_bundle.outputs.bundle_dir }}" \
+            "${GITHUB_RUN_ID}" \
+            "${GITHUB_RUN_ATTEMPT}" \
+            "${GITHUB_ACTOR}"
 
       - name: Log release traceability
         run: |
@@ -192,79 +135,8 @@ jobs:
       - name: Write release validation summary
         run: |
           set -eu
-          python3 - <<'PY'
-          import json
-          import os
-          import re
-          import zipfile
-          from pathlib import Path
-
-          bundle_dir = Path("${{ steps.download_prepare_bundle.outputs.bundle_dir }}")
-          metadata = json.loads((bundle_dir / "release-metadata.json").read_text(encoding="utf-8"))
-          resolved = json.loads((bundle_dir / "resolved-release-metadata.json").read_text(encoding="utf-8"))
-          artifact_path = bundle_dir / metadata["artifact_filename"]
-          artifact_version_match = re.fullmatch(
-              r"onlinebrief24-([0-9]{4}-[0-9]{2}-[0-9]{2})\.zip",
-              metadata["artifact_filename"],
-          )
-          if not artifact_version_match:
-              raise SystemExit(
-                  f"::error file={artifact_path}::Could not derive version from artifact filename."
-              )
-
-          with zipfile.ZipFile(artifact_path) as archive:
-              cls_text = archive.read("onlinebrief24/onlinebrief24.cls").decode("utf-8")
-              doc_text = archive.read("onlinebrief24/onlinebrief24-doc.tex").decode("utf-8")
-
-          cls_match = re.search(
-              r"\\ProvidesClass\{onlinebrief24\}\[([0-9]{4}/[0-9]{2}/[0-9]{2})\b",
-              cls_text,
-          )
-          if not cls_match:
-              raise SystemExit(
-                  f"::error file={artifact_path}::Could not extract version from onlinebrief24.cls in artifact."
-              )
-
-          doc_match = re.search(r"\\date\{([0-9]{4}-[0-9]{2}-[0-9]{2})\}", doc_text)
-          if not doc_match:
-              raise SystemExit(
-                  f"::error file={artifact_path}::Could not extract date from onlinebrief24-doc.tex in artifact."
-              )
-
-          artifact_filename_version = artifact_version_match.group(1)
-          cls_version = cls_match.group(1).replace("/", "-")
-          doc_version = doc_match.group(1)
-          # Show the complete announcement in the validation summary so the
-          # approval decision is based on the exact text frozen into the bundle.
-          announcement_text = (
-              (bundle_dir / metadata["announcement_filename"])
-              .read_text(encoding="utf-8")
-              .strip()
-          ) or "(empty)"
-
-          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as fh:
-              fh.write("## Release CTAN validation\n\n")
-              fh.write("| Field | Value |\n")
-              fh.write("| --- | --- |\n")
-              fh.write(f"| Requested prepare run | `{metadata['prepare_run_id']}` |\n")
-              fh.write(f"| Release run | `{resolved['release_run_id']}` |\n")
-              fh.write(f"| Release actor | `{resolved['release_requested_by']}` |\n")
-              fh.write(f"| Source commit | `{metadata['source_commit_sha']}` |\n")
-              fh.write(f"| Artifact | `{metadata['artifact_filename']}` |\n")
-              fh.write(f"| SHA256 | `{metadata['artifact_sha256']}` |\n")
-              fh.write(f"| Approval gate | `ctan-release` environment pending after validation |\n\n")
-              fh.write("Version cross-check:\n\n")
-              fh.write("| `release-metadata.json` | ZIP filename | `onlinebrief24.cls` in ZIP | `onlinebrief24-doc.tex` in ZIP |\n")
-              fh.write("| --- | --- | --- | --- |\n")
-              fh.write(
-                  f"| `{metadata['version']}` | `{artifact_filename_version}` | `{cls_version}` | `{doc_version}` |\n\n"
-              )
-              fh.write("Announcement:\n\n")
-              fh.write("```text\n")
-              fh.write(announcement_text.replace("```", "'''"))
-              fh.write("\n```\n\n")
-              fh.write("Next step: approve the `ctan-release` deployment before `publish-to-ctan` can access CTAN credentials.\n")
-          PY
+          python3 scripts/lib/release_workflow.py write-release-validation-summary \
+            "${{ steps.download_prepare_bundle.outputs.bundle_dir }}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload validated release bundle
         uses: actions/upload-artifact@v6
@@ -353,69 +225,6 @@ jobs:
       - name: Write CTAN publish summary
         run: |
           set -eu
-          python3 - <<'PY'
-          import json
-          import os
-          import re
-          import zipfile
-          from pathlib import Path
-
-          bundle_dir = Path("${{ steps.download_validated_bundle.outputs.bundle_dir }}")
-          metadata = json.loads((bundle_dir / "release-metadata.json").read_text(encoding="utf-8"))
-          resolved = json.loads((bundle_dir / "resolved-release-metadata.json").read_text(encoding="utf-8"))
-          artifact_path = bundle_dir / metadata["artifact_filename"]
-          rendered_pkg_path = bundle_dir / "onlinebrief24-release-audit.pkg"
-          artifact_version_match = re.fullmatch(
-              r"onlinebrief24-([0-9]{4}-[0-9]{2}-[0-9]{2})\.zip",
-              metadata["artifact_filename"],
-          )
-          if not artifact_version_match:
-              raise SystemExit(
-                  f"::error file={artifact_path}::Could not derive version from artifact filename."
-              )
-
-          with zipfile.ZipFile(artifact_path) as archive:
-              cls_text = archive.read("onlinebrief24/onlinebrief24.cls").decode("utf-8")
-              doc_text = archive.read("onlinebrief24/onlinebrief24-doc.tex").decode("utf-8")
-
-          pkg_text = rendered_pkg_path.read_text(encoding="utf-8")
-
-          cls_match = re.search(
-              r"\\ProvidesClass\{onlinebrief24\}\[([0-9]{4}/[0-9]{2}/[0-9]{2})\b",
-              cls_text,
-          )
-          doc_match = re.search(r"\\date\{([0-9]{4}-[0-9]{2}-[0-9]{2})\}", doc_text)
-          pkg_version_match = re.search(r"\\version\{([0-9]{4}-[0-9]{2}-[0-9]{2})\}", pkg_text)
-          pkg_file_match = re.search(r"\\file\{([^}]*)\}", pkg_text)
-
-          if not cls_match or not doc_match or not pkg_version_match or not pkg_file_match:
-              raise SystemExit(
-                  f"::error file={rendered_pkg_path}::Could not extract one or more release-version fields for the publish summary."
-              )
-
-          artifact_filename_version = artifact_version_match.group(1)
-          cls_version = cls_match.group(1).replace("/", "-")
-          doc_version = doc_match.group(1)
-          pkg_version = pkg_version_match.group(1)
-          pkg_artifact_name = Path(pkg_file_match.group(1)).name
-
-          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as fh:
-              fh.write("## CTAN publish completed\n\n")
-              fh.write("| Field | Value |\n")
-              fh.write("| --- | --- |\n")
-              fh.write(f"| Prepare run | `{metadata['prepare_run_id']}` |\n")
-              fh.write(f"| Release run | `{resolved['release_run_id']}` |\n")
-              fh.write(f"| Source commit | `{metadata['source_commit_sha']}` |\n")
-              fh.write(f"| Artifact | `{metadata['artifact_filename']}` |\n")
-              fh.write(f"| SHA256 | `{metadata['artifact_sha256']}` |\n")
-              fh.write(f"| Rendered `.pkg` artifact | `{os.environ['RENDERED_PKG_ARTIFACT_NAME']}` |\n")
-              fh.write(f"| Rendered `.pkg` audit copy | `{rendered_pkg_path.name}` |\n")
-              fh.write(f"| Rendered `.pkg` file target | `{pkg_artifact_name}` |\n\n")
-              fh.write("Version cross-check:\n\n")
-              fh.write("| `release-metadata.json` | ZIP filename | `onlinebrief24.cls` in ZIP | `onlinebrief24-doc.tex` in ZIP | rendered `.pkg` |\n")
-              fh.write("| --- | --- | --- | --- | --- |\n")
-              fh.write(
-                  f"| `{metadata['version']}` | `{artifact_filename_version}` | `{cls_version}` | `{doc_version}` | `{pkg_version}` |\n\n"
-              )
-              fh.write("The follow-up workflow `Sync GitHub Release` should now create or update the matching Git tag and GitHub Release from the same validated bundle.\n")
-          PY
+          python3 scripts/lib/release_workflow.py write-ctan-publish-summary \
+            "${{ steps.download_validated_bundle.outputs.bundle_dir }}" \
+            "${RENDERED_PKG_ARTIFACT_NAME}" >> "$GITHUB_STEP_SUMMARY"
