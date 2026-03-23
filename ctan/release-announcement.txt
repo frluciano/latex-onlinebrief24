@@ -24,4 +24,3 @@ Documentation:
 - New Guides Mode section explaining the DIN 5008 zone overlay
 - New Extensibility section covering \addfooteritem, \addinfoblockrow,
   and the layout-tuning API
-- CONTRIBUTING.md and GitHub Issue Templates added for community contributions
