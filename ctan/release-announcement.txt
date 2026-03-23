@@ -19,8 +19,6 @@ Bug fixes:
 Internationalization:
 - Expanded localized infoblock labels: now fully supports and verifies
   german, english, french, spanish, italian, dutch, and polish
-- Regression test coverage expanded to verify all supported languages
-  in the automated CI pipeline
 - Dedicated ngerman infoblock label duplicates dropped; the German labels now
   serve as the shared fallback for both German variants
 
@@ -34,4 +32,3 @@ Documentation:
 - New Guides Mode section explaining the DIN 5008 zone overlay
 - New Extensibility section covering \addfooteritem, \addinfoblockrow,
   and the layout-tuning API
-- New technical example: example-onlinebrief24-guides.tex

@@ -12,7 +12,7 @@
 - [x] Version-Datum in `onlinebrief24.cls` und `ctan/onlinebrief24-doc.tex` auf Release-Datum setzen — `sh scripts/bump-version.sh 2026-03-23`
 - [x] `ctan/release-announcement.txt` erstellen — Zusammenfassung der Änderungen für CTAN
 - [x] CTAN-Paket bauen und validieren — `sh scripts/build-ctan.sh`
-- [ ] Prepare CTAN Release Workflow auslösen — GitHub Actions
+- [x] Prepare CTAN Release Workflow auslösen — GitHub Actions (triggerte automatisch durch Push)
 
 ## Done
 
