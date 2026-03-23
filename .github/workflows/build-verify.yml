@@ -48,35 +48,8 @@ jobs:
           PUSH_AFTER: ${{ github.sha }}
         run: |
           set -eu
-
-          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
-            echo "verify=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          if [ "$EVENT_NAME" = "pull_request" ]; then
-            changed_files=$(gh api \
-              "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files" \
-              --paginate \
-              --jq '.[].filename')
-          else
-            if [ -z "$PUSH_BEFORE" ] || [ "$PUSH_BEFORE" = "0000000000000000000000000000000000000000" ]; then
-              echo "verify=true" >> "$GITHUB_OUTPUT"
-              exit 0
-            fi
-            changed_files=$(gh api \
-              "repos/${GITHUB_REPOSITORY}/compare/${PUSH_BEFORE}...${PUSH_AFTER}" \
-              --jq '.files[].filename')
-          fi
-
-          echo "$changed_files"
-
-          if printf '%s\n' "$changed_files" | grep -Eq \
-            '^(\.github/workflows/build-verify\.yml|onlinebrief24\.cls|examples/|tests/fixtures/|scripts/verify\.sh)'; then
-            echo "verify=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "verify=false" >> "$GITHUB_OUTPUT"
-          fi
+          changed=$(sh scripts/ci-detect-changes.sh verify)
+          printf '%s\n' "verify=$changed" >> "$GITHUB_OUTPUT"
 
       - name: Skip heavy verification setup when inputs are unchanged
         if: steps.changes.outputs.verify != 'true'

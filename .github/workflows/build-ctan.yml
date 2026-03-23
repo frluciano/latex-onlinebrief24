@@ -49,37 +49,8 @@ jobs:
           PUSH_AFTER: ${{ github.sha }}
         run: |
           set -eu
-
-          # Manual runs are explicit preparation requests and should always build
-          # a fresh release bundle even when the diff-based heuristic would skip.
-          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
-            echo "ctan=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          if [ "$EVENT_NAME" = "pull_request" ]; then
-            changed_files=$(gh api \
-              "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files" \
-              --paginate \
-              --jq '.[].filename')
-          else
-            if [ -z "$PUSH_BEFORE" ] || [ "$PUSH_BEFORE" = "0000000000000000000000000000000000000000" ]; then
-              echo "ctan=true" >> "$GITHUB_OUTPUT"
-              exit 0
-            fi
-            changed_files=$(gh api \
-              "repos/${GITHUB_REPOSITORY}/compare/${PUSH_BEFORE}...${PUSH_AFTER}" \
-              --jq '.files[].filename')
-          fi
-
-          echo "$changed_files"
-
-          if printf '%s\n' "$changed_files" | grep -Eq \
-            '^(\.github/workflows/build-ctan\.yml|\.github/workflows/release-ctan\.yml|onlinebrief24\.cls|ctan/|examples/|scripts/build-ctan\.sh|scripts/generate-announcement-draft\.sh|scripts/generate-release-metadata\.sh|scripts/validate-release-inputs\.sh|LICENSE$)'; then
-            echo "ctan=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "ctan=false" >> "$GITHUB_OUTPUT"
-          fi
+          changed=$(sh scripts/ci-detect-changes.sh ctan)
+          printf '%s\n' "ctan=$changed" >> "$GITHUB_OUTPUT"
 
       - name: Skip heavy CTAN setup when package inputs are unchanged
         if: steps.changes.outputs.ctan != 'true'
