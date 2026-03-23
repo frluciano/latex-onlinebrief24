@@ -1,0 +1,29 @@
+\documentclass[modern, footercenter, lang=german]{../../onlinebrief24}
+
+\setreturnaddress{Max Mustermann, Musterstraße 1, 12345 Musterstadt}
+\setrecipient{%
+  Muster GmbH \\
+  Frau Erika Beispiel \\
+  Musterweg 2 \\
+  54321 Musterort%
+}
+\setfromfirstname{Max}
+\setfromlastname{Mustermann}
+\setfromaddress{Musterstraße 1, 12345 Musterstadt}
+\setfromemail{max.mustermann@example.com}
+\setfromphone{0151 / 234 567}
+\setfromlandline{089 / 123 456}
+\setsubject{Test: Zentrierter Footer}
+\setplace{Musterstadt}
+\setdate{2026-03-23}
+
+\begin{document}
+\begin{letter}{}
+\opening{Sehr geehrte Frau Beispiel,}
+
+dieses Dokument prüft dass die footercenter-Option den Footer-Inhalt
+korrekt zentriert und alle Kontaktfelder in der Fußzeile erscheinen.
+
+\closing{Mit freundlichen Grüßen}
+\end{letter}
+\end{document}

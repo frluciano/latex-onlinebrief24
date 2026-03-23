@@ -57,35 +57,9 @@ jobs:
           # Only a completed successful `Release CTAN` run from `main` may feed
           # the GitHub release sync. This preserves the same trust boundary as
           # the CTAN publish workflow itself.
-          python3 - <<'PY'
-          import json
-          import os
-          import subprocess
-          import sys
-
-          run_id = os.environ["RELEASE_RUN_ID_INPUT"]
-          repo = os.environ["GITHUB_REPOSITORY"]
-          raw = subprocess.check_output(
-              ["gh", "api", f"repos/{repo}/actions/runs/{run_id}"],
-              text=True,
-          )
-          data = json.loads(raw)
-          errors = []
-
-          if data.get("name") != "Release CTAN":
-              errors.append(f"release run {run_id} is not from 'Release CTAN'")
-          if data.get("event") != "workflow_dispatch":
-              errors.append(f"release run {run_id} must come from a workflow_dispatch event")
-          if data.get("head_branch") != "main":
-              errors.append(f"release run {run_id} must come from main, got {data.get('head_branch')!r}")
-          if data.get("status") != "completed" or data.get("conclusion") != "success":
-              errors.append(f"release run {run_id} must be completed successfully")
-
-          if errors:
-              for message in errors:
-                  print(f"::error::{message}")
-              sys.exit(1)
-          PY
+          python3 scripts/lib/release_workflow.py validate-release-run-provenance \
+            "${GITHUB_REPOSITORY}" \
+            "${RELEASE_RUN_ID_INPUT}"
 
       - name: Download validated release bundle
         id: download_validated_bundle
@@ -115,33 +89,9 @@ jobs:
         run: |
           set -eu
           # Read only the fields needed for checkout and final release tagging.
-          python3 - <<'PY'
-          import json
-          import os
-          from pathlib import Path
-
-          bundle_dir = Path("${{ steps.download_validated_bundle.outputs.bundle_dir }}")
-          resolved_path = bundle_dir / "resolved-release-metadata.json"
-          if not resolved_path.exists():
-              raise SystemExit(f"::error file={resolved_path}::Missing resolved release metadata.")
-
-          data = json.loads(resolved_path.read_text(encoding="utf-8"))
-          required = ("artifact_filename", "release_run_id", "source_commit_sha", "version")
-          missing = [key for key in required if not data.get(key)]
-          if missing:
-              raise SystemExit(f"::error file={resolved_path}::Missing required resolved metadata fields: {', '.join(missing)}")
-
-          expected_run_id = "${{ steps.source_run.outputs.release_run_id }}"
-          if str(data["release_run_id"]) != expected_run_id:
-              raise SystemExit(
-                  f"::error file={resolved_path}::Resolved metadata release_run_id {data['release_run_id']} "
-                  f"does not match triggering release run ID {expected_run_id}."
-              )
-
-          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as fh:
-              for key in required:
-                  fh.write(f"{key}={data[key]}\n")
-          PY
+          python3 scripts/lib/release_workflow.py read-resolved-release-metadata \
+            "${{ steps.download_validated_bundle.outputs.bundle_dir }}" \
+            "${{ steps.source_run.outputs.release_run_id }}" >> "$GITHUB_OUTPUT"
 
       - uses: actions/checkout@v6
         with:
@@ -164,27 +114,7 @@ jobs:
           TRIGGER_EVENT_NAME: ${{ github.event_name }}
         run: |
           set -eu
-          python3 - <<'PY'
-          import json
-          import os
-          from pathlib import Path
-
-          bundle_dir = Path("${{ steps.download_validated_bundle.outputs.bundle_dir }}")
-          metadata = json.loads((bundle_dir / "release-metadata.json").read_text(encoding="utf-8"))
-          resolved = json.loads((bundle_dir / "resolved-release-metadata.json").read_text(encoding="utf-8"))
-          version = metadata["version"]
-          release_url = f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/releases/tag/{version}"
-
-          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as fh:
-              fh.write("## GitHub release sync completed\n\n")
-              fh.write("| Field | Value |\n")
-              fh.write("| --- | --- |\n")
-              fh.write(f"| Trigger | `{os.environ['TRIGGER_EVENT_NAME']}` |\n")
-              fh.write(f"| Prepare run | `{metadata['prepare_run_id']}` |\n")
-              fh.write(f"| Release run | `{resolved['release_run_id']}` |\n")
-              fh.write(f"| Source commit | `{metadata['source_commit_sha']}` |\n")
-              fh.write(f"| Version / tag | `{version}` |\n")
-              fh.write(f"| Artifact | `{metadata['artifact_filename']}` |\n")
-              fh.write(f"| SHA256 | `{metadata['artifact_sha256']}` |\n")
-              fh.write(f"| Release URL | {release_url} |\n")
-          PY
+          python3 scripts/lib/release_workflow.py write-sync-github-release-summary \
+            "${{ steps.download_validated_bundle.outputs.bundle_dir }}" \
+            "${TRIGGER_EVENT_NAME}" \
+            "${GITHUB_REPOSITORY}" >> "$GITHUB_STEP_SUMMARY"
