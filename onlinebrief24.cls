@@ -154,8 +154,11 @@
   \setlength{\@obb@infoblockvaluewidth}{#3}%
 }
 
-% Keep localized information-block labels compact enough to fit the shared
-% DIN-style geometry without forcing awkward line breaks in longer languages.
+% Localized information-block labels. Keep labels compact enough to fit the
+% shared DIN-style geometry without forcing awkward line breaks in longer
+% languages. Add a new language block here to extend localization support.
+
+% German
 \@obb@defineinfoblocklabel{german}{yourref}{Ihr Zeichen}
 \@obb@defineinfoblocklabel{german}{yourmessage}{Ihre Nachricht vom}
 \@obb@defineinfoblocklabel{german}{ourref}{Unser Zeichen}
@@ -164,6 +167,8 @@
 \@obb@defineinfoblocklabel{german}{contactphone}{Telefon}
 \@obb@defineinfoblocklabel{german}{contactfax}{Telefax}
 \@obb@defineinfoblocklabel{german}{contactemail}{E-Mail}
+
+% English
 \@obb@defineinfoblocklabel{english}{yourref}{Your reference}
 \@obb@defineinfoblocklabel{english}{yourmessage}{Your message of}
 \@obb@defineinfoblocklabel{english}{ourref}{Our reference}
@@ -172,6 +177,8 @@
 \@obb@defineinfoblocklabel{english}{contactphone}{Phone}
 \@obb@defineinfoblocklabel{english}{contactfax}{Fax}
 \@obb@defineinfoblocklabel{english}{contactemail}{Email}
+
+% French
 \@obb@defineinfoblocklabel{french}{yourref}{Vos r\'ef\'erences}
 \@obb@defineinfoblocklabel{french}{yourmessage}{Votre message du}
 \@obb@defineinfoblocklabel{french}{ourref}{Nos r\'ef\'erences}
@@ -180,6 +187,8 @@
 \@obb@defineinfoblocklabel{french}{contactphone}{T\'el\'ephone}
 \@obb@defineinfoblocklabel{french}{contactfax}{Fax}
 \@obb@defineinfoblocklabel{french}{contactemail}{E-mail}
+
+% Spanish
 \@obb@defineinfoblocklabel{spanish}{yourref}{Su referencia}
 \@obb@defineinfoblocklabel{spanish}{yourmessage}{Su mensaje del}
 \@obb@defineinfoblocklabel{spanish}{ourref}{Nuestra referencia}
@@ -188,6 +197,8 @@
 \@obb@defineinfoblocklabel{spanish}{contactphone}{Tel\'efono}
 \@obb@defineinfoblocklabel{spanish}{contactfax}{Fax}
 \@obb@defineinfoblocklabel{spanish}{contactemail}{E-mail}
+
+% Italian
 \@obb@defineinfoblocklabel{italian}{yourref}{Vostro rif.}
 \@obb@defineinfoblocklabel{italian}{yourmessage}{Vostra comunic.\ del}
 \@obb@defineinfoblocklabel{italian}{ourref}{Nostro rif.}
@@ -196,6 +207,8 @@
 \@obb@defineinfoblocklabel{italian}{contactphone}{Telefono}
 \@obb@defineinfoblocklabel{italian}{contactfax}{Fax}
 \@obb@defineinfoblocklabel{italian}{contactemail}{E-mail}
+
+% Dutch
 \@obb@defineinfoblocklabel{dutch}{yourref}{Uw kenmerk}
 \@obb@defineinfoblocklabel{dutch}{yourmessage}{Uw bericht van}
 \@obb@defineinfoblocklabel{dutch}{ourref}{Ons kenmerk}
@@ -204,6 +217,8 @@
 \@obb@defineinfoblocklabel{dutch}{contactphone}{Telefoon}
 \@obb@defineinfoblocklabel{dutch}{contactfax}{Fax}
 \@obb@defineinfoblocklabel{dutch}{contactemail}{E-mail}
+
+% Polish
 \@obb@defineinfoblocklabel{polish}{yourref}{Pa\'nstwa znak}
 \@obb@defineinfoblocklabel{polish}{yourmessage}{Pa\'nstwa pismo z dn.}
 \@obb@defineinfoblocklabel{polish}{ourref}{Nasz znak}
