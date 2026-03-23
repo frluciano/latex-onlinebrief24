@@ -10,15 +10,19 @@ New commands:
   allow tuning the information-block position and column widths from the
   document preamble without editing the class file
 
-Removed:
-- dedicated ngerman infoblock label duplicates dropped; the German labels now
-  serve as the shared fallback for both German variants
+Bug fixes:
+- Fixed a bug where empty lines between localized label blocks could cause
+  unwanted \par tokens during class loading
+- Replaced non-ASCII characters in comments and guides labels with ASCII-safe
+  variants for improved robustness across all TeX engines
 
 Internationalization:
 - Expanded localized infoblock labels: now fully supports and verifies
   german, english, french, spanish, italian, dutch, and polish
 - Regression test coverage expanded to verify all supported languages
   in the automated CI pipeline
+- Dedicated ngerman infoblock label duplicates dropped; the German labels now
+  serve as the shared fallback for both German variants
 
 Internal improvements:
 - Return-address font size centralised as named macros to eliminate duplication
@@ -30,3 +34,4 @@ Documentation:
 - New Guides Mode section explaining the DIN 5008 zone overlay
 - New Extensibility section covering \addfooteritem, \addinfoblockrow,
   and the layout-tuning API
+- New technical example: example-onlinebrief24-guides.tex
