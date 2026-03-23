@@ -38,7 +38,9 @@ import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 
-from . import release_validation
+# Ensure the script can import release_validation when run directly from the root.
+sys.path.append(str(Path(__file__).parent))
+import release_validation
 
 
 def load_json(path_str):
