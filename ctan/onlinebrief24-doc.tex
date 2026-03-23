@@ -126,7 +126,7 @@ Accent-color schemes for modern mode. \\
 
 \section{Main Commands}
 
-\begin{longtable}{@{}p{50mm}p{90mm}@{}}
+\begin{longtable}{@{}p{60mm}p{80mm}@{}}
 \toprule
 Command & Purpose \\
 \midrule
@@ -171,10 +171,12 @@ not split. \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Extensibility}} \\
 \midrule
-\texttt{\string\addfooteritem\{\textit{icon}\}\{\textit{text}\}} &
+\texttt{\string\addfooteritem}\\
+\texttt{\{\textit{icon}\}\{\textit{text}\}} &
 Append a custom item to the modern-mode footer. The icon is a
 \texttt{fontawesome5} command. Multiple calls append in order. \\
-\texttt{\string\addinfoblockrow\{\textit{label}\}\{\textit{value}\}} &
+\texttt{\string\addinfoblockrow}\\
+\texttt{\{\textit{label}\}\{\textit{value}\}} &
 Append a custom row to the DIN-style information block. Empty values are
 silently omitted. \\
 \midrule
@@ -184,7 +186,8 @@ silently omitted. \\
 Vertical offset from the page top to the information block (default: 50mm). \\
 \texttt{\string\setinfoblockrightedge\{\textit{dim}\}} &
 Horizontal distance from the left page edge to the block's right edge (default: 200mm). \\
-\texttt{\string\setinfoblockcolwidths\{\textit{label}\}\{\textit{sep}\}\{\textit{value}\}} &
+\texttt{\string\setinfoblockcolwidths}\\
+\texttt{\{\textit{label}\}\{\textit{sep}\}\{\textit{value}\}} &
 Column widths for the information-block tabular (defaults: 30mm, 2mm, 43mm). \\
 \bottomrule
 \end{longtable}
