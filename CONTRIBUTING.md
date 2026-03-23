@@ -34,14 +34,13 @@ Examples live in `examples/` and must be named `example-onlinebrief24-*.tex`. A 
 ### Improve the code
 
 1. Fork the repository and create a branch from `main`.
-2. Follow the conventions in `agent-rules/` (especially `LaTeX.md` and `Code-Style.md`).
-3. Run the full verification suite before opening a pull request:
+2. Run the full verification suite before opening a pull request:
    ```sh
    sh scripts/verify.sh                          # default: xelatex
    OB24_TEX_ENGINE=lualatex sh scripts/verify.sh
    OB24_TEX_ENGINE=pdflatex sh scripts/verify.sh
    ```
-4. Update `CHANGELOG.md` under `## Unreleased` with a brief description of your change.
+3. Update `CHANGELOG.md` under `## Unreleased` with a brief description of your change.
 5. Open a pull request against `main` using the PR template.
 
 ## Development setup
