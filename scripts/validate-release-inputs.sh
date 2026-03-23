@@ -157,6 +157,68 @@ if [ "$checksum_target" != "$ARTIFACT_FILENAME" ]; then
   exit 1
 fi
 
+# Guard against stale upload metadata: the frozen release version must match
+# the versions embedded in the package files inside the ZIP that CTAN receives.
+artifact_versions=$(
+  python3 - "$artifact_path" "$VERSION" <<'PY'
+import re
+import sys
+import zipfile
+
+artifact_path = sys.argv[1]
+expected_version = sys.argv[2]
+cls_member = "onlinebrief24/onlinebrief24.cls"
+doc_member = "onlinebrief24/onlinebrief24-doc.tex"
+
+try:
+    with zipfile.ZipFile(artifact_path) as archive:
+        try:
+            cls_text = archive.read(cls_member).decode("utf-8")
+        except KeyError as exc:
+            raise SystemExit(f"Prepared artifact missing required file: {cls_member}") from exc
+
+        try:
+            doc_text = archive.read(doc_member).decode("utf-8")
+        except KeyError as exc:
+            raise SystemExit(f"Prepared artifact missing required file: {doc_member}") from exc
+except zipfile.BadZipFile as exc:
+    raise SystemExit(f"Prepared artifact is not a readable ZIP archive: {artifact_path}") from exc
+
+cls_match = re.search(
+    r"\\ProvidesClass\{onlinebrief24\}\[([0-9]{4}/[0-9]{2}/[0-9]{2})\b",
+    cls_text,
+)
+if not cls_match:
+    raise SystemExit(
+        "Could not extract \\ProvidesClass date from onlinebrief24.cls inside the prepared artifact."
+    )
+
+doc_match = re.search(r"\\date\{([0-9]{4}-[0-9]{2}-[0-9]{2})\}", doc_text)
+if not doc_match:
+    raise SystemExit(
+        "Could not extract \\date from onlinebrief24-doc.tex inside the prepared artifact."
+    )
+
+cls_version = cls_match.group(1).replace("/", "-")
+doc_version = doc_match.group(1)
+
+if cls_version != expected_version:
+    raise SystemExit(
+        f"Prepared artifact class version {cls_version} does not match release metadata version {expected_version}."
+    )
+
+if doc_version != expected_version:
+    raise SystemExit(
+        f"Prepared artifact documentation date {doc_version} does not match release metadata version {expected_version}."
+    )
+
+print(f"ARTIFACT_CLASS_VERSION={cls_version}")
+print(f"ARTIFACT_DOC_VERSION={doc_version}")
+PY
+)
+
+eval "$artifact_versions"
+
 if ! git -C "$repo_root" rev-parse --verify "${SOURCE_COMMIT_SHA}^{commit}" >/dev/null 2>&1; then
   printf '%s\n' "Prepared source commit is not available locally: $SOURCE_COMMIT_SHA" >&2
   exit 1
@@ -167,4 +229,6 @@ fi
 printf '%s\n' "Validated prepared release bundle: $bundle_dir"
 printf '%s\n' "Prepared artifact: $ARTIFACT_FILENAME"
 printf '%s\n' "Prepared version: $VERSION"
+printf '%s\n' "Artifact class version: $ARTIFACT_CLASS_VERSION"
+printf '%s\n' "Artifact doc version: $ARTIFACT_DOC_VERSION"
 printf '%s\n' "Prepared commit: $SOURCE_COMMIT_SHA"

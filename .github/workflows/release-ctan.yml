@@ -26,6 +26,7 @@ env:
   # republishes the validated copy inside the same workflow after approval.
   PREPARE_ARTIFACT_NAME: onlinebrief24-ctan-release-bundle
   VALIDATED_ARTIFACT_NAME: validated-onlinebrief24-ctan-release-bundle
+  RENDERED_PKG_ARTIFACT_NAME: rendered-onlinebrief24-release-pkg
 
 jobs:
   validate-release-inputs:
@@ -194,11 +195,45 @@ jobs:
           python3 - <<'PY'
           import json
           import os
+          import re
+          import zipfile
           from pathlib import Path
 
           bundle_dir = Path("${{ steps.download_prepare_bundle.outputs.bundle_dir }}")
           metadata = json.loads((bundle_dir / "release-metadata.json").read_text(encoding="utf-8"))
           resolved = json.loads((bundle_dir / "resolved-release-metadata.json").read_text(encoding="utf-8"))
+          artifact_path = bundle_dir / metadata["artifact_filename"]
+          artifact_version_match = re.fullmatch(
+              r"onlinebrief24-([0-9]{4}-[0-9]{2}-[0-9]{2})\.zip",
+              metadata["artifact_filename"],
+          )
+          if not artifact_version_match:
+              raise SystemExit(
+                  f"::error file={artifact_path}::Could not derive version from artifact filename."
+              )
+
+          with zipfile.ZipFile(artifact_path) as archive:
+              cls_text = archive.read("onlinebrief24/onlinebrief24.cls").decode("utf-8")
+              doc_text = archive.read("onlinebrief24/onlinebrief24-doc.tex").decode("utf-8")
+
+          cls_match = re.search(
+              r"\\ProvidesClass\{onlinebrief24\}\[([0-9]{4}/[0-9]{2}/[0-9]{2})\b",
+              cls_text,
+          )
+          if not cls_match:
+              raise SystemExit(
+                  f"::error file={artifact_path}::Could not extract version from onlinebrief24.cls in artifact."
+              )
+
+          doc_match = re.search(r"\\date\{([0-9]{4}-[0-9]{2}-[0-9]{2})\}", doc_text)
+          if not doc_match:
+              raise SystemExit(
+                  f"::error file={artifact_path}::Could not extract date from onlinebrief24-doc.tex in artifact."
+              )
+
+          artifact_filename_version = artifact_version_match.group(1)
+          cls_version = cls_match.group(1).replace("/", "-")
+          doc_version = doc_match.group(1)
           # Show the complete announcement in the validation summary so the
           # approval decision is based on the exact text frozen into the bundle.
           announcement_text = (
@@ -215,10 +250,15 @@ jobs:
               fh.write(f"| Release run | `{resolved['release_run_id']}` |\n")
               fh.write(f"| Release actor | `{resolved['release_requested_by']}` |\n")
               fh.write(f"| Source commit | `{metadata['source_commit_sha']}` |\n")
-              fh.write(f"| Version | `{metadata['version']}` |\n")
               fh.write(f"| Artifact | `{metadata['artifact_filename']}` |\n")
               fh.write(f"| SHA256 | `{metadata['artifact_sha256']}` |\n")
               fh.write(f"| Approval gate | `ctan-release` environment pending after validation |\n\n")
+              fh.write("Version cross-check:\n\n")
+              fh.write("| `release-metadata.json` | ZIP filename | `onlinebrief24.cls` in ZIP | `onlinebrief24-doc.tex` in ZIP |\n")
+              fh.write("| --- | --- | --- | --- |\n")
+              fh.write(
+                  f"| `{metadata['version']}` | `{artifact_filename_version}` | `{cls_version}` | `{doc_version}` |\n\n"
+              )
               fh.write("Announcement:\n\n")
               fh.write("```text\n")
               fh.write(announcement_text.replace("```", "'''"))
@@ -299,17 +339,65 @@ jobs:
             "${{ steps.download_validated_bundle.outputs.bundle_dir }}" \
             "${{ needs.validate-release-inputs.outputs.prepare_run_id }}"
 
+      - name: Upload rendered CTAN submission input
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          # Keep a redacted audit copy of the rendered ctan-o-mat input without
+          # exposing the CTAN contact email in workflow artifacts.
+          name: ${{ env.RENDERED_PKG_ARTIFACT_NAME }}
+          path: ${{ steps.download_validated_bundle.outputs.bundle_dir }}/onlinebrief24-release-audit.pkg
+          if-no-files-found: ignore
+          retention-days: 30
+
       - name: Write CTAN publish summary
         run: |
           set -eu
           python3 - <<'PY'
           import json
           import os
+          import re
+          import zipfile
           from pathlib import Path
 
           bundle_dir = Path("${{ steps.download_validated_bundle.outputs.bundle_dir }}")
           metadata = json.loads((bundle_dir / "release-metadata.json").read_text(encoding="utf-8"))
           resolved = json.loads((bundle_dir / "resolved-release-metadata.json").read_text(encoding="utf-8"))
+          artifact_path = bundle_dir / metadata["artifact_filename"]
+          rendered_pkg_path = bundle_dir / "onlinebrief24-release-audit.pkg"
+          artifact_version_match = re.fullmatch(
+              r"onlinebrief24-([0-9]{4}-[0-9]{2}-[0-9]{2})\.zip",
+              metadata["artifact_filename"],
+          )
+          if not artifact_version_match:
+              raise SystemExit(
+                  f"::error file={artifact_path}::Could not derive version from artifact filename."
+              )
+
+          with zipfile.ZipFile(artifact_path) as archive:
+              cls_text = archive.read("onlinebrief24/onlinebrief24.cls").decode("utf-8")
+              doc_text = archive.read("onlinebrief24/onlinebrief24-doc.tex").decode("utf-8")
+
+          pkg_text = rendered_pkg_path.read_text(encoding="utf-8")
+
+          cls_match = re.search(
+              r"\\ProvidesClass\{onlinebrief24\}\[([0-9]{4}/[0-9]{2}/[0-9]{2})\b",
+              cls_text,
+          )
+          doc_match = re.search(r"\\date\{([0-9]{4}-[0-9]{2}-[0-9]{2})\}", doc_text)
+          pkg_version_match = re.search(r"\\version\{([0-9]{4}-[0-9]{2}-[0-9]{2})\}", pkg_text)
+          pkg_file_match = re.search(r"\\file\{([^}]*)\}", pkg_text)
+
+          if not cls_match or not doc_match or not pkg_version_match or not pkg_file_match:
+              raise SystemExit(
+                  f"::error file={rendered_pkg_path}::Could not extract one or more release-version fields for the publish summary."
+              )
+
+          artifact_filename_version = artifact_version_match.group(1)
+          cls_version = cls_match.group(1).replace("/", "-")
+          doc_version = doc_match.group(1)
+          pkg_version = pkg_version_match.group(1)
+          pkg_artifact_name = Path(pkg_file_match.group(1)).name
 
           with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as fh:
               fh.write("## CTAN publish completed\n\n")
@@ -318,8 +406,16 @@ jobs:
               fh.write(f"| Prepare run | `{metadata['prepare_run_id']}` |\n")
               fh.write(f"| Release run | `{resolved['release_run_id']}` |\n")
               fh.write(f"| Source commit | `{metadata['source_commit_sha']}` |\n")
-              fh.write(f"| Version | `{metadata['version']}` |\n")
               fh.write(f"| Artifact | `{metadata['artifact_filename']}` |\n")
-              fh.write(f"| SHA256 | `{metadata['artifact_sha256']}` |\n\n")
+              fh.write(f"| SHA256 | `{metadata['artifact_sha256']}` |\n")
+              fh.write(f"| Rendered `.pkg` artifact | `{os.environ['RENDERED_PKG_ARTIFACT_NAME']}` |\n")
+              fh.write(f"| Rendered `.pkg` audit copy | `{rendered_pkg_path.name}` |\n")
+              fh.write(f"| Rendered `.pkg` file target | `{pkg_artifact_name}` |\n\n")
+              fh.write("Version cross-check:\n\n")
+              fh.write("| `release-metadata.json` | ZIP filename | `onlinebrief24.cls` in ZIP | `onlinebrief24-doc.tex` in ZIP | rendered `.pkg` |\n")
+              fh.write("| --- | --- | --- | --- | --- |\n")
+              fh.write(
+                  f"| `{metadata['version']}` | `{artifact_filename_version}` | `{cls_version}` | `{doc_version}` | `{pkg_version}` |\n\n"
+              )
               fh.write("The follow-up workflow `Sync GitHub Release` should now create or update the matching Git tag and GitHub Release from the same validated bundle.\n")
           PY
