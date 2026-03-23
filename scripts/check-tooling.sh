@@ -59,7 +59,9 @@ PY
 if command -v shellcheck >/dev/null 2>&1; then
   # shellcheck disable=SC2044
   for script in $(find scripts -type f -name '*.sh' | sort); do
-    shellcheck --shell=sh "$script"
+    # SC1007: CDPATH= idiom is valid POSIX sh; not a broken assignment.
+    # -x: follow sourced files so SC1091 (lib/common.sh not found) is suppressed.
+    shellcheck --shell=sh -x --exclude=SC1007 "$script"
   done
 else
   printf '%s\n' "Warning: shellcheck not found; skipping static analysis." >&2
