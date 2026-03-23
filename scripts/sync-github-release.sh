@@ -160,8 +160,6 @@ if [ -z "$remote_tag_commit_sha" ]; then
     -f sha="${SOURCE_COMMIT_SHA}" >/dev/null
 fi
 
-asset_args="$artifact_path $checksum_path $announcement_path $metadata_path $resolved_metadata_path"
-
 printf '%s\n' "Syncing GitHub release from validated CTAN bundle"
 printf '%s\n' "Release run ID: $RELEASE_RUN_ID"
 printf '%s\n' "Release run attempt: $RELEASE_RUN_ATTEMPT"
