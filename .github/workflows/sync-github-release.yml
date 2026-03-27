@@ -18,7 +18,7 @@ on:
 
 permissions:
   actions: read
-  contents: write
+  contents: read
 
 concurrency:
   # Serialize release-sync attempts for the same CTAN release run so automatic
@@ -101,9 +101,21 @@ jobs:
             "${{ steps.download_validated_bundle.outputs.bundle_dir }}" \
             "${{ steps.source_run.outputs.release_run_id }}" >> "$GITHUB_OUTPUT"
 
+      - name: Require release sync token
+        env:
+          RELEASE_SYNC_TOKEN: ${{ secrets.RELEASE_SYNC_TOKEN }}
+        run: |
+          set -eu
+          if [ -z "$RELEASE_SYNC_TOKEN" ]; then
+            printf '%s\n' "::error::Repository secret RELEASE_SYNC_TOKEN is required for GitHub release sync."
+            exit 1
+          fi
+
       - name: Sync Git tag and GitHub Release
         env:
-          GH_TOKEN: ${{ github.token }}
+          # Use a dedicated token so the repository-wide default GITHUB_TOKEN
+          # can stay read-only.
+          GH_TOKEN: ${{ secrets.RELEASE_SYNC_TOKEN }}
         run: |
           set -eu
           sh scripts/sync-github-release.sh \
