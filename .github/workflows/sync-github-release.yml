@@ -50,10 +50,11 @@ jobs:
 
       - uses: actions/checkout@v6
         with:
-          # Local workflow helper scripts do not exist on the runner until the
-          # repository is checked out. A later checkout pins the exact CTAN
-          # release commit once the validated bundle metadata has been read.
-          fetch-depth: 1
+          # Keep the workflow tools from the current default-branch revision so
+          # release-sync retries can benefit from workflow/script fixes made
+          # after the original CTAN publication. Full history keeps the
+          # prepared source commit available for validation.
+          fetch-depth: 0
 
       - name: Validate release run provenance
         env:
@@ -99,13 +100,6 @@ jobs:
           python3 scripts/lib/release_workflow.py read-resolved-release-metadata \
             "${{ steps.download_validated_bundle.outputs.bundle_dir }}" \
             "${{ steps.source_run.outputs.release_run_id }}" >> "$GITHUB_OUTPUT"
-
-      - uses: actions/checkout@v6
-        with:
-          # Sync the Git tag and GitHub Release against the exact commit that
-          # CTAN just published from, not against the workflow file's branch tip.
-          fetch-depth: 0
-          ref: ${{ steps.metadata.outputs.source_commit_sha }}
 
       - name: Sync Git tag and GitHub Release
         env:
