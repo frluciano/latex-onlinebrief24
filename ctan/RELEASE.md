@@ -127,13 +127,13 @@ release.
 {
   "schema_version": 1,
   "package_name": "onlinebrief24",
-  "version": "2026-03-22",
-  "artifact_filename": "onlinebrief24-2026-03-22.zip",
+  "version": "2026-03-27",
+  "artifact_filename": "onlinebrief24-2026-03-27.zip",
   "artifact_sha256": "<sha256>",
   "source_commit_sha": "<git-sha>",
   "prepare_run_id": 123456789,
   "prepare_run_attempt": 1,
-  "build_timestamp_utc": "2026-03-22T14:11:12Z",
+  "build_timestamp_utc": "2026-03-27T14:11:12Z",
   "announcement_filename": "announcement-draft.txt"
 }
 ```
