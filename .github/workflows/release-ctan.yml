@@ -65,6 +65,13 @@ jobs:
           bundle_dir=$(dirname "$metadata_path")
           printf '%s\n' "bundle_dir=$bundle_dir" >> "$GITHUB_OUTPUT"
 
+      - uses: actions/checkout@v6
+        with:
+          # Local workflow helper scripts do not exist on the runner until the
+          # repository is checked out. A later checkout pins the exact prepared
+          # commit once the metadata has been read.
+          fetch-depth: 1
+
       - name: Validate prepare run provenance
         env:
           GH_TOKEN: ${{ github.token }}
