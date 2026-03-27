@@ -48,6 +48,13 @@ jobs:
           fi
           printf '%s\n' "release_run_id=$release_run_id" >> "$GITHUB_OUTPUT"
 
+      - uses: actions/checkout@v6
+        with:
+          # Local workflow helper scripts do not exist on the runner until the
+          # repository is checked out. A later checkout pins the exact CTAN
+          # release commit once the validated bundle metadata has been read.
+          fetch-depth: 1
+
       - name: Validate release run provenance
         env:
           GH_TOKEN: ${{ github.token }}
