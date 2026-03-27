@@ -55,6 +55,11 @@ anything to CTAN.
 - `Release CTAN` validates inputs before the publish job starts.
 - Only the `publish-to-ctan` job in the protected environment receives
   `CTAN_EMAIL`.
+- `Sync GitHub Release` uses the repository secret `RELEASE_SYNC_TOKEN`
+  instead of the default `GITHUB_TOKEN`.
+- The repository-wide default workflow permission can stay at `Read repository
+  contents`, because only the dedicated sync token needs write access for tags
+  and GitHub Releases.
 
 This enforces least privilege and prevents accidental publishing from build or
 package jobs.
@@ -263,6 +268,11 @@ This preserves the guarantee that a retry never triggers a second CTAN submit.
 - GitHub Environment `ctan-release` must exist.
 - `ctan-release` must use Required Reviewers.
 - Secret `CTAN_EMAIL` must be stored only in the `ctan-release` environment.
+- Repository secret `RELEASE_SYNC_TOKEN` must exist for `Sync GitHub Release`.
+- `RELEASE_SYNC_TOKEN` must be allowed to create or update tags and GitHub
+  Releases for this repository.
+- Repository default workflow permissions may stay on `Read repository
+  contents`.
 - The package must already exist on CTAN because the workflow submits updates.
 
 ## CI Workflows
@@ -302,6 +312,11 @@ Important changes:
 - upload the same ZIP, checksum, announcement, and metadata files used for CTAN
 
 The sync never rebuilds the package and never re-submits anything to CTAN.
+
+The workflow itself keeps `permissions.contents: read` and fails closed unless
+the repository secret `RELEASE_SYNC_TOKEN` is present. Only the final sync step
+receives that token, so release-writing privileges stay isolated from the rest
+of the pipeline.
 
 If the GitHub Release sync fails after CTAN already succeeded, rerun only
 `Sync GitHub Release` with the original `release_run_id`. Do not rerun
