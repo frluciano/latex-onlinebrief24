@@ -104,47 +104,23 @@ if ! git -C "$repo_root" rev-parse --verify "${SOURCE_COMMIT_SHA}^{commit}" >/de
   exit 1
 fi
 
+remote_tag_refs=$(
+  git -C "$repo_root" ls-remote --tags origin \
+    "refs/tags/${tag_name}" \
+    "refs/tags/${tag_name}^{}"
+)
 remote_tag_commit_sha=$(
-  python3 - "$GITHUB_REPOSITORY" "$tag_name" <<'PY'
-import json
-import subprocess
-import sys
-
-repo = sys.argv[1]
-tag_name = sys.argv[2]
-
-proc = subprocess.run(
-    ["gh", "api", f"repos/{repo}/git/ref/tags/{tag_name}"],
-    text=True,
-    capture_output=True,
-)
-if proc.returncode != 0:
-    stderr = proc.stderr or ""
-    if "404" in stderr or "Not Found" in stderr:
-        print("")
-        raise SystemExit(0)
-    raise SystemExit(stderr.strip() or f"Failed to query tag {tag_name}")
-
-ref_data = json.loads(proc.stdout)
-obj = ref_data["object"]
-if obj["type"] == "commit":
-    print(obj["sha"])
-    raise SystemExit(0)
-
-if obj["type"] != "tag":
-    raise SystemExit(f"Unsupported remote tag object type: {obj['type']}")
-
-tag_data = json.loads(
-    subprocess.check_output(
-        ["gh", "api", f"repos/{repo}/git/tags/{obj['sha']}"],
-        text=True,
-    )
-)
-target = tag_data["object"]
-if target["type"] != "commit":
-    raise SystemExit(f"Annotated tag {tag_name} does not point to a commit.")
-print(target["sha"])
-PY
+  printf '%s\n' "$remote_tag_refs" | awk -v ref="refs/tags/$tag_name" '
+    $2 == ref "^{}" { deref = $1 }
+    $2 == ref { direct = $1 }
+    END {
+      if (deref != "") {
+        print deref
+      } else if (direct != "") {
+        print direct
+      }
+    }
+  '
 )
 
 if [ -n "$remote_tag_commit_sha" ] && [ "$remote_tag_commit_sha" != "$SOURCE_COMMIT_SHA" ]; then
