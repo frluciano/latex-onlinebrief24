@@ -152,14 +152,6 @@ if [ -n "$remote_tag_commit_sha" ] && [ "$remote_tag_commit_sha" != "$SOURCE_COM
   exit 1
 fi
 
-if [ -z "$remote_tag_commit_sha" ]; then
-  # Create the tag only after CTAN succeeded and point it at the exact commit
-  # recorded in the validated release bundle. No implicit default-branch tags.
-  gh api --method POST "repos/${GITHUB_REPOSITORY}/git/refs" \
-    -f ref="refs/tags/${tag_name}" \
-    -f sha="${SOURCE_COMMIT_SHA}" >/dev/null
-fi
-
 printf '%s\n' "Syncing GitHub release from validated CTAN bundle"
 printf '%s\n' "Release run ID: $RELEASE_RUN_ID"
 printf '%s\n' "Release run attempt: $RELEASE_RUN_ATTEMPT"
@@ -187,14 +179,30 @@ if gh release view "$tag_name" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
     "$metadata_path" \
     "$resolved_metadata_path"
 else
-  gh release create "$tag_name" \
-    --repo "$GITHUB_REPOSITORY" \
-    --title "$release_title" \
-    --notes-file "$announcement_path" \
-    --verify-tag \
-    "$artifact_path" \
-    "$checksum_path" \
-    "$announcement_path" \
-    "$metadata_path" \
-    "$resolved_metadata_path"
+  if [ -n "$remote_tag_commit_sha" ]; then
+    gh release create "$tag_name" \
+      --repo "$GITHUB_REPOSITORY" \
+      --title "$release_title" \
+      --notes-file "$announcement_path" \
+      --verify-tag \
+      "$artifact_path" \
+      "$checksum_path" \
+      "$announcement_path" \
+      "$metadata_path" \
+      "$resolved_metadata_path"
+  else
+    # Let `gh release create` create the missing tag at the validated commit
+    # instead of posting the git ref separately. This keeps the first publish
+    # path compatible with GitHub's workflow token restrictions.
+    gh release create "$tag_name" \
+      --repo "$GITHUB_REPOSITORY" \
+      --target "$SOURCE_COMMIT_SHA" \
+      --title "$release_title" \
+      --notes-file "$announcement_path" \
+      "$artifact_path" \
+      "$checksum_path" \
+      "$announcement_path" \
+      "$metadata_path" \
+      "$resolved_metadata_path"
+  fi
 fi
