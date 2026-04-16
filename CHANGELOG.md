@@ -5,6 +5,16 @@ Alle wesentlichen Aenderungen an `onlinebrief24` werden in dieser Datei dokument
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-DD).
 
+## [Unreleased]
+
+### Intern
+
+- GitHub-Actions (`actions/checkout`, `actions/upload-artifact`) und
+  `ctan-o-mat` auf unveraenderliche Commit-SHAs gepinnt; Release-Pipeline ist
+  damit gegen kompromittierte Mutable-Tags geschuetzt
+- Workflow-Eingaben in den Release-Workflows ueber `env:`-Variablen
+  weitergeleitet statt direkt in Shell-Befehlszeilen interpoliert
+
 ## [2026-03-27]
 
 ### Hinzugefuegt
