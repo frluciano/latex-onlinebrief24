@@ -19,6 +19,10 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
   (`tests/fixtures/returnaddress-width-regression.tex`)
 
 ### Behoben
+- Modern-Mode-Header-Breite korrigiert: `\parbox{\paperwidth-50mm}` ist keine
+  gueltige LaTeX-Laengenrechnung; `\dimexpr\paperwidth-50mm\relax` berechnet
+  die Breite korrekt mit 160 mm, sodass der Sendernamen-Block nicht mehr ueber
+  den rechten Seitenrand laeuft (`onlinebrief24.cls`)
 - CTAN-Dokumentation korrigiert: `\faXTwitter` (existiert in fontawesome5 nicht)
   durch `\faTwitter` ersetzt (`ctan/onlinebrief24-doc.tex`)
 - `\addinfoblockrow` wird jetzt auch gerendert, wenn keines der eingebauten
