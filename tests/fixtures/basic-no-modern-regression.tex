@@ -1,0 +1,26 @@
+\documentclass[basic, lang=english]{../../onlinebrief24}
+
+\setreturnaddress{Jane Smith, 12 Oak Street, Bristol BS1 4DJ}
+\setrecipient{%
+  Example Services Ltd. \\
+  Mr. John Smith \\
+  24 Market Road \\
+  London SW1A 1AA%
+}
+% Email set via \setfromemail but basic mode must NOT render it in a footer.
+% The negative assertion in verify.sh confirms this email is absent from the PDF.
+\setfromemail{noshow@example.com}
+\setsubject{Basic mode: no modern header or footer}
+\setplace{Bristol}
+\setdate{2026-03-27}
+
+\begin{document}
+\begin{letter}{}
+\opening{Dear Mr. Smith,}
+
+This document verifies that the basic style suppresses the modern header
+and footer even when sender contact fields are set.
+
+\closing{Kind regards}
+\end{letter}
+\end{document}

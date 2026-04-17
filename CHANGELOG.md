@@ -5,6 +5,23 @@ Alle wesentlichen Aenderungen an `onlinebrief24` werden in dieser Datei dokument
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-DD).
 
+## [Unreleased]
+
+### Intern
+- Locale-Fixtures (`german`, `french`, `spanish`, `dutch`, `polish`) auf volle
+  Feldabdeckung der italienischen Fixture erweitert: `\setplace`, `\setourref`,
+  `\setourmessage`, `\setcontactname`, `\setcontactphone`, `\setcontactfax`
+- Assertions fuer alle Locale-Fixtures um interne Referenz und Kontakt-E-Mail
+  ergaenzt, sodass Regressionen in allen Sprachen erkannt werden
+- Franzoesische Label-Assertion (`Vos references`) auf ASCII-sicheren Teilstring
+  `ferences` umgestellt, damit die Pruefung unter pdflatex+T1 robust ist
+- Assertions fuer `footercenter`-Fixture um Telefon- und Festnetz-Felder ergaenzt
+- Inhalts-Assertion fuer `guides`-Fixture ergaenzt (Betreff-Text)
+- Drei neue Regressions-Fixtures: `modern-no-footercenter` (Modern-Modus ohne
+  zentrierten Footer), `guides-infoblock` (Guides + Infoblock kombiniert),
+  `basic-no-modern` (negativer Test: Footer-Email darf im Basic-Modus nicht
+  im PDF erscheinen)
+
 ## [2026-03-27]
 
 ### Hinzugefuegt

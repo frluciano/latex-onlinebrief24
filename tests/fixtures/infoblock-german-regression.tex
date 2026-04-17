@@ -1,15 +1,31 @@
 \documentclass[basic, infoblock, lang=german]{../../onlinebrief24}
+
 \setreturnaddress{Erika Mustermann, Blumenweg 1, 54321 Blumenstadt}
-\setrecipient{Mustermann GmbH, Herrn Max Mustermann, Heidefeld 2, 12345 Berlin}
+\setrecipient{%
+  Mustermann GmbH \& Co. KG \\
+  Herrn Max Mustermann \\
+  Heidefeld 2 \\
+  12345 Berlin%
+}
 \setsubject{Betreffzeile}
+\setplace{Blumenstadt}
 \setdate{2026-03-27}
 \setyourref{RM-7741}
 \setyourmessage{2026-03-18}
+\setourref{OB24-2026-DE}
+\setourmessage{2026-03-20}
+\setcontactname{Erika Mustermann}
+\setcontactphone{0123 / 456 789}
+\setcontactfax{0123 / 456 780}
 \setcontactemail{kontakt@example.com}
+
 \begin{document}
 \begin{letter}{}
 \opening{Sehr geehrter Herr Mustermann,}
-Deutsch-Regression.
-\closing{Mit freundlichen Grüßen}
+
+dieses Dokument prueft den deutschen Informationsblock mit allen
+lokalisierten Feldbeschriftungen und vollem Feldabdeckung.
+
+\closing{Mit freundlichen Gruessen}
 \end{letter}
 \end{document}
