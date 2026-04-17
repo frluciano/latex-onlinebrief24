@@ -19,6 +19,8 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
   (`tests/fixtures/returnaddress-width-regression.tex`)
 
 ### Behoben
+- CTAN-Dokumentation korrigiert: `\faXTwitter` (existiert in fontawesome5 nicht)
+  durch `\faTwitter` ersetzt (`ctan/onlinebrief24-doc.tex`)
 - `\addinfoblockrow` wird jetzt auch gerendert, wenn keines der eingebauten
   Infoblock-Felder gesetzt ist; die `\ifboolexpr`-Bedingung prueft nun auch
   `\@obb@extrainfoblockrows` (`onlinebrief24.cls`)
