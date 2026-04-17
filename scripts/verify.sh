@@ -81,7 +81,12 @@ for example in \
   tests/fixtures/signature-regression.tex \
   tests/fixtures/multipage-regression.tex \
   tests/fixtures/guides-regression.tex \
-  tests/fixtures/footercenter-regression.tex
+  tests/fixtures/footercenter-regression.tex \
+  tests/fixtures/addfooteritem-regression.tex \
+  tests/fixtures/addinfoblockrow-regression.tex \
+  tests/fixtures/layout-tuning-regression.tex \
+  tests/fixtures/modern-infoblock-regression.tex \
+  tests/fixtures/returnaddress-width-regression.tex
 do
   latexmk "$latexmk_engine_flag" -g -interaction=nonstopmode -halt-on-error \
     -cd -outdir="$build_dir" "$example"
@@ -242,6 +247,55 @@ fi
 footercenter_text=$(pdftotext "$build_dir/footercenter-regression.pdf" - | normalize_pdf_text)
 if ! printf '%s' "$footercenter_text" | grep -F "max.mustermann@example.com" >/dev/null; then
   printf '%s\n' "Footercenter regression failed: email address not found in PDF." >&2
+  exit 1
+fi
+
+# Verify that \addfooteritem appends custom items to the modern footer.
+addfooteritem_text=$(pdftotext "$build_dir/addfooteritem-regression.pdf" - | normalize_pdf_text)
+if ! printf '%s' "$addfooteritem_text" | grep -F "github.com/example" >/dev/null; then
+  printf '%s\n' "addfooteritem regression failed: github custom item not found in PDF." >&2
+  exit 1
+fi
+if ! printf '%s' "$addfooteritem_text" | grep -F "@example" >/dev/null; then
+  printf '%s\n' "addfooteritem regression failed: twitter custom item not found in PDF." >&2
+  exit 1
+fi
+
+# Verify that \addinfoblockrow renders even without built-in infoblock fields (US-C01).
+addinfoblockrow_text=$(pdftotext "$build_dir/addinfoblockrow-regression.pdf" - | normalize_pdf_text)
+if ! printf '%s' "$addinfoblockrow_text" | grep -F "Testprojekt 2026" >/dev/null; then
+  printf '%s\n' "addinfoblockrow regression failed: custom row value not found in PDF." >&2
+  exit 1
+fi
+if ! printf '%s' "$addinfoblockrow_text" | grep -F "AU-2026-042" >/dev/null; then
+  printf '%s\n' "addinfoblockrow regression failed: second custom row value not found in PDF." >&2
+  exit 1
+fi
+
+# Verify that the layout-tuning fixture compiles and our reference appears.
+layout_tuning_text=$(pdftotext "$build_dir/layout-tuning-regression.pdf" - | normalize_pdf_text)
+if ! printf '%s' "$layout_tuning_text" | grep -F "LT-2026-01" >/dev/null; then
+  printf '%s\n' "Layout-tuning regression failed: our reference not found in PDF." >&2
+  exit 1
+fi
+
+# Verify modern + infoblock combination renders both footer and infoblock.
+modern_infoblock_text=$(pdftotext "$build_dir/modern-infoblock-regression.pdf" - | normalize_pdf_text)
+if ! printf '%s' "$modern_infoblock_text" | grep -F "max.mustermann@example.com" >/dev/null; then
+  printf '%s\n' "Modern+infoblock regression failed: email not found in PDF." >&2
+  exit 1
+fi
+if ! printf '%s' "$modern_infoblock_text" | grep -F "MI-2026-01" >/dev/null; then
+  printf '%s\n' "Modern+infoblock regression failed: our reference not found in PDF." >&2
+  exit 1
+fi
+
+# Verify return address near the 72mm boundary compiles and renders without error.
+# The returnaddress-width fixture uses a long but valid address — compilation
+# itself is the assertion; pdftotext confirms the address appears in the output.
+returnaddr_text=$(pdftotext "$build_dir/returnaddress-width-regression.pdf" - | normalize_pdf_text)
+if ! printf '%s' "$returnaddr_text" | grep -F "Mustersta" >/dev/null; then
+  printf '%s\n' "Return-address-width regression failed: address text not found in PDF." >&2
   exit 1
 fi
 
