@@ -1,0 +1,55 @@
+name: Download release bundle
+description: >
+  Download a GitHub Actions artifact, locate the bundle metadata file,
+  and expose the bundle directory path as an output. Replaces the
+  duplicated inline download block across the release workflows.
+
+inputs:
+  token:
+    description: GitHub token for the gh CLI.
+    required: true
+  run-id:
+    description: The GitHub Actions run ID to download from.
+    required: true
+  artifact-name:
+    description: Name of the artifact to download.
+    required: true
+  metadata-filename:
+    description: Name of the metadata JSON file to locate inside the bundle.
+    required: false
+    default: release-metadata.json
+
+outputs:
+  bundle_dir:
+    description: Absolute path to the extracted bundle directory.
+    value: ${{ steps.download.outputs.bundle_dir }}
+
+runs:
+  using: composite
+  steps:
+    - name: Download and locate bundle
+      id: download
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        BUNDLE_RUN_ID: ${{ inputs.run-id }}
+        ARTIFACT_NAME: ${{ inputs.artifact-name }}
+        METADATA_FILENAME: ${{ inputs.metadata-filename }}
+      shell: sh
+      run: |
+        set -eu
+        download_root="${RUNNER_TEMP}/bundle-${BUNDLE_RUN_ID}"
+        rm -rf "$download_root"
+        mkdir -p "$download_root"
+        gh run download "${BUNDLE_RUN_ID}" \
+          --repo "${GITHUB_REPOSITORY}" \
+          --name "${ARTIFACT_NAME}" \
+          --dir "$download_root"
+        metadata_path=$(find "$download_root" -type f \
+          -name "${METADATA_FILENAME}" -print -quit)
+        if [ -z "$metadata_path" ]; then
+          printf '%s\n' \
+            "::error::Could not locate ${METADATA_FILENAME} in artifact ${ARTIFACT_NAME}."
+          exit 1
+        fi
+        bundle_dir=$(dirname "$metadata_path")
+        printf '%s\n' "bundle_dir=$bundle_dir" >> "$GITHUB_OUTPUT"
