@@ -5,6 +5,17 @@ Alle wesentlichen Aenderungen an `onlinebrief24` werden in dieser Datei dokument
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-DD).
 
+## [Unreleased]
+
+### Intern
+- DIN-5008-Fenster-Geometrie als benannte Laengen-Konstanten (`\@obb@din*`)
+  zentralisiert; die TikZ-Guides-Darstellung referenziert jetzt dieselben
+  Konstanten wie der Picture-Modus, sodass beide Pfade nicht mehr
+  auseinanderdriften koennen
+- Kalibrierungs-Offset fuer Zone 3 (+1 mm unter DIN-Nominalwert) im
+  Guides-Overlay korrigiert: Zone 2 endet jetzt bei 73 mm statt 72 mm,
+  passend zur tatsaechlichen Empfaenger-Position im Picture-Modus
+
 ## [2026-03-27]
 
 ### Hinzugefuegt
