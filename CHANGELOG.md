@@ -45,6 +45,14 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
 - `\g@addto@macro` durch das dokumentierte `\gappto` (etoolbox) ersetzt
   (`onlinebrief24.cls`)
 
+### Intern
+
+- GitHub-Actions (`actions/checkout`, `actions/upload-artifact`) und
+  `ctan-o-mat` auf unveraenderliche Commit-SHAs gepinnt; Release-Pipeline ist
+  damit gegen kompromittierte Mutable-Tags geschuetzt
+- Workflow-Eingaben in den Release-Workflows ueber `env:`-Variablen
+  weitergeleitet statt direkt in Shell-Befehlszeilen interpoliert
+
 ## [2026-03-27]
 
 ### Hinzugefuegt
