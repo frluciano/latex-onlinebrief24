@@ -455,17 +455,38 @@
   \fi
 }
 
+% --- DIN 5008 window geometry (authoritative, top-down) ---
+% All values are distances from the page top edge. This is the single source
+% of truth for both the picture-mode overlay and the guides-mode TikZ drawing.
+% Updating any value here propagates to both renderers automatically so that
+% neither representation can drift from the other.
+% Zone 3 is intentionally placed 1mm below the nominal DIN 72mm boundary to
+% match the onlinebrief24.de preview; this calibration is documented here so
+% it cannot silently diverge between the two rendering paths.
+\newlength{\@obb@dinwindowleft}    \setlength{\@obb@dinwindowleft}{20mm}
+\newlength{\@obb@dinwindowwidth}   \setlength{\@obb@dinwindowwidth}{72mm}
+\newlength{\@obb@dinzoneonestart}  \setlength{\@obb@dinzoneonestart}{50mm}
+\newlength{\@obb@dinzoneoneheight} \setlength{\@obb@dinzoneoneheight}{2mm}
+\newlength{\@obb@dinzonethreestart}  \setlength{\@obb@dinzonethreestart}{73mm}
+\newlength{\@obb@dinzonethreeheight} \setlength{\@obb@dinzonethreeheight}{20mm}
+\newlength{\@obb@dinfoldmarki}     \setlength{\@obb@dinfoldmarki}{105mm}
+\newlength{\@obb@dinfoldmarkii}    \setlength{\@obb@dinfoldmarkii}{205mm}
+
 % --- DIN 5008 window coordinates (picture mode, unitlength=1mm) ---
+% These scalar values are derived from the din* length constants above.
 % In LaTeX picture mode y increases upward from the page bottom. With
-% unitlength=1mm these values are millimetres measured from the bottom of an
-% A4 sheet (height = 297mm), so y_pic = 297 - y_from_top.
+% unitlength=1mm: y_pic = 297 - y_from_top.
+%   \@obb@piczoneoney   = 297 - (dinzoneonestart  + dinzoneoneheight)   = 297-52  = 245
+%   \@obb@piczonethreey = 297 - (dinzonethreestart + dinzonethreeheight) = 297-93  = 204
+%   \@obb@picfoldmarki  = 297 - dinfoldmarki                            = 297-105 = 192
+%   \@obb@picfoldmarkii = 297 - dinfoldmarkii                           = 297-205 = 92
 % Macro names must stay alphabetic here; digits terminate TeX control sequence
 % names and would make these constants unusable in \newcommand arguments.
 \newcommand{\@obb@picwindowx}{20}         % left edge of address window: 20mm from left
-\newcommand{\@obb@piczoneoney}{245.00}    % Zone 1 (sender, 2mm high): top at 50mm from top (297-50=247), bottom at 245mm
-\newcommand{\@obb@piczonethreey}{204}     % Zone 3 (recipient): calibrated 1mm below the 72mm mark
-\newcommand{\@obb@picfoldmarki}{192}      % 1st fold mark: 105mm from top (297-105=192)
-\newcommand{\@obb@picfoldmarkii}{92}      % 2nd fold mark: 205mm from top (297-205=92)
+\newcommand{\@obb@piczoneoney}{245.00}    % Zone 1 bottom: 297-(50+2)=245mm from page bottom
+\newcommand{\@obb@piczonethreey}{204}     % Zone 3 bottom: 297-(73+20)=204mm from page bottom
+\newcommand{\@obb@picfoldmarki}{192}      % 1st fold mark: 297-105=192mm from page bottom
+\newcommand{\@obb@picfoldmarkii}{92}      % 2nd fold mark: 297-205=92mm from page bottom
 
 % --- Page overlay drawing ---
 \newcommand{\@obb@firstpageoverlay}{%
@@ -566,46 +587,84 @@
       }
 
       % --- Window frame ---
-      % Calibrated 1mm lower to match the onlinebrief24.de preview.
-      % Start at (20mm, -50mm)
-      % Width 72mm
+      % Zone positions come from the din* length constants defined above so
+      % this overlay always matches the picture-mode rendering exactly.
 
-      % Zone 1 (sender): 50mm to 52mm
-      \draw[guide line, guide fill, fill=blue!18] ($(TL)+(20mm, -50mm)$) rectangle ++(72mm, -2mm);
-      \node[guide text, anchor=west] at ($(TL)+(92mm, -51mm)$) {Zone 1 (Absender)};
+      % Zone 1 (Absender): dinzoneonestart to dinzoneonestart+dinzoneoneheight
+      \draw[guide line, guide fill, fill=blue!18]
+        ($(TL)+(\@obb@dinwindowleft, -\@obb@dinzoneonestart)$)
+        rectangle ++(\@obb@dinwindowwidth, -\@obb@dinzoneoneheight);
+      \node[guide text, anchor=west] at
+        ($(TL)+(\dimexpr\@obb@dinwindowleft+\@obb@dinwindowwidth\relax, -51mm)$)
+        {Zone 1 (Absender)};
 
-      % Zone 2 (reserved/code area): 52mm to 72mm
-      \draw[guide line, guide fill, fill=red!22] ($(TL)+(20mm, -52mm)$) rectangle ++(72mm, -20mm);
-      \node[guide text, anchor=west] at ($(TL)+(92mm, -62mm)$) {Zone 2 (Sperrzone/Codes)};
+      % Zone 2 (Sperrzone): end of zone 1 to start of zone 3 (calibrated)
+      \draw[guide line, guide fill, fill=red!22]
+        ($(TL)+(\@obb@dinwindowleft,
+                -\dimexpr\@obb@dinzoneonestart+\@obb@dinzoneoneheight\relax)$)
+        rectangle
+        ++(\@obb@dinwindowwidth,
+           -\dimexpr\@obb@dinzonethreestart
+                    -\@obb@dinzoneonestart
+                    -\@obb@dinzoneoneheight\relax);
+      \node[guide text, anchor=west] at
+        ($(TL)+(\dimexpr\@obb@dinwindowleft+\@obb@dinwindowwidth\relax, -62mm)$)
+        {Zone 2 (Sperrzone/Codes)};
 
-      % Zone 3 (recipient): 72mm to 92mm
-      \draw[guide line, guide fill, fill=green!22] ($(TL)+(20mm, -72mm)$) rectangle ++(72mm, -20mm);
-      \node[guide text, anchor=west] at ($(TL)+(92mm, -82mm)$) {Zone 3 (Empfaenger)};
+      % Zone 3 (Empfaenger): dinzonethreestart to dinzonethreestart+dinzonethreeheight
+      \draw[guide line, guide fill, fill=green!22]
+        ($(TL)+(\@obb@dinwindowleft, -\@obb@dinzonethreestart)$)
+        rectangle ++(\@obb@dinwindowwidth, -\@obb@dinzonethreeheight);
+      \node[guide text, anchor=west] at
+        ($(TL)+(\dimexpr\@obb@dinwindowleft+\@obb@dinwindowwidth\relax,
+                -\dimexpr\@obb@dinzonethreestart+10mm\relax)$)
+        {Zone 3 (Empfaenger)};
 
       % --- Dimension markers (left of the window) ---
 
-      % 50mm offset (window start)
-      \draw[dim line] ($(TL)+(15mm, 0)$) -- ($(TL)+(15mm, -50mm)$) node[dim text, rotate=90] {50mm};
+      % Offset to window start (50mm)
+      \draw[dim line] ($(TL)+(15mm, 0)$) --
+        ($(TL)+(15mm, -\@obb@dinzoneonestart)$)
+        node[dim text, rotate=90] {50mm};
 
       % Height of zone 1 (2mm) with label shifted left
-      \draw[dim line] ($(TL)+(15mm, -50mm)$) -- ($(TL)+(15mm, -52mm)$) node[midway, left=1mm, rotate=90, font=\fontsize{5}{6}\sffamily, text=red!70] {2mm};
+      \draw[dim line]
+        ($(TL)+(15mm, -\@obb@dinzoneonestart)$) --
+        ($(TL)+(15mm, -\dimexpr\@obb@dinzoneonestart+\@obb@dinzoneoneheight\relax)$)
+        node[midway, left=1mm, rotate=90, font=\fontsize{5}{6}\sffamily, text=red!70] {2mm};
 
-      % Height of zone 2 (20mm)
-      \draw[dim line] ($(TL)+(15mm, -52mm)$) -- ($(TL)+(15mm, -72mm)$) node[dim text, rotate=90] {20mm};
+      % Height of zone 2 (calibrated: 21mm)
+      \draw[dim line]
+        ($(TL)+(15mm, -\dimexpr\@obb@dinzoneonestart+\@obb@dinzoneoneheight\relax)$) --
+        ($(TL)+(15mm, -\@obb@dinzonethreestart)$)
+        node[dim text, rotate=90] {21mm};
 
       % Height of zone 3 (20mm)
-      \draw[dim line] ($(TL)+(15mm, -72mm)$) -- ($(TL)+(15mm, -92mm)$) node[dim text, rotate=90] {20mm};
+      \draw[dim line]
+        ($(TL)+(15mm, -\@obb@dinzonethreestart)$) --
+        ($(TL)+(15mm,
+                -\dimexpr\@obb@dinzonethreestart+\@obb@dinzonethreeheight\relax)$)
+        node[dim text, rotate=90] {20mm};
 
       % Horizontal offset (20mm)
-      \draw[dim line] ($(TL)+(0, -40mm)$) -- ($(TL)+(20mm, -40mm)$) node[dim text] {20mm};
+      \draw[dim line] ($(TL)+(0, -40mm)$) --
+        ($(TL)+(\@obb@dinwindowleft, -40mm)$)
+        node[dim text] {20mm};
 
       % Window width (72mm)
-      \draw[dim line] ($(TL)+(20mm, -40mm)$) -- ($(TL)+(92mm, -40mm)$) node[dim text] {72mm};
+      \draw[dim line]
+        ($(TL)+(\@obb@dinwindowleft, -40mm)$) --
+        ($(TL)+(\dimexpr\@obb@dinwindowleft+\@obb@dinwindowwidth\relax, -40mm)$)
+        node[dim text] {72mm};
 
       % --- Fold mark annotations (text at the end of the line) ---
-      \draw[red!70, thin, <-] ($(TL)+(6mm, -105mm)$) -- ($(TL)+(15mm, -105mm)$) node[anchor=west, rotate=90, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=1pt] {1. Falz (105mm)};
+      \draw[red!70, thin, <-] ($(TL)+(6mm, -\@obb@dinfoldmarki)$) --
+        ($(TL)+(15mm, -\@obb@dinfoldmarki)$)
+        node[anchor=west, rotate=90, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=1pt] {1. Falz (105mm)};
 
-      \draw[red!70, thin, <-] ($(TL)+(6mm, -205mm)$) -- ($(TL)+(15mm, -205mm)$) node[anchor=west, rotate=90, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=1pt] {2. Falz (205mm)};
+      \draw[red!70, thin, <-] ($(TL)+(6mm, -\@obb@dinfoldmarkii)$) --
+        ($(TL)+(15mm, -\@obb@dinfoldmarkii)$)
+        node[anchor=west, rotate=90, font=\fontsize{6}{7}\sffamily, text=red!70, inner sep=1pt] {2. Falz (205mm)};
 
       % --- Text start line (indicated only, not full width) ---
       \draw[guide line, dashed] ($(TL)+(20mm, -110mm)$) -- ($(TL)+(100mm, -110mm)$);
