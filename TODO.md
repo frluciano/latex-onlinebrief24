@@ -4,11 +4,6 @@
 
 ### Queued
 
-#### cls/feature
-
-- **US-C01** `\addinfoblockrow` ohne eingebaute Felder — bereits behoben in 2026-04-17; Regression-Fixture in `tests/fixtures/addinfoblockrow-regression.tex` vorhanden
-- **US-Q08** Einheitliche Zeichen-Kodierungs-Konvention in allen Fixtures (ASCII-Escapes vs. UTF-8) [tests/fixtures/ — P2]
-
 #### scripts/consolidation
 
 - **US-C05** `build-ctan.sh` bricht bei leerem Version-String nicht ab → produziert `onlinebrief24-.zip` [scripts/build-ctan.sh — P2]
