@@ -13,6 +13,14 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
   die Breite korrekt mit 160 mm, sodass der Sendernamen-Block nicht mehr ueber
   den rechten Seitenrand laeuft (`onlinebrief24.cls`)
 
+### Intern
+
+- GitHub-Actions (`actions/checkout`, `actions/upload-artifact`) und
+  `ctan-o-mat` auf unveraenderliche Commit-SHAs gepinnt; Release-Pipeline ist
+  damit gegen kompromittierte Mutable-Tags geschuetzt
+- Workflow-Eingaben in den Release-Workflows ueber `env:`-Variablen
+  weitergeleitet statt direkt in Shell-Befehlszeilen interpoliert
+
 ## [2026-03-27]
 
 ### Hinzugefuegt
