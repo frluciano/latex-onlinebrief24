@@ -7,6 +7,10 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
 
 ## [Unreleased]
 
+### Behoben
+- CTAN-Dokumentation korrigiert: `\faXTwitter` (existiert in fontawesome5 nicht)
+  durch `\faTwitter` ersetzt (`ctan/onlinebrief24-doc.tex`)
+
 ### Intern
 - Locale-Fixtures (`german`, `french`, `spanish`, `dutch`, `polish`) auf volle
   Feldabdeckung der italienischen Fixture erweitert: `\setplace`, `\setourref`,
@@ -14,7 +18,7 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
 - Assertions fuer alle Locale-Fixtures um interne Referenz und Kontakt-E-Mail
   ergaenzt, sodass Regressionen in allen Sprachen erkannt werden
 - Franzoesische Label-Assertion (`Vos references`) auf ASCII-sicheren Teilstring
-  `ferences` umgestellt, damit die Pruefung unter pdflatex+T1 robust ist
+  `rences` umgestellt, damit die Pruefung unter pdflatex+T1 robust ist
 - Assertions fuer `footercenter`-Fixture um Telefon- und Festnetz-Felder ergaenzt
 - Inhalts-Assertion fuer `guides`-Fixture ergaenzt (Betreff-Text)
 - Drei neue Regressions-Fixtures: `modern-no-footercenter` (Modern-Modus ohne
