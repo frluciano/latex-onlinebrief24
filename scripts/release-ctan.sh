@@ -2,8 +2,8 @@
 set -eu
 
 if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
-  printf '%s\n' "Usage: sh scripts/release-ctan.sh <bundle-dir> [expected-prepare-run-id]" >&2
-  exit 1
+	printf '%s\n' "Usage: sh scripts/release-ctan.sh <bundle-dir> [expected-prepare-run-id]" >&2
+	exit 1
 fi
 
 bundle_dir=$1
@@ -24,7 +24,7 @@ require_file "$ctan_o_mat_bin" "ctan-o-mat executable not found at $ctan_o_mat_b
 sh "$repo_root/scripts/validate-release-inputs.sh" "$bundle_dir" "$expected_prepare_run_id"
 
 metadata_values=$(
-  python3 - "$metadata_path" <<'PY'
+	python3 - "$metadata_path" <<'PY'
 import json
 import sys
 from pathlib import Path

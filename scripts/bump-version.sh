@@ -19,8 +19,8 @@ doc_file="$repo_root/ctan/onlinebrief24-doc.tex"
 
 # Validate date format (YYYY-MM-DD)
 if ! printf '%s' "$date" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'; then
-  printf '%s\n' "Error: date must be in YYYY-MM-DD format (got: $date)" >&2
-  exit 1
+	printf '%s\n' "Error: date must be in YYYY-MM-DD format (got: $date)" >&2
+	exit 1
 fi
 
 # Convert to LaTeX format (YYYY/MM/DD) for \ProvidesClass
