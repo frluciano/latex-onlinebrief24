@@ -7,6 +7,10 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
 
 ## [Unreleased]
 
+### Behoben
+- CTAN-Dokumentation korrigiert: `\faXTwitter` (existiert in fontawesome5 nicht)
+  durch `\faTwitter` ersetzt (`ctan/onlinebrief24-doc.tex`)
+
 ### Intern
 - DIN-5008-Fenster-Geometrie als benannte Laengen-Konstanten (`\@obb@din*`)
   zentralisiert; die TikZ-Guides-Darstellung referenziert jetzt dieselben
