@@ -5,6 +5,14 @@ Alle wesentlichen Aenderungen an `onlinebrief24` werden in dieser Datei dokument
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-DD).
 
+## [Unreleased]
+
+### Behoben
+- Modern-Mode-Header-Breite korrigiert: `\parbox{\paperwidth-50mm}` ist keine
+  gueltige LaTeX-Laengenrechnung; `\dimexpr\paperwidth-50mm\relax` berechnet
+  die Breite korrekt mit 160 mm, sodass der Sendernamen-Block nicht mehr ueber
+  den rechten Seitenrand laeuft (`onlinebrief24.cls`)
+
 ## [2026-03-27]
 
 ### Hinzugefuegt
