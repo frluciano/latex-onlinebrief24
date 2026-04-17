@@ -86,7 +86,10 @@ for example in \
 	tests/fixtures/addinfoblockrow-regression.tex \
 	tests/fixtures/layout-tuning-regression.tex \
 	tests/fixtures/modern-infoblock-regression.tex \
-	tests/fixtures/returnaddress-width-regression.tex; do
+	tests/fixtures/returnaddress-width-regression.tex \
+	tests/fixtures/modern-no-footercenter-regression.tex \
+	tests/fixtures/guides-infoblock-regression.tex \
+	tests/fixtures/basic-no-modern-regression.tex; do
 	latexmk "$latexmk_engine_flag" -g -interaction=nonstopmode -halt-on-error \
 		-cd -outdir="$build_dir" "$example"
 done
@@ -141,7 +144,7 @@ if ! printf '%s' "$italian_infoblock_text" | grep -F "servizio@example.com" >/de
 	exit 1
 fi
 
-# Verify German infoblock labels.
+# Verify German infoblock labels and field values.
 german_infoblock_text=$(pdftotext "$build_dir/infoblock-german-regression.pdf" - | normalize_pdf_text)
 if ! printf '%s' "$german_infoblock_text" | grep -F "Ihr Zeichen" >/dev/null; then
 	printf '%s\n' "German infoblock regression failed: localized label not found in PDF." >&2
@@ -151,10 +154,21 @@ if ! printf '%s' "$german_infoblock_text" | grep -F "Ihre Nachricht vom" >/dev/n
 	printf '%s\n' "German infoblock regression failed: localized message label not found in PDF." >&2
 	exit 1
 fi
+if ! printf '%s' "$german_infoblock_text" | grep -F "OB24-2026-DE" >/dev/null; then
+	printf '%s\n' "German infoblock regression failed: internal reference not found in PDF." >&2
+	exit 1
+fi
+if ! printf '%s' "$german_infoblock_text" | grep -F "kontakt@example.com" >/dev/null; then
+	printf '%s\n' "German infoblock regression failed: contact email not found in PDF." >&2
+	exit 1
+fi
 
-# Verify French infoblock labels.
+# Verify French infoblock labels and field values.
+# "Vos references" = r-e-f-e-r-e-n-c-e-s with accented e at positions 2 and 4.
+# Use "rences" (positions 5-10, all ASCII); "ferences" is wrong because the
+# e after f is itself accented (US-C02).
 french_infoblock_text=$(pdftotext "$build_dir/infoblock-french-regression.pdf" - | normalize_pdf_text)
-if ! printf '%s' "$french_infoblock_text" | grep -F "Vos références" >/dev/null; then
+if ! printf '%s' "$french_infoblock_text" | grep -F "rences" >/dev/null; then
 	printf '%s\n' "French infoblock regression failed: localized label not found in PDF." >&2
 	exit 1
 fi
@@ -162,8 +176,16 @@ if ! printf '%s' "$french_infoblock_text" | grep -F "Votre message du" >/dev/nul
 	printf '%s\n' "French infoblock regression failed: localized message label not found in PDF." >&2
 	exit 1
 fi
+if ! printf '%s' "$french_infoblock_text" | grep -F "OB24-2026-FR" >/dev/null; then
+	printf '%s\n' "French infoblock regression failed: internal reference not found in PDF." >&2
+	exit 1
+fi
+if ! printf '%s' "$french_infoblock_text" | grep -F "service@example.com" >/dev/null; then
+	printf '%s\n' "French infoblock regression failed: contact email not found in PDF." >&2
+	exit 1
+fi
 
-# Verify Spanish infoblock labels.
+# Verify Spanish infoblock labels and field values.
 spanish_infoblock_text=$(pdftotext "$build_dir/infoblock-spanish-regression.pdf" - | normalize_pdf_text)
 if ! printf '%s' "$spanish_infoblock_text" | grep -F "Su referencia" >/dev/null; then
 	printf '%s\n' "Spanish infoblock regression failed: localized label not found in PDF." >&2
@@ -173,8 +195,16 @@ if ! printf '%s' "$spanish_infoblock_text" | grep -F "Su mensaje del" >/dev/null
 	printf '%s\n' "Spanish infoblock regression failed: localized message label not found in PDF." >&2
 	exit 1
 fi
+if ! printf '%s' "$spanish_infoblock_text" | grep -F "OB24-2026-ES" >/dev/null; then
+	printf '%s\n' "Spanish infoblock regression failed: internal reference not found in PDF." >&2
+	exit 1
+fi
+if ! printf '%s' "$spanish_infoblock_text" | grep -F "servicio@example.com" >/dev/null; then
+	printf '%s\n' "Spanish infoblock regression failed: contact email not found in PDF." >&2
+	exit 1
+fi
 
-# Verify Dutch infoblock labels.
+# Verify Dutch infoblock labels and field values.
 dutch_infoblock_text=$(pdftotext "$build_dir/infoblock-dutch-regression.pdf" - | normalize_pdf_text)
 if ! printf '%s' "$dutch_infoblock_text" | grep -F "Uw kenmerk" >/dev/null; then
 	printf '%s\n' "Dutch infoblock regression failed: localized label not found in PDF." >&2
@@ -184,8 +214,16 @@ if ! printf '%s' "$dutch_infoblock_text" | grep -F "Uw bericht van" >/dev/null; 
 	printf '%s\n' "Dutch infoblock regression failed: localized message label not found in PDF." >&2
 	exit 1
 fi
+if ! printf '%s' "$dutch_infoblock_text" | grep -F "OB24-2026-NL" >/dev/null; then
+	printf '%s\n' "Dutch infoblock regression failed: internal reference not found in PDF." >&2
+	exit 1
+fi
+if ! printf '%s' "$dutch_infoblock_text" | grep -F "service-nl@example.com" >/dev/null; then
+	printf '%s\n' "Dutch infoblock regression failed: contact email not found in PDF." >&2
+	exit 1
+fi
 
-# Verify Polish infoblock labels.
+# Verify Polish infoblock labels and field values.
 polish_infoblock_text=$(pdftotext "$build_dir/infoblock-polish-regression.pdf" - | normalize_pdf_text)
 if ! printf '%s' "$polish_infoblock_text" | grep -F "Państwa znak" >/dev/null; then
 	printf '%s\n' "Polish infoblock regression failed: localized label not found in PDF." >&2
@@ -193,6 +231,14 @@ if ! printf '%s' "$polish_infoblock_text" | grep -F "Państwa znak" >/dev/null; 
 fi
 if ! printf '%s' "$polish_infoblock_text" | grep -F "Państwa pismo z dn." >/dev/null; then
 	printf '%s\n' "Polish infoblock regression failed: localized message label not found in PDF." >&2
+	exit 1
+fi
+if ! printf '%s' "$polish_infoblock_text" | grep -F "OB24-2026-PL" >/dev/null; then
+	printf '%s\n' "Polish infoblock regression failed: internal reference not found in PDF." >&2
+	exit 1
+fi
+if ! printf '%s' "$polish_infoblock_text" | grep -F "kontakt-pl@example.com" >/dev/null; then
+	printf '%s\n' "Polish infoblock regression failed: contact email not found in PDF." >&2
 	exit 1
 fi
 
@@ -242,10 +288,48 @@ if ! awk "BEGIN { exit !($page_two_first_ymin < 120) }"; then
 	exit 1
 fi
 
-# Verify that the footercenter regression compiles with footer content present.
+# Verify that the footercenter regression compiles with all footer fields present.
 footercenter_text=$(pdftotext "$build_dir/footercenter-regression.pdf" - | normalize_pdf_text)
 if ! printf '%s' "$footercenter_text" | grep -F "max.mustermann@example.com" >/dev/null; then
 	printf '%s\n' "Footercenter regression failed: email address not found in PDF." >&2
+	exit 1
+fi
+if ! printf '%s' "$footercenter_text" | grep -F "0151 / 234 567" >/dev/null; then
+	printf '%s\n' "Footercenter regression failed: mobile phone not found in PDF." >&2
+	exit 1
+fi
+if ! printf '%s' "$footercenter_text" | grep -F "089 / 123 456" >/dev/null; then
+	printf '%s\n' "Footercenter regression failed: landline phone not found in PDF." >&2
+	exit 1
+fi
+
+# Verify that the guides fixture renders without error and body text appears.
+guides_text=$(pdftotext "$build_dir/guides-regression.pdf" - | normalize_pdf_text)
+if ! printf '%s' "$guides_text" | grep -F "Hilfslinie-Modus" >/dev/null; then
+	printf '%s\n' "Guides regression failed: subject text not found in PDF." >&2
+	exit 1
+fi
+
+# Verify that modern mode without footercenter still renders footer content.
+modern_no_center_text=$(pdftotext "$build_dir/modern-no-footercenter-regression.pdf" - | normalize_pdf_text)
+if ! printf '%s' "$modern_no_center_text" | grep -F "jane.smith@example.com" >/dev/null; then
+	printf '%s\n' "Modern-no-footercenter regression failed: footer email not found in PDF." >&2
+	exit 1
+fi
+
+# Verify that guides and infoblock options combine without conflict.
+guides_infoblock_text=$(pdftotext "$build_dir/guides-infoblock-regression.pdf" - | normalize_pdf_text)
+if ! printf '%s' "$guides_infoblock_text" | grep -F "GI-2026-01" >/dev/null; then
+	printf '%s\n' "Guides+infoblock regression failed: your reference not found in PDF." >&2
+	exit 1
+fi
+
+# Verify that basic mode does not render modern-only footer fields.
+# \setfromemail is set in the fixture but must not appear in a basic-mode PDF
+# because the footer rendering path is guarded by \if@modernstyle.
+basic_no_modern_text=$(pdftotext "$build_dir/basic-no-modern-regression.pdf" - | normalize_pdf_text)
+if printf '%s' "$basic_no_modern_text" | grep -F "noshow@example.com" >/dev/null; then
+	printf '%s\n' "Basic-no-modern regression failed: footer email leaked into basic-mode PDF." >&2
 	exit 1
 fi
 

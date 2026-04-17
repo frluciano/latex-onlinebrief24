@@ -1,15 +1,31 @@
 \documentclass[basic, infoblock, lang=french]{../../onlinebrief24}
+
 \setreturnaddress{Jean Dupont, 10 Rue de la Paix, 75002 Paris}
-\setrecipient{Services SA, M. Paul Durand, 24 Rue de Rivoli, 75001 Paris}
+\setrecipient{%
+  Services SA \\
+  M. Paul Durand \\
+  24 Rue de Rivoli \\
+  75001 Paris%
+}
 \setsubject{Objet du message}
+\setplace{Paris}
 \setdate{2026-03-27}
 \setyourref{RM-7741}
 \setyourmessage{2026-03-18}
+\setourref{OB24-2026-FR}
+\setourmessage{2026-03-20}
+\setcontactname{Jean Dupont}
+\setcontactphone{01 23 45 67 89}
+\setcontactfax{01 23 45 67 80}
 \setcontactemail{service@example.com}
+
 \begin{document}
 \begin{letter}{}
 \opening{Monsieur Durand,}
-Regression française.
+
+Ce document verifie le bloc d'information localise en francais avec
+tous les champs de reference et de contact.
+
 \closing{Cordialement}
 \end{letter}
 \end{document}

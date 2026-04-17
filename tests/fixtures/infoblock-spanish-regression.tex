@@ -1,15 +1,31 @@
 \documentclass[basic, infoblock, lang=spanish]{../../onlinebrief24}
-\setreturnaddress{Juan Pérez, Calle Mayor 1, 28013 Madrid}
-\setrecipient{Servicios S.L., Sr. Carlos García, Calle de Alcalá 24, 28014 Madrid}
-\setsubject{Asunto del message}
+
+\setreturnaddress{Juan Perez, Calle Mayor 1, 28013 Madrid}
+\setrecipient{%
+  Servicios S.L. \\
+  Sr. Carlos Garcia \\
+  Calle de Alcala 24 \\
+  28014 Madrid%
+}
+\setsubject{Asunto del mensaje}
+\setplace{Madrid}
 \setdate{2026-03-27}
 \setyourref{RM-7741}
 \setyourmessage{2026-03-18}
+\setourref{OB24-2026-ES}
+\setourmessage{2026-03-20}
+\setcontactname{Juan Perez}
+\setcontactphone{91 123 45 67}
+\setcontactfax{91 123 45 68}
 \setcontactemail{servicio@example.com}
+
 \begin{document}
 \begin{letter}{}
-\opening{Estimado Sr. García,}
-Regresión española.
+\opening{Estimado Sr. Garcia,}
+
+Este documento verifica el bloque de informacion localizado en espanol
+con todos los campos de referencia y contacto.
+
 \closing{Atentamente}
 \end{letter}
 \end{document}

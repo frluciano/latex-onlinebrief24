@@ -95,13 +95,13 @@ Release-blockierende Korrektur-Items (mit sichtbarer Auswirkung auf Nutzer-Kompi
 ## Empfohlene Merge-Reihenfolge
 
 1. ~~**Branch 3** `security/supply-chain`~~ — ✓ erledigt
-2. **Branch 1** `release/next-ctan` — macht nächste CTAN-Release möglich
-3. **Branch 2** `release/fix-modern-header` — nach visueller Verifikation
-4. **Branch 7** `scripts/consolidation` — vor Branch 8, damit CI-Refactor auf konsolidiertes Script-Layer aufsetzt
-5. **Branch 8** `ci-and-tooling`
-6. **Branch 4** `cls/refactor-and-api-tests`
-7. **Branch 5** `cls/din-geometry` — nach visueller Verifikation
-8. **Branch 6** `tests/coverage-gaps` — parallel zu allen anderen möglich
+2. ~~**Branch 1** `release/next-ctan`~~ — PR #32 offen
+3. ~~**Branch 2** `release/fix-modern-header`~~ — PR #33 offen, nach visueller Verifikation
+4. ~~**Branch 7** `scripts/consolidation`~~ — PR #30 erledigt
+5. ~~**Branch 8** `ci-and-tooling`~~ — PR #31 offen
+6. ~~**Branch 4** `cls/refactor-and-api-tests`~~ — PR #34 offen
+7. ~~**Branch 5** `cls/din-geometry`~~ — PR #35 offen, nach visueller Verifikation
+8. ~~**Branch 6** `tests/coverage-gaps`~~ — PR #36 offen
 
 ## Done
 

@@ -58,6 +58,19 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
 - Kalibrierungs-Offset fuer Zone 3 (+1 mm unter DIN-Nominalwert) im
   Guides-Overlay korrigiert: Zone 2 endet jetzt bei 73 mm statt 72 mm,
   passend zur tatsaechlichen Empfaenger-Position im Picture-Modus
+- Locale-Fixtures (`german`, `french`, `spanish`, `dutch`, `polish`) auf volle
+  Feldabdeckung der italienischen Fixture erweitert: `\setplace`, `\setourref`,
+  `\setourmessage`, `\setcontactname`, `\setcontactphone`, `\setcontactfax`
+- Assertions fuer alle Locale-Fixtures um interne Referenz und Kontakt-E-Mail
+  ergaenzt, sodass Regressionen in allen Sprachen erkannt werden
+- Franzoesische Label-Assertion (`Vos references`) auf ASCII-sicheren Teilstring
+  `rences` umgestellt, damit die Pruefung unter pdflatex+T1 robust ist
+- Assertions fuer `footercenter`-Fixture um Telefon- und Festnetz-Felder ergaenzt
+- Inhalts-Assertion fuer `guides`-Fixture ergaenzt (Betreff-Text)
+- Drei neue Regressions-Fixtures: `modern-no-footercenter` (Modern-Modus ohne
+  zentrierten Footer), `guides-infoblock` (Guides + Infoblock kombiniert),
+  `basic-no-modern` (negativer Test: Footer-Email darf im Basic-Modus nicht
+  im PDF erscheinen)
 
 ## [2026-03-27]
 
