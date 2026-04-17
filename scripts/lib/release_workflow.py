@@ -34,7 +34,6 @@ import json
 import re
 import subprocess
 import sys
-import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 

@@ -71,26 +71,12 @@ jobs:
 
       - name: Download validated release bundle
         id: download_validated_bundle
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -eu
-          # Sync only from the post-validation bundle produced by `Release CTAN`
-          # so GitHub never has to infer assets or metadata on its own.
-          download_root="${RUNNER_TEMP}/release-sync-download"
-          rm -rf "$download_root"
-          mkdir -p "$download_root"
-          gh run download "${{ steps.source_run.outputs.release_run_id }}" \
-            --repo "${GITHUB_REPOSITORY}" \
-            --name "${VALIDATED_ARTIFACT_NAME}" \
-            --dir "$download_root"
-          resolved_metadata_path=$(find "$download_root" -type f -name resolved-release-metadata.json -print | head -n 1)
-          if [ -z "$resolved_metadata_path" ]; then
-            printf '%s\n' "::error::Could not locate resolved-release-metadata.json in the validated release artifact."
-            exit 1
-          fi
-          bundle_dir=$(dirname "$resolved_metadata_path")
-          printf '%s\n' "bundle_dir=$bundle_dir" >> "$GITHUB_OUTPUT"
+        uses: ./.github/actions/download-release-bundle
+        with:
+          token: ${{ github.token }}
+          run-id: ${{ steps.source_run.outputs.release_run_id }}
+          artifact-name: ${{ env.VALIDATED_ARTIFACT_NAME }}
+          metadata-filename: resolved-release-metadata.json
 
       - name: Read resolved release metadata
         id: metadata

@@ -74,4 +74,21 @@ else
   printf '%s\n' "Warning: shellcheck not found; skipping static analysis." >&2
 fi
 
+# Format check for all shell scripts. -d prints a diff without modifying files.
+if command -v shfmt >/dev/null 2>&1; then
+  # shellcheck disable=SC2044
+  for script in $(find scripts -type f -name '*.sh' | sort); do
+    shfmt -d -ln posix "$script"
+  done
+else
+  printf '%s\n' "Warning: shfmt not found; skipping shell format check." >&2
+fi
+
+# Python lint for release helper modules.
+if command -v ruff >/dev/null 2>&1; then
+  ruff check scripts/lib/
+else
+  printf '%s\n' "Warning: ruff not found; skipping Python lint." >&2
+fi
+
 printf '%s\n' "Tooling checks passed."

@@ -41,36 +41,19 @@ jobs:
       version: ${{ steps.metadata.outputs.version }}
 
     steps:
-      - name: Download prepared release bundle
-        id: download_prepare_bundle
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -eu
-          # `gh run download` is not consistent about the exact extraction path.
-          # Resolve the real bundle directory from the downloaded metadata file
-          # instead of assuming a fixed folder shape.
-          download_root="${RUNNER_TEMP}/prepared-download"
-          rm -rf "$download_root"
-          mkdir -p "$download_root"
-          gh run download "${{ inputs.prepare_run_id }}" \
-            --repo "${GITHUB_REPOSITORY}" \
-            --name "${PREPARE_ARTIFACT_NAME}" \
-            --dir "$download_root"
-          metadata_path=$(find "$download_root" -type f -name release-metadata.json -print | head -n 1)
-          if [ -z "$metadata_path" ]; then
-            printf '%s\n' "::error::Could not locate release-metadata.json in the prepared release artifact."
-            exit 1
-          fi
-          bundle_dir=$(dirname "$metadata_path")
-          printf '%s\n' "bundle_dir=$bundle_dir" >> "$GITHUB_OUTPUT"
-
       - uses: actions/checkout@v6
         with:
-          # Local workflow helper scripts do not exist on the runner until the
-          # repository is checked out. A later checkout pins the exact prepared
-          # commit once the metadata has been read.
-          fetch-depth: 1
+          # Full history is needed so we can switch to the prepared source
+          # commit without a second checkout action.
+          fetch-depth: 0
+
+      - name: Download prepared release bundle
+        id: download_prepare_bundle
+        uses: ./.github/actions/download-release-bundle
+        with:
+          token: ${{ github.token }}
+          run-id: ${{ inputs.prepare_run_id }}
+          artifact-name: ${{ env.PREPARE_ARTIFACT_NAME }}
 
       - name: Validate prepare run provenance
         env:
@@ -93,12 +76,10 @@ jobs:
           python3 scripts/lib/release_workflow.py read-prepared-metadata \
             "${{ steps.download_prepare_bundle.outputs.bundle_dir }}" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/checkout@v6
-        with:
-          # Validate and later publish against the exact prepared commit rather
-          # than the commit currently checked out in the default branch.
-          fetch-depth: 0
-          ref: ${{ steps.metadata.outputs.source_commit_sha }}
+      - name: Switch to prepared source commit
+        env:
+          SOURCE_COMMIT_SHA: ${{ steps.metadata.outputs.source_commit_sha }}
+        run: git checkout "$SOURCE_COMMIT_SHA"
 
       - name: Validate prepared release bundle
         run: |
@@ -146,7 +127,7 @@ jobs:
             "${{ steps.download_prepare_bundle.outputs.bundle_dir }}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload validated release bundle
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           # The publish job reuses the already validated bundle from this same
           # workflow run after the protected environment gate is approved. Keep
@@ -184,28 +165,11 @@ jobs:
 
       - name: Download validated release bundle
         id: download_validated_bundle
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -eu
-          # Reuse the post-validation bundle produced by this workflow rather
-          # than re-downloading the original artifact and reintroducing drift.
-          # Resolve the actual extraction directory dynamically for the same
-          # reason as in the validate job.
-          download_root="${RUNNER_TEMP}/validated-download"
-          rm -rf "$download_root"
-          mkdir -p "$download_root"
-          gh run download "${GITHUB_RUN_ID}" \
-            --repo "${GITHUB_REPOSITORY}" \
-            --name "${VALIDATED_ARTIFACT_NAME}" \
-            --dir "$download_root"
-          metadata_path=$(find "$download_root" -type f -name release-metadata.json -print | head -n 1)
-          if [ -z "$metadata_path" ]; then
-            printf '%s\n' "::error::Could not locate release-metadata.json in the validated release artifact."
-            exit 1
-          fi
-          bundle_dir=$(dirname "$metadata_path")
-          printf '%s\n' "bundle_dir=$bundle_dir" >> "$GITHUB_OUTPUT"
+        uses: ./.github/actions/download-release-bundle
+        with:
+          token: ${{ github.token }}
+          run-id: ${{ github.run_id }}
+          artifact-name: ${{ env.VALIDATED_ARTIFACT_NAME }}
 
       - name: Publish prepared artifact to CTAN
         env:
@@ -220,7 +184,10 @@ jobs:
 
       - name: Upload rendered CTAN submission input
         if: always()
-        uses: actions/upload-artifact@v6
+        # Upload failure does not invalidate a successful CTAN publish — the
+        # audit copy is best-effort and non-fatal.
+        continue-on-error: true
+        uses: actions/upload-artifact@v7
         with:
           # Keep a redacted audit copy of the rendered ctan-o-mat input without
           # exposing the CTAN contact email in workflow artifacts.
