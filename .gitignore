@@ -328,17 +328,11 @@ TSWLatexianTemp*
 #*Notes.bib
 
 .DS_Store
+
+# Agent-coding files (local-only, not for CTAN or collaborators)
+AGENTS.md
 CLAUDE.md
-.gitignore
-agent-rules/Code-Style.md
-agent-rules/Dependencies.md
-agent-rules/Development-Workflow.md
-agent-rules/Error-Handling.md
-agent-rules/Git.md
-agent-rules/Performance.md
-agent-rules/Security.md
-agent-rules/Session-Management.md
-agent-rules/Testing.md
-agent-rules/LaTeX.md
+SKILL.md
+agent-rules/
 LESSONS-LEARNED.md
 TODO.md
