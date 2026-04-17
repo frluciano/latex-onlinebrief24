@@ -150,7 +150,7 @@ jobs:
             "${{ steps.download_prepare_bundle.outputs.bundle_dir }}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload validated release bundle
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           # The publish job reuses the already validated bundle from this same
           # workflow run after the protected environment gate is approved. Keep
@@ -216,7 +216,7 @@ jobs:
         # Upload failure does not invalidate a successful CTAN publish — the
         # audit copy is best-effort and non-fatal.
         continue-on-error: true
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           # Keep a redacted audit copy of the rendered ctan-o-mat input without
           # exposing the CTAN contact email in workflow artifacts.
