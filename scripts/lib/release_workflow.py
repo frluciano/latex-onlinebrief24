@@ -23,6 +23,10 @@ write-ctan-publish-summary <bundle_dir> <rendered_pkg_artifact_name>
 validate-release-run-provenance <repo> <run_id>
     Ensure the selected Actions run is a successful workflow_dispatch release run.
 
+validate-resolved-release-metadata <bundle_dir> <expected_release_run_id>
+    Validate that resolved-release-metadata.json matches the prepared bundle and
+    belongs to the specified CTAN release run (exits with error if invalid).
+
 read-resolved-release-metadata <bundle_dir> <expected_release_run_id>
     Print selected resolved-release-metadata.json fields as KEY=VALUE lines.
 
@@ -34,7 +38,6 @@ import json
 import re
 import subprocess
 import sys
-import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -106,19 +109,31 @@ def extract_zip_versions(bundle_dir, metadata):
     )
 
 
+def _validate_run_provenance(run, run_id, expected_workflow_name, expected_event, expected_branch=None):
+    """Return a list of error strings; empty list means the run is valid."""
+    errors = []
+    if run.get("name") != expected_workflow_name:
+        errors.append(
+            f"run {run_id} must be from '{expected_workflow_name}', got '{run.get('name')}'"
+        )
+    if run.get("event") != expected_event:
+        errors.append(
+            f"run {run_id} must come from a {expected_event} event, got '{run.get('event')}'"
+        )
+    if expected_branch is not None and run.get("head_branch") != expected_branch:
+        errors.append(
+            f"run {run_id} must come from {expected_branch}, got '{run.get('head_branch')}'"
+        )
+    if run.get("status") != "completed" or run.get("conclusion") != "success":
+        errors.append(f"run {run_id} must be completed successfully")
+    return errors
+
+
 def cmd_validate_prepare_run_provenance(repo, run_id):
     data = read_run(repo, run_id)
-    errors = []
-
-    if data.get("name") != "Prepare CTAN Release":
-        errors.append(f"prepare run {run_id} is not from 'Prepare CTAN Release'")
-    if data.get("event") != "push":
-        errors.append(f"prepare run {run_id} must come from a push event")
-    if data.get("head_branch") != "main":
-        errors.append(f"prepare run {run_id} must come from main, got {data.get('head_branch')!r}")
-    if data.get("status") != "completed" or data.get("conclusion") != "success":
-        errors.append(f"prepare run {run_id} must be completed successfully")
-
+    errors = _validate_run_provenance(
+        data, run_id, "Prepare CTAN Release", "push", expected_branch="main"
+    )
     if errors:
         for message in errors:
             print(f"::error::{message}")
@@ -185,7 +200,7 @@ def cmd_write_prepare_summary(
 def cmd_write_release_validation_summary(bundle_dir_str):
     bundle_dir, _, metadata = load_bundle_metadata(bundle_dir_str)
     _, resolved_path, resolved = load_resolved_metadata(bundle_dir_str)
-    artifact_path, artifact_filename_version, cls_version, doc_version = extract_zip_versions(
+    _, artifact_filename_version, cls_version, doc_version = extract_zip_versions(
         bundle_dir, metadata
     )
     announcement_text = (
@@ -231,7 +246,7 @@ def cmd_write_release_validation_summary(bundle_dir_str):
 def cmd_write_ctan_publish_summary(bundle_dir_str, rendered_pkg_artifact_name):
     bundle_dir, _, metadata = load_bundle_metadata(bundle_dir_str)
     _, resolved_path, resolved = load_resolved_metadata(bundle_dir_str)
-    artifact_path, artifact_filename_version, cls_version, doc_version = extract_zip_versions(
+    _, artifact_filename_version, cls_version, doc_version = extract_zip_versions(
         bundle_dir, metadata
     )
     rendered_pkg_path = bundle_dir / "onlinebrief24-release-audit.pkg"
@@ -280,21 +295,71 @@ def cmd_write_ctan_publish_summary(bundle_dir_str, rendered_pkg_artifact_name):
 
 def cmd_validate_release_run_provenance(repo, run_id):
     data = read_run(repo, run_id)
-    errors = []
-
-    if data.get("name") != "Release CTAN":
-        errors.append(f"release run {run_id} is not from 'Release CTAN'")
-    if data.get("event") != "workflow_dispatch":
-        errors.append(f"release run {run_id} must come from a workflow_dispatch event")
-    if data.get("head_branch") != "main":
-        errors.append(f"release run {run_id} must come from main, got {data.get('head_branch')!r}")
-    if data.get("status") != "completed" or data.get("conclusion") != "success":
-        errors.append(f"release run {run_id} must be completed successfully")
-
+    errors = _validate_run_provenance(
+        data, run_id, "Release CTAN", "workflow_dispatch", expected_branch="main"
+    )
     if errors:
         for message in errors:
             print(f"::error::{message}")
         raise SystemExit(1)
+
+
+def cmd_validate_resolved_release_metadata(bundle_dir_str, expected_release_run_id):
+    """Validate that resolved-release-metadata.json matches the prepared bundle."""
+    _, _, metadata = load_bundle_metadata(bundle_dir_str)
+    _, resolved_path, resolved = load_resolved_metadata(bundle_dir_str)
+
+    shared_fields = (
+        "schema_version",
+        "package_name",
+        "version",
+        "artifact_filename",
+        "artifact_sha256",
+        "source_commit_sha",
+        "prepare_run_id",
+        "prepare_run_attempt",
+        "build_timestamp_utc",
+        "announcement_filename",
+    )
+    for key in shared_fields:
+        if resolved.get(key) != metadata.get(key):
+            raise SystemExit(
+                f"::error file={resolved_path}::resolved-release-metadata field {key!r} "
+                "does not match release-metadata.json"
+            )
+
+    release_run_id = str(resolved.get("release_run_id", ""))
+    release_run_attempt = str(resolved.get("release_run_attempt", ""))
+    release_requested_by = str(resolved.get("release_requested_by", ""))
+    release_timestamp_utc = str(resolved.get("release_timestamp_utc", ""))
+
+    if not re.fullmatch(r"[0-9]+", release_run_id):
+        raise SystemExit(
+            f"::error file={resolved_path}::"
+            "release_run_id must be a positive integer string"
+        )
+    if not re.fullmatch(r"[0-9]+", release_run_attempt):
+        raise SystemExit(
+            f"::error file={resolved_path}::"
+            "release_run_attempt must be a positive integer string"
+        )
+    if not re.fullmatch(r"[A-Za-z0-9-]+", release_requested_by):
+        raise SystemExit(
+            f"::error file={resolved_path}::"
+            "release_requested_by must look like a GitHub login"
+        )
+    if not re.fullmatch(
+        r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z", release_timestamp_utc
+    ):
+        raise SystemExit(
+            f"::error file={resolved_path}::"
+            "release_timestamp_utc must use an ISO-8601 UTC timestamp"
+        )
+    if expected_release_run_id and release_run_id != expected_release_run_id:
+        raise SystemExit(
+            f"::error file={resolved_path}::resolved-release-metadata release_run_id "
+            f"{release_run_id} does not match expected release run ID {expected_release_run_id}"
+        )
 
 
 def cmd_read_resolved_release_metadata(bundle_dir_str, expected_release_run_id):
@@ -316,7 +381,7 @@ def cmd_read_resolved_release_metadata(bundle_dir_str, expected_release_run_id):
 
 
 def cmd_write_sync_github_release_summary(bundle_dir_str, trigger_event_name, github_repository):
-    bundle_dir, _, metadata = load_bundle_metadata(bundle_dir_str)
+    _, _, metadata = load_bundle_metadata(bundle_dir_str)
     _, resolved_path, resolved = load_resolved_metadata(bundle_dir_str)
     version = metadata["version"]
     release_url = f"https://github.com/{github_repository}/releases/tag/{version}"
@@ -347,8 +412,8 @@ def main():
             "Subcommands: validate-prepare-run-provenance, read-prepared-metadata, "
             "record-resolved-release-metadata, write-prepare-summary, "
             "write-release-validation-summary, write-ctan-publish-summary, "
-            "validate-release-run-provenance, read-resolved-release-metadata, "
-            "write-sync-github-release-summary"
+            "validate-release-run-provenance, validate-resolved-release-metadata, "
+            "read-resolved-release-metadata, write-sync-github-release-summary"
         )
 
     subcommand = sys.argv[1]
@@ -403,6 +468,13 @@ def main():
                 "Usage: release_workflow.py validate-release-run-provenance <repo> <run_id>"
             )
         cmd_validate_release_run_provenance(sys.argv[2], sys.argv[3])
+    elif subcommand == "validate-resolved-release-metadata":
+        if len(sys.argv) != 4:
+            raise SystemExit(
+                "Usage: release_workflow.py validate-resolved-release-metadata "
+                "<bundle_dir> <expected_release_run_id>"
+            )
+        cmd_validate_resolved_release_metadata(sys.argv[2], sys.argv[3])
     elif subcommand == "read-resolved-release-metadata":
         if len(sys.argv) != 4:
             raise SystemExit(
@@ -423,8 +495,8 @@ def main():
             "Subcommands: validate-prepare-run-provenance, read-prepared-metadata, "
             "record-resolved-release-metadata, write-prepare-summary, "
             "write-release-validation-summary, write-ctan-publish-summary, "
-            "validate-release-run-provenance, read-resolved-release-metadata, "
-            "write-sync-github-release-summary"
+            "validate-release-run-provenance, validate-resolved-release-metadata, "
+            "read-resolved-release-metadata, write-sync-github-release-summary"
         )
 
 
