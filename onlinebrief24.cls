@@ -505,7 +505,7 @@
   \if@modernstyle
     % Header: sender name
     \put(25, 270){%
-        \parbox[t][15mm][t]{\paperwidth-50mm}{%
+        \parbox[t][15mm][t]{\dimexpr\paperwidth-50mm\relax}{%
             \raggedleft
             \fontsize{18pt}{20pt}\sffamily\bfseries
             \@obb@renderheadername
