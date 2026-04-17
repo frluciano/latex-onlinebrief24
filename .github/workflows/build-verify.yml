@@ -40,39 +40,44 @@ jobs:
 
       - name: Detect verification-relevant changes
         id: changes
-        env:
-          GH_TOKEN: ${{ github.token }}
-          EVENT_NAME: ${{ github.event_name }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          PUSH_BEFORE: ${{ github.event.before }}
-          PUSH_AFTER: ${{ github.sha }}
-        run: |
-          set -eu
-          changed=$(sh scripts/ci-detect-changes.sh verify)
-          printf '%s\n' "verify=$changed" >> "$GITHUB_OUTPUT"
+        uses: ./.github/actions/detect-changes
+        with:
+          token: ${{ github.token }}
+          mode: verify
 
       - name: Skip heavy verification setup when inputs are unchanged
-        if: steps.changes.outputs.verify != 'true'
+        if: steps.changes.outputs.changed != 'true'
         run: echo "No verification-relevant changes detected; skipping TeX install."
 
       - name: Install TeX and PDF tools
-        if: steps.changes.outputs.verify == 'true'
-        run: |
-          # Install a minimal but sufficient TeX/PDF toolchain for the examples,
-          # the font-dependent modern style, and the page-2 regression checks.
-          sudo apt-get update
-          sudo apt-get install -y \
-            latexmk \
-            poppler-utils \
-            texlive-fonts-extra \
-            texlive-lang-german \
-            texlive-latex-extra \
-            texlive-luatex \
-            texlive-pictures \
+        if: steps.changes.outputs.changed == 'true'
+        uses: ./.github/actions/install-texlive
+        with:
+          extra-packages: >-
+            poppler-utils
+            texlive-fonts-extra
+            texlive-lang-german
+            texlive-latex-extra
+            texlive-luatex
+            texlive-pictures
             texlive-xetex
 
+      # Cache the LuaLaTeX font database (luaotfload) so the expensive font
+      # scan only runs once per TeX Live installation. The key includes the
+      # workflow and class file hashes because adding new packages or fonts
+      # invalidates the database. The restore-key falls back to any prior
+      # lualatex cache for the same OS so the first run after a class change
+      # still benefits from a warm cache.
+      - name: Cache LuaLaTeX font database
+        if: matrix.engine == 'lualatex' && steps.changes.outputs.changed == 'true'
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: .texlive-cache/lualatex
+          key: lualatex-fonts-${{ runner.os }}-${{ hashFiles('.github/workflows/build-verify.yml', 'onlinebrief24.cls') }}
+          restore-keys: lualatex-fonts-${{ runner.os }}-
+
       - name: Build & verify examples (${{ matrix.engine }})
-        if: steps.changes.outputs.verify == 'true'
+        if: steps.changes.outputs.changed == 'true'
         # The verification script selects the engine via OB24_TEX_ENGINE and
         # handles the LuaLaTeX cache workaround automatically when needed.
         run: OB24_TEX_ENGINE=${{ matrix.engine }} sh scripts/verify.sh
