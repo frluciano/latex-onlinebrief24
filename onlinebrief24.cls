@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{onlinebrief24}[2026/03/27 Precision Layout Class with Guides]
+\ProvidesClass{onlinebrief24}[2026/04/17 Precision Layout Class with Guides]
 
 % --- Option declarations (all before ProcessOptions) ---
 
@@ -302,21 +302,25 @@
 
 % Patch the letter environment
 \let\@obb@oldletter\letter
-\renewcommand{\letter}[1]{%
-  \ifstrempty{#1}{}{%
+\renewcommand{\letter}[2][]{%
+  \ifstrempty{#2}{}{%
     \ifdefempty{\@obb@recipient}{%
-      \renewcommand{\@obb@recipient}{#1}%
+      \renewcommand{\@obb@recipient}{#2}%
     }{%
       \ClassWarningNoLine{onlinebrief24}{Ignoring recipient passed to letter environment because \string\setrecipient\space is already set}%
     }%
   }%
   \@obb@validateletterfields
-  \@obb@oldletter{}%
+  \ifstrempty{#1}{%
+    \@obb@oldletter{}%
+  }{%
+    \@obb@oldletter[#1]{}%
+  }%
 }
 
 % --- Conditional loading for the modern style ---
 \if@modernstyle
-  \RequirePackage[default, light, semibold]{sourcesanspro}
+  \RequirePackage[default, light, semibold]{sourcesans}
   \RequirePackage{fontawesome5}
 
   % --- Color definitions (moderncv-compatible) ---
