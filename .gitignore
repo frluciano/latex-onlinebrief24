@@ -328,6 +328,8 @@ TSWLatexianTemp*
 #*Notes.bib
 
 .DS_Store
+__pycache__/
+*.pyc
 
 # Local-only files (not for CTAN or collaborators)
 AGENTS.md
