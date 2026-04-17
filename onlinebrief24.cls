@@ -254,7 +254,12 @@
   \renewcommand{\@obb@place}{#1}%
   \@obb@syncplaceanddate
 }
-\newcommand{\setfromname}[1]{\renewcommand{\@obb@fromname}{#1}} % Legacy
+% \setfromname is a legacy alias kept for backwards compatibility.
+% Prefer \setfromfirstname + \setfromlastname for the split-name header.
+\newcommand{\setfromname}[1]{%
+  \ClassWarningNoLine{onlinebrief24}{\string\setfromname\space is a legacy alias; prefer \string\setfromfirstname\space and \string\setfromlastname}%
+  \renewcommand{\@obb@fromname}{#1}%
+}
 \newcommand{\setfromfirstname}[1]{\renewcommand{\@obb@fromfirstname}{#1}}
 \newcommand{\setfromlastname}[1]{\renewcommand{\@obb@fromlastname}{#1}}
 \newcommand{\setfromaddress}[1]{\renewcommand{\@obb@fromaddress}{#1}}
@@ -278,9 +283,14 @@
 \newcommand{\@obb@returnaddressfontsz}{5.8pt}
 \newcommand{\@obb@returnaddresslinesz}{6.4pt}
 
+% Measure the rendered return address width into \@obb@addrwidth.
+% Both validation (error check) and rendering (underline clamp) share this.
+\newcommand{\@obb@measurereturnaddress}{%
+  \settowidth{\@obb@addrwidth}{{\fontsize{\@obb@returnaddressfontsz}{\@obb@returnaddresslinesz}\sffamily\selectfont\@obb@return}}%
+}
 \newcommand{\@obb@validatereturnaddresswidth}{%
   \begingroup
-    \settowidth{\@obb@addrwidth}{{\fontsize{\@obb@returnaddressfontsz}{\@obb@returnaddresslinesz}\sffamily\selectfont\@obb@return}}%
+    \@obb@measurereturnaddress
     \ifdim\@obb@addrwidth>72mm
       \endgroup
       \ClassError{onlinebrief24}{Return address too long}{Shorten the return address so it fits on a single line within the 72mm sender zone.}%
@@ -344,13 +354,25 @@
 % Extra footer items appended by \addfooteritem (empty by default).
 \newcommand{\@obb@extrafooterlist}{}
 
+% Render one footer field if value is non-empty, inserting the separator when
+% not the first item. Shared by the five built-in fields and \@obb@extrafooterlist.
+\newcommand{\@obb@renderfooterfield}[2]{%
+  \ifdefempty{#2}{}{%
+    \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
+    \@obb@icon{#1}\ #2%
+  }%
+}
+
 % \addfooteritem{icon}{text}
 %   Appends a custom item to the modern-mode footer. The icon is a fontawesome5
 %   command (e.g. \faGithub); it is raised to match the footer baseline. Items
 %   are separated by the standard footer separator (\textbar). Must be called in
 %   the document preamble, before \begin{document}.
 \newcommand{\addfooteritem}[2]{%
-  \g@addto@macro\@obb@extrafooterlist{%
+  \if@modernstyle\else
+    \ClassWarningNoLine{onlinebrief24}{\string\addfooteritem\space has no effect without the modern option}%
+  \fi
+  \gappto\@obb@extrafooterlist{%
     \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
     \@obb@icon{#1}\ #2%
   }%
@@ -410,7 +432,7 @@
 %   silently omitted when value is empty so callers do not need to guard it.
 %   Must be called in the document preamble, before \begin{document}.
 \newcommand{\addinfoblockrow}[2]{%
-  \g@addto@macro\@obb@extrainfoblockrows{%
+  \gappto\@obb@extrainfoblockrows{%
     \@obb@renderinfoblockrow{#1}{#2}%
   }%
 }
@@ -442,7 +464,8 @@
       not test {\ifdefempty{\@obb@contactname}} or
       not test {\ifdefempty{\@obb@contactphone}} or
       not test {\ifdefempty{\@obb@contactfax}} or
-      not test {\ifdefempty{\@obb@contactemail}}
+      not test {\ifdefempty{\@obb@contactemail}} or
+      not test {\ifdefempty{\@obb@extrainfoblockrows}}
     }{%
       % Render the DIN-style information block independently from the text
       % flow so the first-page body start stays stable in both styles.
@@ -467,6 +490,18 @@
 \newcommand{\@obb@picfoldmarki}{192}      % 1st fold mark: 105mm from top (297-105=192)
 \newcommand{\@obb@picfoldmarkii}{92}      % 2nd fold mark: 205mm from top (297-205=92)
 
+% --- Modern style calibration constants ---
+% All values are in mm (picture unitlength=1mm) unless noted.
+% y values are measured from the page bottom (y_pic = 297 - y_from_top for A4).
+\newcommand{\@obb@picmodernx}{25}      % left margin of modern header and footer: 25mm from left
+\newcommand{\@obb@picheadery}{270}     % modern header baseline: 27mm from top (297-270=27)
+\newcommand{\@obb@picfootery}{5}       % modern footer baseline: 5mm from bottom
+\newcommand{\@obb@headermargin}{50mm}  % right-side reduction: header width = paperwidth - 50mm = 160mm on A4
+\newcommand{\@obb@headerheight}{15mm}  % height of the header parbox
+\newcommand{\@obb@footerheight}{10mm}  % height of the footer parbox
+\newcommand{\@obb@headerfontsize}{18pt}% sender name font size in the header
+\newcommand{\@obb@headerbaseline}{20pt}% sender name baseline skip in the header
+
 % --- Page overlay drawing ---
 \newcommand{\@obb@firstpageoverlay}{%
   \setlength{\unitlength}{1mm}%
@@ -483,7 +518,7 @@
         }%
       }%
       % Keep the underline for zone 1 fully above the 52mm boundary.
-      \settowidth{\@obb@addrwidth}{{\fontsize{\@obb@returnaddressfontsz}{\@obb@returnaddresslinesz}\sffamily\selectfont\@obb@return}}%
+      \@obb@measurereturnaddress
       \ifdim\@obb@addrwidth>72mm\@obb@addrwidth=72mm\fi
       \put(\@obb@picwindowx, \@obb@piczoneoney){\rule{\@obb@addrwidth}{0.2pt}}
 
@@ -504,10 +539,10 @@
   % --- Modern style (header and footer) ---
   \if@modernstyle
     % Header: sender name
-    \put(25, 270){%
-        \parbox[t][15mm][t]{\dimexpr\paperwidth-50mm\relax}{%
+    \put(\@obb@picmodernx, \@obb@picheadery){%
+        \parbox[t][\@obb@headerheight][t]{\dimexpr\paperwidth-\@obb@headermargin\relax}{%
             \raggedleft
-            \fontsize{18pt}{20pt}\sffamily\bfseries
+            \fontsize{\@obb@headerfontsize}{\@obb@headerbaseline}\sffamily\bfseries
             \@obb@renderheadername
             \ifdefempty{\@obb@fromaddress}{}{\\[4pt]
               \fontsize{10pt}{12pt}\sffamily\color{color2!50}
@@ -517,32 +552,17 @@
     }%
 
     % Footer: contact details, kept close to the bottom edge.
-    \put(25, 5){%
-      \parbox[b][10mm][b]{\textwidth}{%
+    \put(\@obb@picmodernx, \@obb@picfootery){%
+      \parbox[b][\@obb@footerheight][b]{\textwidth}{%
         \if@footercenter\centering\else\raggedleft\fi
         \footnotesize\sffamily\color{color2}%
         \global\@obb@firstfooteritemtrue
         %
-        \ifdefempty{\@obb@fromlandline}{}{%
-          \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
-          \@obb@icon{\faPhone}\ \@obb@fromlandline
-        }%
-        \ifdefempty{\@obb@fromphone}{}{%
-          \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
-          \@obb@icon{\faMobile}\ \@obb@fromphone
-        }%
-        \ifdefempty{\@obb@fromemail}{}{%
-          \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
-          \@obb@icon{\faEnvelope}\ \@obb@fromemail
-        }%
-        \ifdefempty{\@obb@fromweb}{}{%
-          \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
-          \@obb@icon{\faGlobe}\ \@obb@fromweb
-        }%
-        \ifdefempty{\@obb@fromlinkedin}{}{%
-          \if@obb@firstfooteritem\global\@obb@firstfooteritemfalse\else\@obb@footersep\fi
-          \@obb@icon{\faLinkedin}\ \@obb@fromlinkedin
-        }%
+        \@obb@renderfooterfield{\faPhone}{\@obb@fromlandline}%
+        \@obb@renderfooterfield{\faMobile}{\@obb@fromphone}%
+        \@obb@renderfooterfield{\faEnvelope}{\@obb@fromemail}%
+        \@obb@renderfooterfield{\faGlobe}{\@obb@fromweb}%
+        \@obb@renderfooterfield{\faLinkedin}{\@obb@fromlinkedin}%
         \@obb@extrafooterlist
       }%
     }%

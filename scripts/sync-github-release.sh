@@ -17,6 +17,7 @@ metadata_path="$bundle_dir/release-metadata.json"
 resolved_metadata_path="$bundle_dir/resolved-release-metadata.json"
 
 normalize_gh_token
+
 require_env GH_TOKEN "GH_TOKEN or GITHUB_TOKEN is required to create the GitHub release."
 require_env GITHUB_REPOSITORY "GITHUB_REPOSITORY is required in the GitHub release sync context."
 require_file "$resolved_metadata_path" "Resolved release metadata not found: $resolved_metadata_path"

@@ -1,0 +1,26 @@
+\documentclass[lang=german]{../../onlinebrief24}
+
+% Return address close to but under the 72mm limit.
+% Verifies US-T07: \@obb@validatereturnaddresswidth accepts addresses near the boundary.
+\setreturnaddress{Max Mustermann, Musterstra\ss{}e 1, 12345 Musterstadt}
+\setrecipient{%
+  Muster GmbH \\
+  Musterweg 2 \\
+  54321 Musterort%
+}
+\setfromfirstname{Max}
+\setfromlastname{Mustermann}
+\setsubject{Test: Ruecksende-Adresse Breitengrenze}
+\setplace{Musterstadt}
+\setdate{2026-03-27}
+
+\begin{document}
+\begin{letter}{}
+\opening{Sehr geehrte Damen und Herren,}
+
+dieses Dokument prueft, dass eine Ruecksendeadresse nahe der 72-mm-Grenze ohne
+Fehler kompiliert und die Unterstreichung auf die gemessene Breite begrenzt wird.
+
+\closing{Mit freundlichen Gr\"u\ss{}en}
+\end{letter}
+\end{document}
