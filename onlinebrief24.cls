@@ -320,7 +320,7 @@
 
 % --- Conditional loading for the modern style ---
 \if@modernstyle
-  \RequirePackage[default, light, semibold]{sourcesans}
+  \RequirePackage[default, light, semibold]{sourcesanspro}
   \RequirePackage{fontawesome5}
 
   % --- Color definitions (moderncv-compatible) ---
