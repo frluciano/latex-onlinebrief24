@@ -7,6 +7,17 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
 
 ## [Unreleased]
 
+### Hinzugefuegt
+- Regression-Fixture fuer `\addfooteritem` (`tests/fixtures/addfooteritem-regression.tex`)
+- Regression-Fixture fuer `\addinfoblockrow` inkl. Assertion, dass der Infoblock
+  auch ohne eingebaute Felder erscheint (`tests/fixtures/addinfoblockrow-regression.tex`)
+- Regression-Fixture fuer die Layout-Tuning-API `\setinfoblocktopoffset`,
+  `\setinfoblockrightedge`, `\setinfoblockcolwidths` (`tests/fixtures/layout-tuning-regression.tex`)
+- Regression-Fixture fuer die Kombination `modern + infoblock` mit farbigen Labels
+  (`tests/fixtures/modern-infoblock-regression.tex`)
+- Regression-Fixture fuer die 72-mm-Grenze der Ruecksendeadresse
+  (`tests/fixtures/returnaddress-width-regression.tex`)
+
 ### Behoben
 - Modern-Mode-Header-Breite korrigiert: `\parbox{\paperwidth-50mm}` ist keine
   gueltige LaTeX-Laengenrechnung; `\dimexpr\paperwidth-50mm\relax` berechnet
@@ -14,6 +25,25 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
   den rechten Seitenrand laeuft (`onlinebrief24.cls`)
 - CTAN-Dokumentation korrigiert: `\faXTwitter` (existiert in fontawesome5 nicht)
   durch `\faTwitter` ersetzt (`ctan/onlinebrief24-doc.tex`)
+- `\addinfoblockrow` wird jetzt auch gerendert, wenn keines der eingebauten
+  Infoblock-Felder gesetzt ist; die `\ifboolexpr`-Bedingung prueft nun auch
+  `\@obb@extrainfoblockrows` (`onlinebrief24.cls`)
+- `\addfooteritem` gibt jetzt eine `\ClassWarningNoLine` aus, wenn es ohne die
+  `modern`-Option verwendet wird (`onlinebrief24.cls`)
+
+### Geaendert
+- Fuenf kopierte Footer-Separator-Bloecke durch den gemeinsamen Helper
+  `\@obb@renderfooterfield{icon}{value}` ersetzt (`onlinebrief24.cls`)
+- Breiten-Messung der Ruecksendeadresse in `\@obb@measurereturnaddress`
+  ausgelagert; Validierung und Rendering teilen sich dieselbe Implementierung (`onlinebrief24.cls`)
+- Magic-Numbers fuer die Modern-Stil-Position durch benannte Konstanten
+  `\@obb@picmodernx`, `\@obb@picheadery`, `\@obb@picfootery`, `\@obb@headermargin`,
+  `\@obb@headerheight`, `\@obb@footerheight`, `\@obb@headerfontsize`, `\@obb@headerbaseline`
+  ersetzt (`onlinebrief24.cls`)
+- `\setfromname` gibt jetzt eine Deprecation-Warning aus und empfiehlt
+  `\setfromfirstname` + `\setfromlastname` (`onlinebrief24.cls`)
+- `\g@addto@macro` durch das dokumentierte `\gappto` (etoolbox) ersetzt
+  (`onlinebrief24.cls`)
 
 ### Intern
 

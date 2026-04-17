@@ -2,8 +2,8 @@
 set -eu
 
 if [ "$#" -ne 1 ]; then
-  printf '%s\n' "Usage: sh scripts/generate-announcement-draft.sh <output-path>" >&2
-  exit 1
+	printf '%s\n' "Usage: sh scripts/generate-announcement-draft.sh <output-path>" >&2
+	exit 1
 fi
 
 output_path=$1
@@ -21,7 +21,7 @@ Create ctan/release-announcement.txt explicitly before running Prepare CTAN Rele
 manual_trimmed=$(python3 "$scripts_lib/release_validation.py" read-announcement "$manual_announcement_path")
 
 if [ -z "$manual_trimmed" ]; then
-  fail "Manual CTAN announcement file is empty: $manual_announcement_path"
+	fail "Manual CTAN announcement file is empty: $manual_announcement_path"
 fi
 
 mkdir -p "$(dirname "$output_path")"

@@ -1,0 +1,28 @@
+\documentclass[modern, lang=german]{../../onlinebrief24}
+
+\setreturnaddress{Max Mustermann, Musterstra\ss{}e 1, 12345 Musterstadt}
+\setrecipient{%
+  Muster GmbH \\
+  Musterweg 2 \\
+  54321 Musterort%
+}
+\setfromfirstname{Max}
+\setfromlastname{Mustermann}
+\setfromemail{max.mustermann@example.com}
+\addfooteritem{\faGithub}{github.com/example}
+\addfooteritem{\faTwitter}{@example}
+\setsubject{Test: Zusaetzliche Footer-Eintraege}
+\setplace{Musterstadt}
+\setdate{2026-03-27}
+
+\begin{document}
+\begin{letter}{}
+\opening{Sehr geehrte Damen und Herren,}
+
+dieses Dokument prueft, dass \texttt{\string\addfooteritem} benutzerdefinierte
+Footer-Eintraege nach den Standardfeldern einfuegt und der Trenner korrekt
+gesetzt wird.
+
+\closing{Mit freundlichen Gr\"u\ss{}en}
+\end{letter}
+\end{document}

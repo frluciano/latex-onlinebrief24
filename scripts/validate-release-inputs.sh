@@ -2,8 +2,8 @@
 set -eu
 
 if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
-  printf '%s\n' "Usage: sh scripts/validate-release-inputs.sh <bundle-dir> [expected-prepare-run-id]" >&2
-  exit 1
+	printf '%s\n' "Usage: sh scripts/validate-release-inputs.sh <bundle-dir> [expected-prepare-run-id]" >&2
+	exit 1
 fi
 
 bundle_dir=$1
@@ -37,8 +37,8 @@ announcement_path="$bundle_dir/$ANNOUNCEMENT_FILENAME"
 # When a specific prepare run is requested, the bundle must prove it originated
 # from that exact run rather than from another artifact with similar contents.
 if [ -n "$expected_prepare_run_id" ] && [ "$PREPARE_RUN_ID" != "$expected_prepare_run_id" ]; then
-  printf '%s\n' "Prepared release bundle run ID $PREPARE_RUN_ID does not match requested run ID $expected_prepare_run_id" >&2
-  exit 1
+	printf '%s\n' "Prepared release bundle run ID $PREPARE_RUN_ID does not match requested run ID $expected_prepare_run_id" >&2
+	exit 1
 fi
 
 require_file "$artifact_path" "Prepared artifact ZIP not found: $artifact_path"
@@ -50,8 +50,8 @@ announcement_trimmed=$(python3 "$script_dir/lib/release_validation.py" read-anno
 # POSIX sh does not guarantee that set -e exits on a non-zero command
 # substitution used in an assignment, so we guard explicitly.
 if [ -z "$announcement_trimmed" ]; then
-  printf '%s\n' "Prepared announcement draft is empty or whitespace only: $announcement_path" >&2
-  exit 1
+	printf '%s\n' "Prepared announcement draft is empty or whitespace only: $announcement_path" >&2
+	exit 1
 fi
 
 checksum_value=$(awk 'NR==1 { print $1 }' "$checksum_path")
@@ -63,18 +63,18 @@ actual_checksum=$(python3 -c \
 # Cross-check metadata, checksum file, and actual artifact bytes. All three must
 # agree before the bundle is considered releasable.
 if [ "$checksum_value" != "$ARTIFACT_SHA256" ]; then
-  printf '%s\n' "release-metadata.json SHA256 does not match checksum file." >&2
-  exit 1
+	printf '%s\n' "release-metadata.json SHA256 does not match checksum file." >&2
+	exit 1
 fi
 
 if [ "$actual_checksum" != "$ARTIFACT_SHA256" ]; then
-  printf '%s\n' "Prepared artifact SHA256 does not match release metadata." >&2
-  exit 1
+	printf '%s\n' "Prepared artifact SHA256 does not match release metadata." >&2
+	exit 1
 fi
 
 if [ "$checksum_target" != "$ARTIFACT_FILENAME" ]; then
-  printf '%s\n' "Checksum file must reference artifact filename '$ARTIFACT_FILENAME' but references '$checksum_target'." >&2
-  exit 1
+	printf '%s\n' "Checksum file must reference artifact filename '$ARTIFACT_FILENAME' but references '$checksum_target'." >&2
+	exit 1
 fi
 
 # Guard against stale upload metadata: the frozen release version must match
@@ -86,8 +86,8 @@ ARTIFACT_CLASS_VERSION=$(python3 "$scripts_lib/release_validation.py" get-field-
 ARTIFACT_DOC_VERSION=$(python3 "$scripts_lib/release_validation.py" get-field-zip "$artifact_path" doc_version)
 
 if ! git -C "$repo_root" rev-parse --verify "${SOURCE_COMMIT_SHA}^{commit}" >/dev/null 2>&1; then
-  printf '%s\n' "Prepared source commit is not available locally: $SOURCE_COMMIT_SHA" >&2
-  exit 1
+	printf '%s\n' "Prepared source commit is not available locally: $SOURCE_COMMIT_SHA" >&2
+	exit 1
 fi
 
 # Print the resolved identifiers so release logs show exactly which artifact and
