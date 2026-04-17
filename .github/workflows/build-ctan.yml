@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           # The announcement draft is derived from Git history, so a shallow
           # checkout would make the release input incomplete or misleading.
@@ -195,8 +195,8 @@ jobs:
             "${PREPARE_ARTIFACT_NAME}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload prepared release bundle
-        if: steps.changes.outputs.changed == 'true' && steps.announcement.outputs.ready == 'true'
-        uses: actions/upload-artifact@v7
+        if: steps.changes.outputs.ctan == 'true' && steps.announcement.outputs.ready == 'true'
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: ${{ env.PREPARE_ARTIFACT_NAME }}
           path: dist/${{ env.PREPARE_ARTIFACT_NAME }}
