@@ -302,20 +302,16 @@
 
 % Patch the letter environment
 \let\@obb@oldletter\letter
-\renewcommand{\letter}[2][]{%
-  \ifstrempty{#2}{}{%
+\renewcommand{\letter}[1]{%
+  \ifstrempty{#1}{}{%
     \ifdefempty{\@obb@recipient}{%
-      \renewcommand{\@obb@recipient}{#2}%
+      \renewcommand{\@obb@recipient}{#1}%
     }{%
       \ClassWarningNoLine{onlinebrief24}{Ignoring recipient passed to letter environment because \string\setrecipient\space is already set}%
     }%
   }%
   \@obb@validateletterfields
-  \ifstrempty{#1}{%
-    \@obb@oldletter{}%
-  }{%
-    \@obb@oldletter[#1]{}%
-  }%
+  \@obb@oldletter{}%
 }
 
 % --- Conditional loading for the modern style ---
