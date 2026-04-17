@@ -1,0 +1,29 @@
+\documentclass[infoblock, lang=german]{../../onlinebrief24}
+
+\setreturnaddress{Max Mustermann, Musterstra\ss{}e 1, 12345 Musterstadt}
+\setrecipient{%
+  Muster GmbH \\
+  Musterweg 2 \\
+  54321 Musterort%
+}
+\setfromfirstname{Max}
+\setfromlastname{Mustermann}
+\setfromemail{max.mustermann@example.com}
+% Only custom rows — no built-in infoblock fields set.
+% Verifies US-C01: \addinfoblockrow must render even without built-in fields.
+\addinfoblockrow{Projekt}{Testprojekt 2026}
+\addinfoblockrow{Auftrag}{AU-2026-042}
+\setsubject{Test: Benutzerdefinierte Infoblock-Zeilen}
+\setplace{Musterstadt}
+\setdate{2026-03-27}
+
+\begin{document}
+\begin{letter}{}
+\opening{Sehr geehrte Damen und Herren,}
+
+dieses Dokument prueft, dass \texttt{\string\addinfoblockrow} den
+Informationsblock rendert, auch wenn keines der eingebauten Felder gesetzt ist.
+
+\closing{Mit freundlichen Gr\"u\ss{}en}
+\end{letter}
+\end{document}
