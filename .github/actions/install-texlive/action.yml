@@ -1,0 +1,25 @@
+name: Install TeX Live
+description: >
+  Install a minimal TeX/PDF toolchain. latexmk is always installed;
+  extra packages are appended via the extra-packages input so each
+  workflow declares only the packages it actually needs.
+
+inputs:
+  extra-packages:
+    description: Additional apt packages to install, space-separated.
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Install TeX tools
+      env:
+        EXTRA_PACKAGES: ${{ inputs.extra-packages }}
+      shell: sh
+      run: |
+        set -eu
+        sudo apt-get update
+        # SC2086: word-splitting on EXTRA_PACKAGES is intentional here.
+        # shellcheck disable=SC2086
+        sudo apt-get install -y latexmk $EXTRA_PACKAGES

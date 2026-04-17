@@ -1,0 +1,12 @@
+[tool.ruff]
+# src controls first-vs-third-party import classification (not linting scope).
+# Linting scope is set by the CLI path in check-tooling.sh: ruff check scripts/lib/
+src = ["scripts/lib"]
+target-version = "py39"
+
+[tool.ruff.lint]
+# E/W: pycodestyle errors and warnings. F: pyflakes (unused imports, undefined names).
+select = ["E", "F", "W"]
+# E501: long lines — ruff defaults to 88 chars; release scripts use longer lines
+# intentionally for JSON templates and error messages.
+ignore = ["E501"]

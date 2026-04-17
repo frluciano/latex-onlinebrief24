@@ -1,0 +1,36 @@
+name: Detect relevant changes
+description: >
+  Run ci-detect-changes.sh for the given mode and expose a single
+  'changed' output. Avoids duplicating the env-var wiring across
+  every workflow that uses change detection.
+
+inputs:
+  token:
+    description: GitHub token for the gh CLI (pass github.token).
+    required: true
+  mode:
+    description: Change-detection mode — verify, ctan, or tooling.
+    required: true
+
+outputs:
+  changed:
+    description: "'true' when relevant changes are detected, 'false' otherwise."
+    value: ${{ steps.detect.outputs.changed }}
+
+runs:
+  using: composite
+  steps:
+    - name: Detect changes
+      id: detect
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        EVENT_NAME: ${{ github.event_name }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        PUSH_BEFORE: ${{ github.event.before }}
+        PUSH_AFTER: ${{ github.sha }}
+        DETECT_MODE: ${{ inputs.mode }}
+      shell: sh
+      run: |
+        set -eu
+        changed=$(sh scripts/ci-detect-changes.sh "$DETECT_MODE")
+        printf '%s\n' "changed=$changed" >> "$GITHUB_OUTPUT"

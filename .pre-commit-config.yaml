@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: check-tooling
+        name: Check tooling
+        language: system
+        entry: sh scripts/check-tooling.sh
+        pass_filenames: false
+        always_run: true
