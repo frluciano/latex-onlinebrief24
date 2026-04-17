@@ -7,6 +7,12 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
 
 ## [Unreleased]
 
+### Behoben
+- Modern-Mode-Header-Breite korrigiert: `\parbox{\paperwidth-50mm}` ist keine
+  gueltige LaTeX-Laengenrechnung; `\dimexpr\paperwidth-50mm\relax` berechnet
+  die Breite korrekt mit 160 mm, sodass der Sendernamen-Block nicht mehr ueber
+  den rechten Seitenrand laeuft (`onlinebrief24.cls`)
+
 ### Intern
 
 - GitHub-Actions (`actions/checkout`, `actions/upload-artifact`) und
