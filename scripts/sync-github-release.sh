@@ -2,8 +2,8 @@
 set -eu
 
 if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
-  printf '%s\n' "Usage: sh scripts/sync-github-release.sh <bundle-dir> [expected-release-run-id]" >&2
-  exit 1
+	printf '%s\n' "Usage: sh scripts/sync-github-release.sh <bundle-dir> [expected-release-run-id]" >&2
+	exit 1
 fi
 
 bundle_dir=$1
@@ -16,8 +16,8 @@ metadata_path="$bundle_dir/release-metadata.json"
 resolved_metadata_path="$bundle_dir/resolved-release-metadata.json"
 
 if [ -z "${GH_TOKEN:-}" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
-  GH_TOKEN=$GITHUB_TOKEN
-  export GH_TOKEN
+	GH_TOKEN=$GITHUB_TOKEN
+	export GH_TOKEN
 fi
 
 require_env GH_TOKEN "GH_TOKEN or GITHUB_TOKEN is required to create the GitHub release."
@@ -31,7 +31,7 @@ sh "$repo_root/scripts/validate-release-inputs.sh" "$bundle_dir"
 # Validate that the resolved metadata still matches the frozen prepare bundle
 # and belongs to the specific successful CTAN release run we are syncing from.
 metadata_values=$(
-  python3 - "$metadata_path" "$resolved_metadata_path" "$expected_release_run_id" <<'PY'
+	python3 - "$metadata_path" "$resolved_metadata_path" "$expected_release_run_id" <<'PY'
 import json
 import re
 import sys
@@ -100,17 +100,17 @@ tag_name="$VERSION"
 release_title="onlinebrief24 $VERSION"
 
 if ! git -C "$repo_root" rev-parse --verify "${SOURCE_COMMIT_SHA}^{commit}" >/dev/null 2>&1; then
-  printf '%s\n' "Prepared source commit is not available locally: $SOURCE_COMMIT_SHA" >&2
-  exit 1
+	printf '%s\n' "Prepared source commit is not available locally: $SOURCE_COMMIT_SHA" >&2
+	exit 1
 fi
 
 remote_tag_refs=$(
-  git -C "$repo_root" ls-remote --tags origin \
-    "refs/tags/${tag_name}" \
-    "refs/tags/${tag_name}^{}"
+	git -C "$repo_root" ls-remote --tags origin \
+		"refs/tags/${tag_name}" \
+		"refs/tags/${tag_name}^{}"
 )
 remote_tag_commit_sha=$(
-  printf '%s\n' "$remote_tag_refs" | awk -v ref="refs/tags/$tag_name" '
+	printf '%s\n' "$remote_tag_refs" | awk -v ref="refs/tags/$tag_name" '
     $2 == ref "^{}" { deref = $1 }
     $2 == ref { direct = $1 }
     END {
@@ -124,8 +124,8 @@ remote_tag_commit_sha=$(
 )
 
 if [ -n "$remote_tag_commit_sha" ] && [ "$remote_tag_commit_sha" != "$SOURCE_COMMIT_SHA" ]; then
-  printf '%s\n' "Remote tag $tag_name points to $remote_tag_commit_sha, expected $SOURCE_COMMIT_SHA." >&2
-  exit 1
+	printf '%s\n' "Remote tag $tag_name points to $remote_tag_commit_sha, expected $SOURCE_COMMIT_SHA." >&2
+	exit 1
 fi
 
 printf '%s\n' "Syncing GitHub release from validated CTAN bundle"
@@ -137,48 +137,48 @@ printf '%s\n' "Prepared version: $VERSION"
 printf '%s\n' "Prepared artifact: $ARTIFACT_FILENAME"
 
 if gh release view "$tag_name" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-  # Keep retries idempotent: update the existing release body and replace the
-  # release assets instead of creating a second GitHub release.
-  gh release edit "$tag_name" \
-    --repo "$GITHUB_REPOSITORY" \
-    --title "$release_title" \
-    --notes-file "$announcement_path" \
-    --verify-tag
-  # `--clobber` replaces assets in place. If an upload fails, rerun this
-  # workflow with the same release run ID instead of touching CTAN again.
-  gh release upload "$tag_name" \
-    --repo "$GITHUB_REPOSITORY" \
-    --clobber \
-    "$artifact_path" \
-    "$checksum_path" \
-    "$announcement_path" \
-    "$metadata_path" \
-    "$resolved_metadata_path"
+	# Keep retries idempotent: update the existing release body and replace the
+	# release assets instead of creating a second GitHub release.
+	gh release edit "$tag_name" \
+		--repo "$GITHUB_REPOSITORY" \
+		--title "$release_title" \
+		--notes-file "$announcement_path" \
+		--verify-tag
+	# `--clobber` replaces assets in place. If an upload fails, rerun this
+	# workflow with the same release run ID instead of touching CTAN again.
+	gh release upload "$tag_name" \
+		--repo "$GITHUB_REPOSITORY" \
+		--clobber \
+		"$artifact_path" \
+		"$checksum_path" \
+		"$announcement_path" \
+		"$metadata_path" \
+		"$resolved_metadata_path"
 else
-  if [ -n "$remote_tag_commit_sha" ]; then
-    gh release create "$tag_name" \
-      --repo "$GITHUB_REPOSITORY" \
-      --title "$release_title" \
-      --notes-file "$announcement_path" \
-      --verify-tag \
-      "$artifact_path" \
-      "$checksum_path" \
-      "$announcement_path" \
-      "$metadata_path" \
-      "$resolved_metadata_path"
-  else
-    # Let `gh release create` create the missing tag at the validated commit
-    # instead of posting the git ref separately. This keeps the first publish
-    # path compatible with GitHub's workflow token restrictions.
-    gh release create "$tag_name" \
-      --repo "$GITHUB_REPOSITORY" \
-      --target "$SOURCE_COMMIT_SHA" \
-      --title "$release_title" \
-      --notes-file "$announcement_path" \
-      "$artifact_path" \
-      "$checksum_path" \
-      "$announcement_path" \
-      "$metadata_path" \
-      "$resolved_metadata_path"
-  fi
+	if [ -n "$remote_tag_commit_sha" ]; then
+		gh release create "$tag_name" \
+			--repo "$GITHUB_REPOSITORY" \
+			--title "$release_title" \
+			--notes-file "$announcement_path" \
+			--verify-tag \
+			"$artifact_path" \
+			"$checksum_path" \
+			"$announcement_path" \
+			"$metadata_path" \
+			"$resolved_metadata_path"
+	else
+		# Let `gh release create` create the missing tag at the validated commit
+		# instead of posting the git ref separately. This keeps the first publish
+		# path compatible with GitHub's workflow token restrictions.
+		gh release create "$tag_name" \
+			--repo "$GITHUB_REPOSITORY" \
+			--target "$SOURCE_COMMIT_SHA" \
+			--title "$release_title" \
+			--notes-file "$announcement_path" \
+			"$artifact_path" \
+			"$checksum_path" \
+			"$announcement_path" \
+			"$metadata_path" \
+			"$resolved_metadata_path"
+	fi
 fi
