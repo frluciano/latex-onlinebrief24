@@ -1,0 +1,32 @@
+\documentclass[infoblock, lang=german]{../../onlinebrief24}
+
+\setreturnaddress{Max Mustermann, Musterstra\ss{}e 1, 12345 Musterstadt}
+\setrecipient{%
+  Muster GmbH \\
+  Musterweg 2 \\
+  54321 Musterort%
+}
+\setfromfirstname{Max}
+\setfromlastname{Mustermann}
+\setfromemail{max.mustermann@example.com}
+\setourref{LT-2026-01}
+% Exercise the layout-tuning public API.
+\setinfoblocktopoffset{25mm}
+\setinfoblockrightedge{190mm}
+\setinfoblockcolwidths{30mm}{4mm}{55mm}
+\setsubject{Test: Layout-Tuning-API}
+\setplace{Musterstadt}
+\setdate{2026-03-27}
+
+\begin{document}
+\begin{letter}{}
+\opening{Sehr geehrte Damen und Herren,}
+
+dieses Dokument prueft die oeffentlichen Layout-Makros
+\texttt{\string\setinfoblocktopoffset},
+\texttt{\string\setinfoblockrightedge} und
+\texttt{\string\setinfoblockcolwidths}.
+
+\closing{Mit freundlichen Gr\"u\ss{}en}
+\end{letter}
+\end{document}
