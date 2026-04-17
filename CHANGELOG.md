@@ -7,6 +7,8 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
 
 ## [Unreleased]
 
+## [2026-04-17]
+
 ### Hinzugefuegt
 - Regression-Fixture fuer `\addfooteritem` (`tests/fixtures/addfooteritem-regression.tex`)
 - Regression-Fixture fuer `\addinfoblockrow` inkl. Assertion, dass der Infoblock
@@ -30,6 +32,10 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
   `\@obb@extrainfoblockrows` (`onlinebrief24.cls`)
 - `\addfooteritem` gibt jetzt eine `\ClassWarningNoLine` aus, wenn es ohne die
   `modern`-Option verwendet wird (`onlinebrief24.cls`)
+- `\addinfoblockrow` renderte bei Literaltext-Werten den Wert doppelt und mit
+  abgeschnittenem erstem Zeichen: `\ifdefempty{#2}` konsumierte das erste Token
+  des Literal-Arguments ueber `\ifdefined`; Fix: Argument per `\protected@edef`
+  in Hilfsmakro expandieren, dann erst testen (`onlinebrief24.cls`)
 
 ### Geaendert
 - Fuenf kopierte Footer-Separator-Bloecke durch den gemeinsamen Helper

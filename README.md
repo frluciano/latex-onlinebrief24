@@ -21,6 +21,10 @@ Das Paket ist auch über CTAN verfügbar:
 - optionale DIN-nahe rechte Informationsspalte über `infoblock`
 - `guides`-Modus zur technischen Sichtprüfung von Zonen, Abständen und Falzmarken
 - Option `footercenter` für zentrierte Fußzeile im `modern`-Stil
+- `\addfooteritem{icon}{text}` für eigene Einträge in der modernen Fußzeile
+- `\addinfoblockrow{label}{value}` für eigene Zeilen im Informationsblock
+- `\setinfoblocktopoffset`, `\setinfoblockrightedge`, `\setinfoblockcolwidths`
+  zum Anpassen von Position und Spaltenbreiten des Informationsblocks
 - Arial als bevorzugte Schrift mit Fallback auf `TeX Gyre Heros`
 - Unterstützt XeLaTeX, LuaLaTeX und pdfLaTeX
 - Konfigurierbare Dokumentsprache (`lang=<babel-Sprachname>`, Standard: `german`)
@@ -186,6 +190,7 @@ Brieftexts. Angezeigt werden nur Felder, die tatsächlich gesetzt sind.
 - `\setcontactphone{...}`: `Telefon`
 - `\setcontactfax{...}`: `Telefax`
 - `\setcontactemail{...}`: `E-Mail`
+- `\addinfoblockrow{label}{value}`: eigene Zusatzzeile anhängen; leere Werte werden still übergangen
 
 Die Feldnamen folgen der gewaehlten Dokumentsprache fuer `german`,
 `english`, `french`, `spanish`, `italian`, `dutch` und `polish`.
@@ -218,7 +223,8 @@ Beispiel:
 - `\setfromemail{...}`
 - `\setfromweb{...}`
 - `\setfromlinkedin{...}`
-- `\setfromname{...}`: Legacy-Fallback, wenn keine getrennten Vor-/Nachnamen gesetzt werden
+- `\setfromname{...}`: veraltet — gibt eine Klassen-Warnung aus; bitte `\setfromfirstname` + `\setfromlastname` verwenden
+- `\addfooteritem{icon}{text}`: eigenen Eintrag an die Fußzeile anhängen (fontawesome5-Icon + Text, durch `|` getrennt)
 
 ## Kalibrierung
 

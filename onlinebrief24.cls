@@ -419,7 +419,12 @@
   \if@modernstyle\color{color0}\fi
 }
 \newcommand{\@obb@renderinfoblockrow}[2]{%
-  \ifdefempty{#2}{}{%
+  % Expand #2 into a helper macro so the empty-test works for both internal
+  % macros (\@obb@yourref etc.) and literal text passed via \addinfoblockrow.
+  % \ifdefempty on the raw #2 tokens calls \ifdefined on only the first token,
+  % consuming it and leaking the rest as stray output in the label column.
+  \protected@edef\@obb@rir@tmp{#2}%
+  \ifdefempty{\@obb@rir@tmp}{}{%
     {\@obb@infoblocklabelstyle #1} & {\@obb@infoblockvaluestyle #2}\tabularnewline
   }%
 }

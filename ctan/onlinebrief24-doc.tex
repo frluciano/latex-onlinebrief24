@@ -166,8 +166,9 @@ header. \\
 \texttt{\string\setfromemail\{...\}} & Optional modern-mode footer field. \\
 \texttt{\string\setfromweb\{...\}} & Optional modern-mode footer field. \\
 \texttt{\string\setfromlinkedin\{...\}} & Optional modern-mode footer field. \\
-\texttt{\string\setfromname\{...\}} & Legacy fallback if first and last name are
-not split. \\
+\texttt{\string\setfromname\{...\}} & Deprecated legacy alias. Emits a class
+warning; use \texttt{\string\setfromfirstname} and
+\texttt{\string\setfromlastname} instead. \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Extensibility}} \\
 \midrule
@@ -257,7 +258,8 @@ In modern mode the footer can be extended with additional contact fields using
 Each item requires a \texttt{fontawesome5} icon command and a text label. Items
 are appended after the standard footer fields (landline, mobile, email, web,
 LinkedIn) and separated by the standard vertical-bar separator. The macro must
-be called in the preamble.
+be called in the preamble. Using \texttt{\string\addfooteritem} without the
+\texttt{modern} option emits a class warning and has no effect.
 
 \subsection{Custom infoblock rows (\texttt{infoblock} option)}
 

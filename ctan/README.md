@@ -20,6 +20,10 @@ the mark in connection with this LaTeX class.
 - optional DIN-style information block in the upper-right header area
 - `guides` overlay mode for technical layout inspection
 - `footercenter` option for centered modern footers
+- `\addfooteritem{icon}{text}` for custom footer entries in modern mode
+- `\addinfoblockrow{label}{value}` for custom rows in the information block
+- `\setinfoblocktopoffset`, `\setinfoblockrightedge`, `\setinfoblockcolwidths`
+  for tuning the information-block position and column widths from the preamble
 - verified pdfLaTeX, XeLaTeX, and LuaLaTeX workflows
 
 ## Requirements
