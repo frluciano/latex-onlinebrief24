@@ -2,8 +2,8 @@
 set -eu
 
 if [ "$#" -ne 3 ]; then
-  printf '%s\n' "Usage: sh scripts/generate-release-metadata.sh <artifact-zip> <announcement-draft> <output-path>" >&2
-  exit 1
+	printf '%s\n' "Usage: sh scripts/generate-release-metadata.sh <artifact-zip> <announcement-draft> <output-path>" >&2
+	exit 1
 fi
 
 artifact_path=$1
@@ -24,8 +24,8 @@ announcement_filename=$(basename "$announcement_path")
 version=$(printf '%s\n' "$artifact_filename" | sed -n 's/^onlinebrief24-\(.*\)\.zip$/\1/p')
 
 if [ -z "$version" ]; then
-  printf '%s\n' "Could not derive version from artifact filename: $artifact_filename" >&2
-  exit 1
+	printf '%s\n' "Could not derive version from artifact filename: $artifact_filename" >&2
+	exit 1
 fi
 
 artifact_sha256=$(python3 -c \
@@ -64,7 +64,7 @@ esac
 mkdir -p "$(dirname "$output_path")"
 # Keep the contract deliberately small. Anything not required for provenance or
 # publish-time validation stays out of the schema to reduce drift.
-cat > "$output_path" <<EOF
+cat >"$output_path" <<EOF
 {
   "schema_version": 1,
   "package_name": "onlinebrief24",
