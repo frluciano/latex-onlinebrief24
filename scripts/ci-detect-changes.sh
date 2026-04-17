@@ -27,10 +27,7 @@ tooling)
 	;;
 esac
 
-if [ -z "${GH_TOKEN:-}" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
-	GH_TOKEN=$GITHUB_TOKEN
-	export GH_TOKEN
-fi
+normalize_gh_token
 
 event_name=${EVENT_NAME:-}
 pr_number=${PR_NUMBER:-}
@@ -56,13 +53,23 @@ if [ "$event_name" = "pull_request" ]; then
 		--paginate \
 		--jq '.[].filename')
 else
-	if [ -z "$push_before" ] || [ "$push_before" = "0000000000000000000000000000000000000000" ]; then
-		printf '%s\n' "true"
-		exit 0
-	fi
-	changed_files=$(gh api \
-		"repos/${repository}/compare/${push_before}...${push_after}" \
-		--jq '.files[].filename')
+  if [ -z "$push_before" ] || [ "$push_before" = "0000000000000000000000000000000000000000" ]; then
+    printf '%s\n' "true"
+    exit 0
+  fi
+  compare_json=$(gh api \
+    "repos/${repository}/compare/${push_before}...${push_after}")
+  # Parse once: extract both the truncated flag and the file list in one pass.
+  compare_parsed=$(printf '%s' "$compare_json" | python3 -c \
+    "import json,sys; d=json.load(sys.stdin); print(d.get('truncated',False)); [print(f['filename']) for f in d['files']]")
+  truncated=$(printf '%s\n' "$compare_parsed" | head -n 1)
+  if [ "$truncated" = "True" ]; then
+    printf '%s\n' \
+      "::warning::Push diff exceeds 300 files; change detection may be incomplete — forcing all checks." >&2
+    printf '%s\n' "true"
+    exit 0
+  fi
+  changed_files=$(printf '%s\n' "$compare_parsed" | tail -n +2)
 fi
 
 if [ -n "$changed_files" ]; then
