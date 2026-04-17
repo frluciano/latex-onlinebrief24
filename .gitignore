@@ -329,7 +329,7 @@ TSWLatexianTemp*
 
 .DS_Store
 
-# Agent-coding files (local-only, not for CTAN or collaborators)
+# Local-only files (not for CTAN or collaborators)
 AGENTS.md
 CLAUDE.md
 SKILL.md
