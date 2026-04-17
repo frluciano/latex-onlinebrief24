@@ -11,6 +11,12 @@ read-announcement <announcement_path>
 validate-zip <artifact_path> <expected_version>
     Check that class and doc versions inside the ZIP match the expected version,
     and print KEY=VALUE pairs to stdout.
+
+get-field <metadata_path> <field_name>
+    Print a single field value from a release JSON file (no eval needed).
+
+get-field-zip <artifact_path> <field_name>
+    Print class_version or doc_version from a release ZIP (no eval needed).
 """
 
 import json
@@ -67,10 +73,10 @@ def cmd_validate_metadata(metadata_path_str):
     if not re.fullmatch(r"[A-Za-z0-9._-]+", data["announcement_filename"]):
         raise SystemExit("announcement_filename must be a simple file name")
 
-    if not isinstance(data["prepare_run_id"], int) or data["prepare_run_id"] <= 0:
+    if type(data["prepare_run_id"]) is not int or data["prepare_run_id"] <= 0:
         raise SystemExit("prepare_run_id must be a positive integer")
 
-    if not isinstance(data["prepare_run_attempt"], int) or data["prepare_run_attempt"] <= 0:
+    if type(data["prepare_run_attempt"]) is not int or data["prepare_run_attempt"] <= 0:
         raise SystemExit("prepare_run_attempt must be a positive integer")
 
     print(f"ARTIFACT_FILENAME={data['artifact_filename']}")
@@ -155,11 +161,31 @@ def cmd_validate_zip(artifact_path_str, expected_version):
     print(f"ARTIFACT_DOC_VERSION={doc_version}")
 
 
+def cmd_get_field(metadata_path_str, field_name):
+    data = json.loads(Path(metadata_path_str).read_text(encoding="utf-8"))
+    if field_name not in data:
+        raise SystemExit(
+            f"::error::Field '{field_name}' not found in {Path(metadata_path_str).name}"
+        )
+    print(data[field_name])
+
+
+def cmd_get_field_zip(artifact_path_str, field_name):
+    cls_version, doc_version = get_zip_versions(artifact_path_str)
+    fields = {"class_version": cls_version, "doc_version": doc_version}
+    if field_name not in fields:
+        raise SystemExit(
+            f"::error::Unknown ZIP field '{field_name}'. Valid fields: class_version, doc_version"
+        )
+    print(fields[field_name])
+
+
 def main():
     if len(sys.argv) < 2:
         raise SystemExit(
             "Usage: release_validation.py <subcommand> [args...]\n"
-            "Subcommands: validate-metadata, read-announcement, validate-zip"
+            "Subcommands: validate-metadata, read-announcement, validate-zip, "
+            "get-field, get-field-zip"
         )
 
     subcommand = sys.argv[1]
@@ -181,10 +207,25 @@ def main():
             )
         cmd_validate_zip(sys.argv[2], sys.argv[3])
 
+    elif subcommand == "get-field":
+        if len(sys.argv) != 4:
+            raise SystemExit(
+                "Usage: release_validation.py get-field <metadata_path> <field_name>"
+            )
+        cmd_get_field(sys.argv[2], sys.argv[3])
+
+    elif subcommand == "get-field-zip":
+        if len(sys.argv) != 4:
+            raise SystemExit(
+                "Usage: release_validation.py get-field-zip <artifact_path> <field_name>"
+            )
+        cmd_get_field_zip(sys.argv[2], sys.argv[3])
+
     else:
         raise SystemExit(
             f"Unknown subcommand: {subcommand!r}\n"
-            "Subcommands: validate-metadata, read-announcement, validate-zip"
+            "Subcommands: validate-metadata, read-announcement, validate-zip, "
+            "get-field, get-field-zip"
         )
 
 

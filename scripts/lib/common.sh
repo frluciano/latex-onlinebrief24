@@ -31,3 +31,17 @@ require_env() {
     fail "$message"
   fi
 }
+
+# Normalize GH_TOKEN / GITHUB_TOKEN: export GH_TOKEN if not already set.
+normalize_gh_token() {
+  if [ -z "${GH_TOKEN:-}" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
+    GH_TOKEN=$GITHUB_TOKEN
+    export GH_TOKEN
+  fi
+}
+
+# Extract the YYYY-MM-DD version string from the \ProvidesClass line in onlinebrief24.cls.
+# Usage: version=$(read_cls_version path/to/onlinebrief24.cls)
+read_cls_version() {
+  sed -n 's/.*\\ProvidesClass{onlinebrief24}\[\([0-9/]*\).*/\1/p' "$1" | tr '/' '-'
+}
