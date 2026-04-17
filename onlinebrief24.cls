@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{onlinebrief24}[2026/03/27 Precision Layout Class with Guides]
+\ProvidesClass{onlinebrief24}[2026/04/17 Precision Layout Class with Guides]
 
 % --- Option declarations (all before ProcessOptions) ---
 
@@ -505,7 +505,7 @@
   \if@modernstyle
     % Header: sender name
     \put(25, 270){%
-        \parbox[t][15mm][t]{\paperwidth-50mm}{%
+        \parbox[t][15mm][t]{\dimexpr\paperwidth-50mm\relax}{%
             \raggedleft
             \fontsize{18pt}{20pt}\sffamily\bfseries
             \@obb@renderheadername
