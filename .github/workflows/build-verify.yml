@@ -62,6 +62,20 @@ jobs:
             texlive-pictures
             texlive-xetex
 
+      # Cache the LuaLaTeX font database (luaotfload) so the expensive font
+      # scan only runs once per TeX Live installation. The key includes the
+      # workflow and class file hashes because adding new packages or fonts
+      # invalidates the database. The restore-key falls back to any prior
+      # lualatex cache for the same OS so the first run after a class change
+      # still benefits from a warm cache.
+      - name: Cache LuaLaTeX font database
+        if: matrix.engine == 'lualatex' && steps.changes.outputs.changed == 'true'
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: .texlive-cache/lualatex
+          key: lualatex-fonts-${{ runner.os }}-${{ hashFiles('.github/workflows/build-verify.yml', 'onlinebrief24.cls') }}
+          restore-keys: lualatex-fonts-${{ runner.os }}-
+
       - name: Build & verify examples (${{ matrix.engine }})
         if: steps.changes.outputs.changed == 'true'
         # The verification script selects the engine via OB24_TEX_ENGINE and
