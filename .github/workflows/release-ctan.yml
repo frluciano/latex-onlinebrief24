@@ -194,28 +194,11 @@ jobs:
 
       - name: Download validated release bundle
         id: download_validated_bundle
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -eu
-          # Reuse the post-validation bundle produced by this workflow rather
-          # than re-downloading the original artifact and reintroducing drift.
-          # Resolve the actual extraction directory dynamically for the same
-          # reason as in the validate job.
-          download_root="${RUNNER_TEMP}/validated-download"
-          rm -rf "$download_root"
-          mkdir -p "$download_root"
-          gh run download "${GITHUB_RUN_ID}" \
-            --repo "${GITHUB_REPOSITORY}" \
-            --name "${VALIDATED_ARTIFACT_NAME}" \
-            --dir "$download_root"
-          metadata_path=$(find "$download_root" -type f -name release-metadata.json -print | head -n 1)
-          if [ -z "$metadata_path" ]; then
-            printf '%s\n' "::error::Could not locate release-metadata.json in the validated release artifact."
-            exit 1
-          fi
-          bundle_dir=$(dirname "$metadata_path")
-          printf '%s\n' "bundle_dir=$bundle_dir" >> "$GITHUB_OUTPUT"
+        uses: ./.github/actions/download-release-bundle
+        with:
+          token: ${{ github.token }}
+          run-id: ${{ github.run_id }}
+          artifact-name: ${{ env.VALIDATED_ARTIFACT_NAME }}
 
       - name: Publish prepared artifact to CTAN
         env:
@@ -230,6 +213,9 @@ jobs:
 
       - name: Upload rendered CTAN submission input
         if: always()
+        # Upload failure does not invalidate a successful CTAN publish — the
+        # audit copy is best-effort and non-fatal.
+        continue-on-error: true
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           # Keep a redacted audit copy of the rendered ctan-o-mat input without
