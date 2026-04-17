@@ -57,8 +57,12 @@ else
     printf '%s\n' "true"
     exit 0
   fi
-  compare_json=$(gh api \
-    "repos/${repository}/compare/${push_before}...${push_after}")
+  if ! compare_json=$(gh api \
+    "repos/${repository}/compare/${push_before}...${push_after}" 2>&1); then
+    printf '%s\n' "::warning::Could not compare ${push_before}...${push_after} — forcing all checks." >&2
+    printf '%s\n' "true"
+    exit 0
+  fi
   # Parse once: extract both the truncated flag and the file list in one pass.
   compare_parsed=$(printf '%s' "$compare_json" | python3 -c \
     "import json,sys; d=json.load(sys.stdin); print(d.get('truncated',False)); [print(f['filename']) for f in d['files']]")
