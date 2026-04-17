@@ -46,12 +46,18 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
   (`onlinebrief24.cls`)
 
 ### Intern
-
 - GitHub-Actions (`actions/checkout`, `actions/upload-artifact`) und
   `ctan-o-mat` auf unveraenderliche Commit-SHAs gepinnt; Release-Pipeline ist
   damit gegen kompromittierte Mutable-Tags geschuetzt
 - Workflow-Eingaben in den Release-Workflows ueber `env:`-Variablen
   weitergeleitet statt direkt in Shell-Befehlszeilen interpoliert
+- DIN-5008-Fenster-Geometrie als benannte Laengen-Konstanten (`\@obb@din*`)
+  zentralisiert; die TikZ-Guides-Darstellung referenziert jetzt dieselben
+  Konstanten wie der Picture-Modus, sodass beide Pfade nicht mehr
+  auseinanderdriften koennen
+- Kalibrierungs-Offset fuer Zone 3 (+1 mm unter DIN-Nominalwert) im
+  Guides-Overlay korrigiert: Zone 2 endet jetzt bei 73 mm statt 72 mm,
+  passend zur tatsaechlichen Empfaenger-Position im Picture-Modus
 
 ## [2026-03-27]
 
