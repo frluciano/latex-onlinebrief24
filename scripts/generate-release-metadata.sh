@@ -28,13 +28,38 @@ if [ -z "$version" ]; then
 	exit 1
 fi
 
-artifact_sha256=$(sha256sum "$artifact_path" | awk '{print $1}')
+artifact_sha256=$(python3 -c \
+  "import hashlib,sys; print(hashlib.sha256(open(sys.argv[1],'rb').read()).hexdigest())" \
+  "$artifact_path")
 source_commit_sha=$(git -C "$repo_root" rev-parse HEAD)
 # Local/manual preparation still needs stable positive identifiers so the same
 # validation rules work in CI and outside GitHub Actions.
 prepare_run_id=${PREPARE_RUN_ID:-${GITHUB_RUN_ID:-$(date -u +%s)}}
 prepare_run_attempt=${PREPARE_RUN_ATTEMPT:-${GITHUB_RUN_ATTEMPT:-1}}
 build_timestamp_utc=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+# Validate that the fields we embed unquoted in JSON are safe integer values.
+case "$prepare_run_id" in
+  *[!0-9]*|'') printf '%s\n' "error: prepare_run_id is not a non-empty integer: '$prepare_run_id'" >&2; exit 1 ;;
+esac
+case "$prepare_run_attempt" in
+  *[!0-9]*|'') printf '%s\n' "error: prepare_run_attempt is not a non-empty integer: '$prepare_run_attempt'" >&2; exit 1 ;;
+esac
+# Validate version so a malformed artifact filename cannot produce bad JSON.
+case "$version" in
+  [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]) ;;
+  *) printf '%s\n' "error: version does not match YYYY-MM-DD: '$version'" >&2; exit 1 ;;
+esac
+version_month=$(printf '%s' "$version" | cut -c6-7)
+version_day=$(printf '%s' "$version" | cut -c9-10)
+case "$version_month" in
+  01|02|03|04|05|06|07|08|09|10|11|12) ;;
+  *) printf '%s\n' "error: version month out of range (01-12): '$version'" >&2; exit 1 ;;
+esac
+case "$version_day" in
+  0[1-9]|[12][0-9]|3[01]) ;;
+  *) printf '%s\n' "error: version day out of range (01-31): '$version'" >&2; exit 1 ;;
+esac
 
 mkdir -p "$(dirname "$output_path")"
 # Keep the contract deliberately small. Anything not required for provenance or

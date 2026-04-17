@@ -11,6 +11,7 @@ expected_prepare_run_id=${2:-}
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 . "$script_dir/lib/common.sh"
 
+scripts_lib="$script_dir/lib"
 repo_root=$(repo_root_from_dir "$script_dir")
 metadata_path="$bundle_dir/release-metadata.json"
 
@@ -19,9 +20,15 @@ require_file "$metadata_path" "Prepared release metadata not found: $metadata_pa
 
 # Parse and validate the JSON contract in Python so the shell only deals with
 # already-normalized scalar values.
-metadata_values=$(python3 "$script_dir/lib/release_validation.py" validate-metadata "$metadata_path")
+python3 "$scripts_lib/release_validation.py" validate-metadata "$metadata_path" > /dev/null
 
-eval "$metadata_values"
+# Extract each field individually — no eval, no injection risk.
+ARTIFACT_FILENAME=$(python3 "$scripts_lib/release_validation.py" get-field "$metadata_path" artifact_filename)
+ARTIFACT_SHA256=$(python3 "$scripts_lib/release_validation.py" get-field "$metadata_path" artifact_sha256)
+ANNOUNCEMENT_FILENAME=$(python3 "$scripts_lib/release_validation.py" get-field "$metadata_path" announcement_filename)
+SOURCE_COMMIT_SHA=$(python3 "$scripts_lib/release_validation.py" get-field "$metadata_path" source_commit_sha)
+PREPARE_RUN_ID=$(python3 "$scripts_lib/release_validation.py" get-field "$metadata_path" prepare_run_id)
+VERSION=$(python3 "$scripts_lib/release_validation.py" get-field "$metadata_path" version)
 
 artifact_path="$bundle_dir/$ARTIFACT_FILENAME"
 checksum_path="$artifact_path.sha256"
@@ -49,7 +56,9 @@ fi
 
 checksum_value=$(awk 'NR==1 { print $1 }' "$checksum_path")
 checksum_target=$(awk 'NR==1 { print $2 }' "$checksum_path")
-actual_checksum=$(sha256sum "$artifact_path" | awk '{print $1}')
+actual_checksum=$(python3 -c \
+  "import hashlib,sys; print(hashlib.sha256(open(sys.argv[1],'rb').read()).hexdigest())" \
+  "$artifact_path")
 
 # Cross-check metadata, checksum file, and actual artifact bytes. All three must
 # agree before the bundle is considered releasable.
@@ -70,9 +79,11 @@ fi
 
 # Guard against stale upload metadata: the frozen release version must match
 # the versions embedded in the package files inside the ZIP that CTAN receives.
-artifact_versions=$(python3 "$script_dir/lib/release_validation.py" validate-zip "$artifact_path" "$VERSION")
+python3 "$scripts_lib/release_validation.py" validate-zip "$artifact_path" "$VERSION" > /dev/null
 
-eval "$artifact_versions"
+# Extract each ZIP version field individually — no eval, no injection risk.
+ARTIFACT_CLASS_VERSION=$(python3 "$scripts_lib/release_validation.py" get-field-zip "$artifact_path" class_version)
+ARTIFACT_DOC_VERSION=$(python3 "$scripts_lib/release_validation.py" get-field-zip "$artifact_path" doc_version)
 
 if ! git -C "$repo_root" rev-parse --verify "${SOURCE_COMMIT_SHA}^{commit}" >/dev/null 2>&1; then
 	printf '%s\n' "Prepared source commit is not available locally: $SOURCE_COMMIT_SHA" >&2

@@ -1,0 +1,31 @@
+\documentclass[modern, infoblock, lang=german]{../../onlinebrief24}
+
+\setreturnaddress{Max Mustermann, Musterstra\ss{}e 1, 12345 Musterstadt}
+\setrecipient{%
+  Muster GmbH \\
+  Musterweg 2 \\
+  54321 Musterort%
+}
+\setfromfirstname{Max}
+\setfromlastname{Mustermann}
+\setfromaddress{Musterstra\ss{}e 1, 12345 Musterstadt}
+\setfromemail{max.mustermann@example.com}
+\setfromphone{0151 / 234 567}
+% Infoblock fields to verify color rendering path (modern + infoblock).
+\setourref{MI-2026-01}
+\setcontactname{Max Mustermann}
+\setsubject{Test: Moderner Stil mit Infoblock}
+\setplace{Musterstadt}
+\setdate{2026-03-27}
+
+\begin{document}
+\begin{letter}{}
+\opening{Sehr geehrte Damen und Herren,}
+
+dieses Dokument prueft die Kombination der Optionen \texttt{modern} und
+\texttt{infoblock}. Es stellt sicher, dass der Infoblock in modernem Stil mit
+farbigen Labels gerendert wird und der Footer-Rendering-Pfad aktiv ist.
+
+\closing{Mit freundlichen Gr\"u\ss{}en}
+\end{letter}
+\end{document}
