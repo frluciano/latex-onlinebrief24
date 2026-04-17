@@ -8,16 +8,8 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
 ## [Unreleased]
 
 ### Behoben
-- `\begin{letter}[opts]{Adresse}` reicht KOMA-Per-Letter-Optionen jetzt korrekt
-  an `scrlttr2` weiter; bisher wurden optionale Argumente stillschweigend ignoriert
-  (`onlinebrief24.cls`)
 - CTAN-Dokumentation korrigiert: `\faXTwitter` (existiert in fontawesome5 nicht)
   durch `\faTwitter` ersetzt (`ctan/onlinebrief24-doc.tex`)
-
-### Geaendert
-- `sourcesanspro` durch das neue kanonische Paket `sourcesans` ersetzt, das den
-  veralteten Alias seit TeX Live 2025 abloesung; eliminiert die
-  Package-Warning bei jedem modernen Kompilat (`onlinebrief24.cls`)
 
 ## [2026-03-27]
 
