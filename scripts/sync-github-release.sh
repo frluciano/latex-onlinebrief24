@@ -11,15 +11,12 @@ expected_release_run_id=${2:-}
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 . "$script_dir/lib/common.sh"
 
+scripts_lib="$script_dir/lib"
 repo_root=$(repo_root_from_dir "$script_dir")
 metadata_path="$bundle_dir/release-metadata.json"
 resolved_metadata_path="$bundle_dir/resolved-release-metadata.json"
 
-if [ -z "${GH_TOKEN:-}" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
-  GH_TOKEN=$GITHUB_TOKEN
-  export GH_TOKEN
-fi
-
+normalize_gh_token
 require_env GH_TOKEN "GH_TOKEN or GITHUB_TOKEN is required to create the GitHub release."
 require_env GITHUB_REPOSITORY "GITHUB_REPOSITORY is required in the GitHub release sync context."
 require_file "$resolved_metadata_path" "Resolved release metadata not found: $resolved_metadata_path"
@@ -30,68 +27,17 @@ sh "$repo_root/scripts/validate-release-inputs.sh" "$bundle_dir"
 
 # Validate that the resolved metadata still matches the frozen prepare bundle
 # and belongs to the specific successful CTAN release run we are syncing from.
-metadata_values=$(
-  python3 - "$metadata_path" "$resolved_metadata_path" "$expected_release_run_id" <<'PY'
-import json
-import re
-import sys
-from pathlib import Path
+python3 "$scripts_lib/release_workflow.py" validate-resolved-release-metadata \
+  "$bundle_dir" "$expected_release_run_id"
 
-metadata = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
-resolved = json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
-expected_release_run_id = sys.argv[3]
-
-shared_fields = (
-    "schema_version",
-    "package_name",
-    "version",
-    "artifact_filename",
-    "artifact_sha256",
-    "source_commit_sha",
-    "prepare_run_id",
-    "prepare_run_attempt",
-    "build_timestamp_utc",
-    "announcement_filename",
-)
-for key in shared_fields:
-    if resolved.get(key) != metadata.get(key):
-        raise SystemExit(
-            f"resolved-release-metadata field {key!r} does not match release-metadata.json"
-        )
-
-release_run_id = str(resolved.get("release_run_id", ""))
-release_run_attempt = str(resolved.get("release_run_attempt", ""))
-release_requested_by = str(resolved.get("release_requested_by", ""))
-release_timestamp_utc = str(resolved.get("release_timestamp_utc", ""))
-
-if not re.fullmatch(r"[0-9]+", release_run_id):
-    raise SystemExit("release_run_id in resolved-release-metadata.json must be a positive integer string")
-
-if not re.fullmatch(r"[0-9]+", release_run_attempt):
-    raise SystemExit("release_run_attempt in resolved-release-metadata.json must be a positive integer string")
-
-if not re.fullmatch(r"[A-Za-z0-9-]+", release_requested_by):
-    raise SystemExit("release_requested_by must look like a GitHub login")
-
-if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z", release_timestamp_utc):
-    raise SystemExit("release_timestamp_utc must use an ISO-8601 UTC timestamp")
-
-if expected_release_run_id and release_run_id != expected_release_run_id:
-    raise SystemExit(
-        f"resolved-release-metadata release_run_id {release_run_id} does not match expected release run ID {expected_release_run_id}"
-    )
-
-print(f"ANNOUNCEMENT_FILENAME={metadata['announcement_filename']}")
-print(f"ARTIFACT_FILENAME={metadata['artifact_filename']}")
-print(f"PREPARE_RUN_ID={metadata['prepare_run_id']}")
-print(f"RELEASE_RUN_ID={release_run_id}")
-print(f"RELEASE_RUN_ATTEMPT={release_run_attempt}")
-print(f"SOURCE_COMMIT_SHA={metadata['source_commit_sha']}")
-print(f"VERSION={metadata['version']}")
-PY
-)
-
-eval "$metadata_values"
+# Extract each field individually — no eval, no injection risk.
+ANNOUNCEMENT_FILENAME=$(python3 "$scripts_lib/release_validation.py" get-field "$metadata_path" announcement_filename)
+ARTIFACT_FILENAME=$(python3 "$scripts_lib/release_validation.py" get-field "$metadata_path" artifact_filename)
+PREPARE_RUN_ID=$(python3 "$scripts_lib/release_validation.py" get-field "$metadata_path" prepare_run_id)
+RELEASE_RUN_ID=$(python3 "$scripts_lib/release_validation.py" get-field "$resolved_metadata_path" release_run_id)
+RELEASE_RUN_ATTEMPT=$(python3 "$scripts_lib/release_validation.py" get-field "$resolved_metadata_path" release_run_attempt)
+SOURCE_COMMIT_SHA=$(python3 "$scripts_lib/release_validation.py" get-field "$metadata_path" source_commit_sha)
+VERSION=$(python3 "$scripts_lib/release_validation.py" get-field "$metadata_path" version)
 
 artifact_path="$bundle_dir/$ARTIFACT_FILENAME"
 checksum_path="$artifact_path.sha256"

@@ -5,8 +5,12 @@ script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 . "$script_dir/lib/common.sh"
 
 repo_root=$(repo_root_from_dir "$script_dir")
-# Extract the version date (YYYY/MM/DD) from \ProvidesClass and convert to YYYY-MM-DD.
-version=$(sed -n 's/.*\\ProvidesClass{onlinebrief24}\[\([0-9/]*\).*/\1/p' "$repo_root/onlinebrief24.cls" | tr '/' '-')
+version=$(read_cls_version "$repo_root/onlinebrief24.cls")
+
+if [ -z "$version" ]; then
+  printf '%s\n' "error: could not extract version from onlinebrief24.cls" >&2
+  exit 1
+fi
 ctan_src_dir="$repo_root/ctan"
 build_root="$repo_root/dist"
 dist_root="$repo_root/dist/ctan"
