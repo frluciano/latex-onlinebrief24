@@ -11,6 +11,7 @@ expected_prepare_run_id=${2:-}
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 . "$script_dir/lib/common.sh"
 
+scripts_lib="$script_dir/lib"
 repo_root=$(repo_root_from_dir "$script_dir")
 metadata_path="$bundle_dir/release-metadata.json"
 
@@ -23,24 +24,14 @@ require_file "$ctan_o_mat_bin" "ctan-o-mat executable not found at $ctan_o_mat_b
 # any prepare-time guarantees.
 sh "$repo_root/scripts/validate-release-inputs.sh" "$bundle_dir" "$expected_prepare_run_id"
 
-metadata_values=$(
-  python3 - "$metadata_path" <<'PY'
-import json
-import sys
-from pathlib import Path
-
 # Re-read the canonical values from metadata after validation instead of trying
 # to reconstruct them from file names or workflow inputs.
-metadata = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
-print(f"ARTIFACT_FILENAME={metadata['artifact_filename']}")
-print(f"ANNOUNCEMENT_FILENAME={metadata['announcement_filename']}")
-print(f"PREPARE_RUN_ID={metadata['prepare_run_id']}")
-print(f"SOURCE_COMMIT_SHA={metadata['source_commit_sha']}")
-print(f"VERSION={metadata['version']}")
-PY
-)
-
-eval "$metadata_values"
+# Each field is extracted individually — no eval, no injection risk.
+ARTIFACT_FILENAME=$(python3 "$scripts_lib/release_validation.py" get-field "$metadata_path" artifact_filename)
+ANNOUNCEMENT_FILENAME=$(python3 "$scripts_lib/release_validation.py" get-field "$metadata_path" announcement_filename)
+PREPARE_RUN_ID=$(python3 "$scripts_lib/release_validation.py" get-field "$metadata_path" prepare_run_id)
+SOURCE_COMMIT_SHA=$(python3 "$scripts_lib/release_validation.py" get-field "$metadata_path" source_commit_sha)
+VERSION=$(python3 "$scripts_lib/release_validation.py" get-field "$metadata_path" version)
 
 artifact_path="$bundle_dir/$ARTIFACT_FILENAME"
 announcement_path="$bundle_dir/$ANNOUNCEMENT_FILENAME"
