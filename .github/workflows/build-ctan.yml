@@ -195,7 +195,7 @@ jobs:
             "${PREPARE_ARTIFACT_NAME}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload prepared release bundle
-        if: steps.changes.outputs.ctan == 'true' && steps.announcement.outputs.ready == 'true'
+        if: steps.changes.outputs.changed == 'true' && steps.announcement.outputs.ready == 'true'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: ${{ env.PREPARE_ARTIFACT_NAME }}
