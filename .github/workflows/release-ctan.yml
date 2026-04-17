@@ -45,6 +45,7 @@ jobs:
         id: download_prepare_bundle
         env:
           GH_TOKEN: ${{ github.token }}
+          PREPARE_RUN_ID: ${{ inputs.prepare_run_id }}
         run: |
           set -eu
           # `gh run download` is not consistent about the exact extraction path.
@@ -53,7 +54,7 @@ jobs:
           download_root="${RUNNER_TEMP}/prepared-download"
           rm -rf "$download_root"
           mkdir -p "$download_root"
-          gh run download "${{ inputs.prepare_run_id }}" \
+          gh run download "${PREPARE_RUN_ID}" \
             --repo "${GITHUB_REPOSITORY}" \
             --name "${PREPARE_ARTIFACT_NAME}" \
             --dir "$download_root"
@@ -65,7 +66,7 @@ jobs:
           bundle_dir=$(dirname "$metadata_path")
           printf '%s\n' "bundle_dir=$bundle_dir" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           # Local workflow helper scripts do not exist on the runner until the
           # repository is checked out. A later checkout pins the exact prepared
@@ -93,7 +94,7 @@ jobs:
           python3 scripts/lib/release_workflow.py read-prepared-metadata \
             "${{ steps.download_prepare_bundle.outputs.bundle_dir }}" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           # Validate and later publish against the exact prepared commit rather
           # than the commit currently checked out in the default branch.
@@ -101,20 +102,23 @@ jobs:
           ref: ${{ steps.metadata.outputs.source_commit_sha }}
 
       - name: Validate prepared release bundle
+        env:
+          PREPARE_RUN_ID: ${{ inputs.prepare_run_id }}
         run: |
           set -eu
           sh scripts/validate-release-inputs.sh \
             "${{ steps.download_prepare_bundle.outputs.bundle_dir }}" \
-            "${{ inputs.prepare_run_id }}"
+            "${PREPARE_RUN_ID}"
 
       - name: Verify prepare run SHA matches bundle metadata
         env:
           GH_TOKEN: ${{ github.token }}
+          PREPARE_RUN_ID: ${{ inputs.prepare_run_id }}
         run: |
           set -eu
           # The artifact payload and the GitHub run record must agree on the
           # commit SHA. A mismatch would mean the bundle is not trustworthy.
-          run_sha=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${{ inputs.prepare_run_id }}" --jq '.head_sha')
+          run_sha=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${PREPARE_RUN_ID}" --jq '.head_sha')
           if [ "$run_sha" != "${{ steps.metadata.outputs.source_commit_sha }}" ]; then
             printf '%s\n' "::error::Prepare run head SHA $run_sha does not match bundle metadata SHA ${{ steps.metadata.outputs.source_commit_sha }}"
             exit 1
@@ -146,7 +150,7 @@ jobs:
             "${{ steps.download_prepare_bundle.outputs.bundle_dir }}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload validated release bundle
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           # The publish job reuses the already validated bundle from this same
           # workflow run after the protected environment gate is approved. Keep
@@ -165,7 +169,7 @@ jobs:
     environment: ctan-release
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           # Publish from the exact prepared commit so the release context matches
           # the bundle provenance that was just validated.
@@ -179,7 +183,13 @@ jobs:
           # workflow must remain physically incapable of performing a submit.
           sudo apt-get update
           sudo apt-get install -y libwww-perl
-          git clone --depth 1 https://github.com/ge-ne/ctan-o-mat.git /tmp/ctan-o-mat
+          git clone --depth 1 --branch 1.2 https://github.com/ge-ne/ctan-o-mat.git /tmp/ctan-o-mat
+          actual=$(git -C /tmp/ctan-o-mat rev-parse HEAD)
+          expected=58889f86acc050e3dfa6400227d336892c308d32 # ctan-o-mat v1.2
+          if [ "$actual" != "$expected" ]; then
+            printf '%s\n' "::error::ctan-o-mat HEAD $actual does not match pinned SHA $expected"
+            exit 1
+          fi
           sudo install /tmp/ctan-o-mat/ctan-o-mat.pl /usr/local/bin/ctan-o-mat
 
       - name: Download validated release bundle
@@ -220,7 +230,7 @@ jobs:
 
       - name: Upload rendered CTAN submission input
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           # Keep a redacted audit copy of the rendered ctan-o-mat input without
           # exposing the CTAN contact email in workflow artifacts.

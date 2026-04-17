@@ -16,6 +16,11 @@ und dieses Projekt nutzt Datumsversionen passend zu den CTAN-Releases (YYYY-MM-D
   durch `\faTwitter` ersetzt (`ctan/onlinebrief24-doc.tex`)
 
 ### Intern
+- GitHub-Actions (`actions/checkout`, `actions/upload-artifact`) und
+  `ctan-o-mat` auf unveraenderliche Commit-SHAs gepinnt; Release-Pipeline ist
+  damit gegen kompromittierte Mutable-Tags geschuetzt
+- Workflow-Eingaben in den Release-Workflows ueber `env:`-Variablen
+  weitergeleitet statt direkt in Shell-Befehlszeilen interpoliert
 - Locale-Fixtures (`german`, `french`, `spanish`, `dutch`, `polish`) auf volle
   Feldabdeckung der italienischen Fixture erweitert: `\setplace`, `\setourref`,
   `\setourmessage`, `\setcontactname`, `\setcontactphone`, `\setcontactfax`

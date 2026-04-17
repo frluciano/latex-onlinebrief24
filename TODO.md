@@ -97,7 +97,7 @@ Release-blockierende Korrektur-Items (mit sichtbarer Auswirkung auf Nutzer-Kompi
 1. ~~**Branch 3** `security/supply-chain`~~ — ✓ erledigt
 2. ~~**Branch 1** `release/next-ctan`~~ — PR #32 offen
 3. ~~**Branch 2** `release/fix-modern-header`~~ — PR #33 offen, nach visueller Verifikation
-4. ~~**Branch 7** `scripts/consolidation`~~ — PR #28 offen
+4. ~~**Branch 7** `scripts/consolidation`~~ — PR #30 erledigt
 5. ~~**Branch 8** `ci-and-tooling`~~ — PR #31 offen
 6. ~~**Branch 4** `cls/refactor-and-api-tests`~~ — PR #34 offen
 7. ~~**Branch 5** `cls/din-geometry`~~ — PR #35 offen, nach visueller Verifikation
