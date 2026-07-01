@@ -48,7 +48,7 @@ jobs:
           fi
           printf '%s\n' "release_run_id=$release_run_id" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
         with:
           # Keep the workflow tools from the current default-branch revision so
           # release-sync retries can benefit from workflow/script fixes made

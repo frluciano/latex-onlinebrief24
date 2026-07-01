@@ -66,7 +66,7 @@ jobs:
           bundle_dir=$(dirname "$metadata_path")
           printf '%s\n' "bundle_dir=$bundle_dir" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
         with:
           # Local workflow helper scripts do not exist on the runner until the
           # repository is checked out. A later checkout pins the exact prepared
@@ -94,7 +94,7 @@ jobs:
           python3 scripts/lib/release_workflow.py read-prepared-metadata \
             "${{ steps.download_prepare_bundle.outputs.bundle_dir }}" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
         with:
           # Validate and later publish against the exact prepared commit rather
           # than the commit currently checked out in the default branch.
@@ -169,7 +169,7 @@ jobs:
     environment: ctan-release
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
         with:
           # Publish from the exact prepared commit so the release context matches
           # the bundle provenance that was just validated.
